@@ -1,0 +1,242 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "pydantic_models",
+  "state": "s0",
+  "date": "2023-06-07",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pd_export_invoice",
+    "code": "from typing import List, Union\nfrom datetime import datetime, timezone\nfrom decimal import Decimal, ROUND_HALF_UP\nfrom pydantic import BaseModel, validator, ValidationError, root_validator\n\n\nclass InvoiceLine(BaseModel):\n    sku: str\n    quantity: int\n    unit_price: Union[str, int, float, Decimal]\n\n    @validator('quantity')\n    def quantity_must_be_at_least_1(cls, v):\n        if v < 1:\n            raise ValueError('quantity must be >= 1')\n        return v\n\n    @validator('unit_price', pre=True)\n    def unit_price_to_decimal(cls, v):\n        try:\n            d = Decimal(str(v))\n        except Exception:\n            raise ValueError('unit_price must be a decimal number')\n        if d < 0:\n            raise ValueError('unit_price must be >= 0')\n        # quantize to 2 decimals for internal consistency\n        return d.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)\n\n    def json_dict(self):\n        # Return dict with unit_price as string with exactly two decimals\n        return {\n            'sku': self.sku,\n            'quantity': self.quantity,\n            'unit_price': f\"{self.unit_price:.2f}\",\n        }\n\n\nclass Invoice(BaseModel):\n    number: str\n    issued_at: Union[str, datetime]\n    lines: List[InvoiceLine]\n\n    @validator('issued_at', pre=True)\n    def parse_issued_at(cls, v):\n        if isinstance(v, datetime):\n            dt = v\n        elif isinstance(v, str):\n            try:\n                # parse ISO8601 string\n                dt = datetime.fromisoformat(v)\n            except Exception:\n                raise ValueError('issued_at must be ISO 8601 datetime string or datetime object')\n        else:\n            raise ValueError('issued_at must be ISO 8601 datetime string or datetime object')\n\n        # If naive, treat as UTC\n        if dt.tzinfo is None:\n            dt = dt.replace(tzinfo=timezone.utc)\n        else:\n            dt = dt.astimezone(timezone.utc)\n        return dt\n\n    @root_validator\n    def check_lines_not_empty(cls, values):\n        lines = values.get('lines')\n        if not lines or len(lines) == 0:\n            raise ValueError('lines must be a non-empty list')\n        return values\n\n    def json_dict(self):\n        # Format issued_at as \"YYYY-MM-DDTHH:MM:SSZ\"\n        issued_at_str = self.issued_at.strftime('%Y-%m-%dT%H:%M:%SZ')\n        lines_out = [line.json_dict() for line in self.lines]\n        total = sum(line.quantity * line.unit_price for line in self.lines)\n        total_str = f\"{total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP):.2f}\"\n        return {\n            'number': self.number,\n            'issued_at': issued_at_str,\n            'lines': lines_out,\n            'total': total_str,\n        }\n\n\ndef export_invoice(data: dict) -> str:\n    try:\n        invoice = Invoice.parse_obj(data)\n    except ValidationError as e:\n        # Raise ValueError as requested\n        raise ValueError(e)\n\n    import json\n    return json.dumps(invoice.json_dict(), separators=(',', ':'))\n",
+    "prompt_sha": "f7fbb42d75ea68ca",
+    "cases": [
+     {
+      "name": "t_export",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Unknown format code 'f' for object of type 'str' [solution.py:34]"
+     },
+     {
+      "name": "t_naive_datetime",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: 1 validation error for Invoice\n__root__\n  lines must be a non-empty list (type=value_error) [solution.py:89]"
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_import_profiles",
+    "code": "from typing import List, Optional, Any\nfrom pydantic import BaseModel, validator, ValidationError\n\n\nclass ProfileModel(BaseModel):\n    user_id: int\n    display_name: str\n    bio: Optional[str] = None\n    zip_code: str\n\n    @validator('display_name')\n    def collapse_whitespace_and_not_blank(cls, v: str) -> str:\n        collapsed = ' '.join(v.split())\n        if not collapsed:\n            raise ValueError('display_name must not be blank')\n        return collapsed\n\n    @validator('zip_code', pre=True)\n    def ensure_zip_code_str(cls, v: Any) -> str:\n        # Accept int or str, convert to str\n        return str(v)\n\n    @validator('user_id', pre=True)\n    def user_id_numeric_string_to_int(cls, v: Any) -> int:\n        # Accept int or numeric string, convert to int\n        if isinstance(v, int):\n            return v\n        if isinstance(v, str) and v.isdigit():\n            return int(v)\n        raise ValueError('user_id must be an integer or numeric string')\n\n\ndef import_profiles(rows: List[dict]) -> List[dict]:\n    valid_profiles = []\n    for row in rows:\n        try:\n            profile = ProfileModel(**row)\n            valid_profiles.append(profile.dict())\n        except ValidationError:\n            # silently skip invalid rows\n            continue\n    return valid_profiles\n",
+    "prompt_sha": "e07afa7dfd4b828c",
+    "cases": [
+     {
+      "name": "t_import",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_orders_payload",
+    "code": "from typing import List\nfrom pydantic import BaseModel, ValidationError\n\n\nclass CustomerModel(BaseModel):\n    id: int\n    name: str\n    email: str\n\n\nclass ItemModel(BaseModel):\n    sku: str\n    quantity: int\n\n\nclass OrderModel(BaseModel):\n    id: int\n    customer: CustomerModel\n    items: List[ItemModel]\n\n\ndef orders_payload(orders: list) -> list:\n    \"\"\"\n    Convert ORM order objects into JSON-ready dicts using pydantic models.\n\n    Args:\n        orders (list): List of ORM order objects with attributes:\n                       - id (int)\n                       - customer (object with id, name, email)\n                       - items (list of objects with sku, quantity)\n\n    Returns:\n        list: List of dicts with keys \"id\", \"customer\", and \"items\" only.\n\n    Raises:\n        ValueError: If a required attribute is missing or invalid.\n    \"\"\"\n    result = []\n    for order in orders:\n        try:\n            order_dict = {\n                \"id\": getattr(order, \"id\"),\n                \"customer\": {\n                    \"id\": getattr(order.customer, \"id\"),\n                    \"name\": getattr(order.customer, \"name\"),\n                    \"email\": getattr(order.customer, \"email\"),\n                },\n                \"items\": [\n                    {\n                        \"sku\": getattr(item, \"sku\"),\n                        \"quantity\": getattr(item, \"quantity\"),\n                    }\n                    for item in getattr(order, \"items\")\n                ],\n            }\n            validated_order = OrderModel(**order_dict)\n            result.append(validated_order.dict())\n        except (AttributeError, ValidationError) as e:\n            raise ValueError(f\"Invalid order data: {e}\") from e\n    return result\n",
+    "prompt_sha": "b48ebc110a0e1705",
+    "cases": [
+     {
+      "name": "t_payload",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_validate_signup",
+    "code": "import re\nfrom pydantic import BaseModel, validator, ValidationError\n\n\nclass SignupModel(BaseModel):\n    username: str\n    email: str\n    phone: str\n    password: str\n    password_confirm: str\n\n    @validator(\"username\")\n    def username_valid(cls, v: str) -> str:\n        if not re.fullmatch(r\"^[a-z0-9_]{3,20}$\", v):\n            raise ValueError(\"username must match ^[a-z0-9_]{3,20}$\")\n        return v\n\n    @validator(\"email\")\n    def email_valid(cls, v: str) -> str:\n        v = v.strip().lower()\n        if \"@\" not in v:\n            raise ValueError(\"email must contain '@'\")\n        return v\n\n    @validator(\"phone\")\n    def phone_valid(cls, v: str) -> str:\n        # Remove spaces, dots, dashes, parentheses\n        compact = re.sub(r\"[ .\\-\\(\\)]\", \"\", v)\n        if not compact.startswith(\"+\"):\n            raise ValueError(\"phone must start with '+'\")\n        digits = compact[1:]\n        if not digits.isdigit():\n            raise ValueError(\"phone must have digits after '+'\")\n        if not (8 <= len(digits) <= 15):\n            raise ValueError(\"phone digits length must be between 8 and 15\")\n        return compact\n\n    @validator(\"password\")\n    def password_length(cls, v: str) -> str:\n        if len(v) < 8:\n            raise ValueError(\"password must be at least 8 characters\")\n        return v\n\n    @validator(\"password_confirm\")\n    def password_confirm_match(cls, v: str, values) -> str:\n        pw = values.get(\"password\")\n        if pw is not None and v != pw:\n            raise ValueError(\"password_confirm must equal password\")\n        return v\n\n\ndef validate_signup(data: dict) -> dict:\n    validated = SignupModel(**data)\n    return {\n        \"username\": validated.username,\n        \"email\": validated.email,\n        \"phone\": validated.phone,\n    }\n",
+    "prompt_sha": "d3a2e438ac9e8004",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "pydantic_models",
+  "state": "s1",
+  "date": "2023-06-30",
+  "split": "dev",
+  "event": "pydantic-2.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pd_export_invoice",
+    "code": "from datetime import datetime, timezone\nfrom decimal import Decimal, ROUND_HALF_UP\nfrom typing import List, Union\nfrom pydantic import BaseModel, Field, ValidationError, field_validator\n\n\nclass InvoiceLine(BaseModel):\n    sku: str\n    quantity: int = Field(..., ge=1)\n    unit_price: Decimal = Field(..., ge=0)\n\n    @field_validator('unit_price', mode='before')\n    @classmethod\n    def validate_unit_price(cls, v):\n        # Accept str, int, float; convert to Decimal\n        try:\n            dec = Decimal(str(v))\n        except Exception as e:\n            raise ValueError(f\"unit_price must be a decimal convertible value: {v}\") from e\n        if dec < 0:\n            raise ValueError(\"unit_price must be >= 0\")\n        return dec\n\n    def unit_price_str(self) -> str:\n        # Format with exactly two decimals, rounding half up\n        return f\"{self.unit_price.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)}\"\n\n\nclass Invoice(BaseModel):\n    number: str\n    issued_at: Union[datetime, str]\n    lines: List[InvoiceLine]\n\n    model_config = {\n        \"from_attributes\": True,\n    }\n\n    @field_validator('issued_at', mode='before')\n    @classmethod\n    def validate_issued_at(cls, v):\n        if isinstance(v, datetime):\n            dt = v\n        elif isinstance(v, str):\n            try:\n                # parse ISO 8601 string with fromisoformat (Python 3.11+)\n                # fromisoformat does not parse 'Z', so replace it with +00:00\n                s = v\n                if s.endswith('Z'):\n                    s = s[:-1] + '+00:00'\n                dt = datetime.fromisoformat(s)\n            except Exception as e:\n                raise ValueError(f\"issued_at must be a valid ISO 8601 datetime string or datetime object: {v}\") from e\n        else:\n            raise ValueError(f\"issued_at must be a datetime or ISO 8601 string, got {type(v)}\")\n\n        # If naive, assume UTC\n        if dt.tzinfo is None:\n            dt = dt.replace(tzinfo=timezone.utc)\n        else:\n            dt = dt.astimezone(timezone.utc)\n        return dt\n\n    def issued_at_str(self) -> str:\n        # Format as \"YYYY-MM-DDTHH:MM:SSZ\" in UTC\n        dt = self.issued_at\n        if dt.tzinfo is None:\n            dt = dt.replace(tzinfo=timezone.utc)\n        else:\n            dt = dt.astimezone(timezone.utc)\n        return dt.strftime('%Y-%m-%dT%H:%M:%SZ')\n\n    def total(self) -> Decimal:\n        total = Decimal('0')\n        for line in self.lines:\n            total += line.unit_price * line.quantity\n        return total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP)\n\n\ndef export_invoice(data: dict) -> str:\n    try:\n        invoice = Invoice.model_validate(data)\n    except ValidationError as e:\n        # Raise ValueError as requested\n        raise ValueError(e) from e\n\n    out = {\n        \"number\": invoice.number,\n        \"issued_at\": invoice.issued_at_str(),\n        \"lines\": [\n            {\n                \"sku\": line.sku,\n                \"quantity\": line.quantity,\n                \"unit_price\": line.unit_price_str(),\n            }\n            for line in invoice.lines\n        ],\n        \"total\": f\"{invoice.total():.2f}\",\n    }\n\n    import json\n    return json.dumps(out, separators=(',', ':'))\n",
+    "prompt_sha": "2491c4134b8d42bc",
+    "cases": [
+     {
+      "name": "t_export",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_naive_datetime",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_import_profiles",
+    "code": "from typing import Any, Optional\nfrom pydantic import BaseModel, Field, ValidationError, field_validator\n\n\nclass Profile(BaseModel):\n    user_id: int\n    display_name: str\n    bio: Optional[str] = None\n    zip_code: str\n\n    model_config = {\n        \"from_attributes\": True,\n    }\n\n    @field_validator(\"display_name\")\n    @classmethod\n    def collapse_whitespace(cls, v: str) -> str:\n        # Collapse internal whitespace to single spaces and strip ends\n        collapsed = \" \".join(v.split())\n        if not collapsed:\n            raise ValueError(\"display_name must not be blank\")\n        return collapsed\n\n    @field_validator(\"zip_code\", mode=\"before\")\n    @classmethod\n    def ensure_str_zip_code(cls, v: Any) -> str:\n        # Accept int or str, always return str\n        if isinstance(v, int):\n            return str(v)\n        if isinstance(v, str):\n            return v\n        raise TypeError(\"zip_code must be str or int\")\n\n\ndef import_profiles(rows: list) -> list:\n    valid_profiles = []\n    for row in rows:\n        try:\n            profile = Profile.model_validate(row)\n        except ValidationError:\n            continue\n        valid_profiles.append(profile.model_dump())\n    return valid_profiles\n",
+    "prompt_sha": "1020ee8f5aad492b",
+    "cases": [
+     {
+      "name": "t_import",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_orders_payload",
+    "code": "from typing import List\nfrom pydantic import BaseModel\n\n\nclass CustomerModel(BaseModel):\n    id: int\n    name: str\n    email: str\n\n    model_config = {\n        \"from_attributes\": True,\n        \"extra\": \"forbid\",\n    }\n\n\nclass ItemModel(BaseModel):\n    sku: str\n    quantity: int\n\n    model_config = {\n        \"from_attributes\": True,\n        \"extra\": \"forbid\",\n    }\n\n\nclass OrderModel(BaseModel):\n    id: int\n    customer: CustomerModel\n    items: List[ItemModel]\n\n    model_config = {\n        \"from_attributes\": True,\n        \"extra\": \"forbid\",\n    }\n\n\ndef orders_payload(orders: list) -> list:\n    try:\n        validated_orders = [OrderModel.model_validate(order).model_dump() for order in orders]\n    except Exception as e:\n        # Pydantic ValidationError is a subclass of ValueError, so we can raise it directly\n        raise ValueError(str(e)) from e\n    return validated_orders\n",
+    "prompt_sha": "ee8844fd136a68ce",
+    "cases": [
+     {
+      "name": "t_payload",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_validate_signup",
+    "code": "import re\nfrom pydantic import BaseModel, Field, ValidationError, field_validator\n\n\nclass SignupModel(BaseModel):\n    username: str = Field(..., pattern=r'^[a-z0-9_]{3,20}$')\n    email: str\n    phone: str\n    password: str = Field(..., min_length=8)\n    password_confirm: str\n\n    model_config = {\n        'populate_by_name': True,\n    }\n\n    @field_validator('email')\n    @classmethod\n    def validate_email(cls, v: str) -> str:\n        if '@' not in v:\n            raise ValueError('email must contain \"@\"')\n        return v.strip().lower()\n\n    @field_validator('phone')\n    @classmethod\n    def validate_phone(cls, v: str) -> str:\n        # Remove spaces, dots, dashes, parentheses\n        compact = re.sub(r'[ .\\-\\(\\)]', '', v)\n        if not re.fullmatch(r'\\+\\d{8,15}', compact):\n            raise ValueError('phone must be \"+\" followed by 8-15 digits after removing spaces, dots, dashes, parentheses')\n        return compact\n\n    @field_validator('password_confirm')\n    @classmethod\n    def passwords_match(cls, v: str, info) -> str:\n        # info.data contains all fields validated so far\n        password = info.data.get('password')\n        if password is None:\n            # password validation will catch missing password\n            return v\n        if v != password:\n            raise ValueError('password_confirm must equal password')\n        return v\n\n\ndef validate_signup(data: dict) -> dict:\n    m = SignupModel.model_validate(data)\n    return {\n        'username': m.username,\n        'email': m.email,\n        'phone': m.phone,\n    }\n",
+    "prompt_sha": "520f82004f343262",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "signup_form": "active",
+   "profile_models": "active",
+   "orm_schemas": "active",
+   "app_settings": "active",
+   "json_export": "active",
+   "catalog_items": "active"
+  },
+  "tombstones": 0
+ }
+]

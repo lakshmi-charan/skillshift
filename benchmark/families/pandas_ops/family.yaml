@@ -1,0 +1,98 @@
+id: pandas_ops
+title: Data-processing procedures built on pandas
+domain: tool
+summary: >
+  A small in-house library of reusable pandas procedures used by reporting jobs: a transaction ledger,
+  calendar-period roll-ups, table cleaning, rule-based flagging, JSON payload conversion and group-wise
+  aggregation. Code runs on CPython 3.11 with the pandas and NumPy versions installed in the deployment
+  environment. Functions must keep their names, signatures and documented behaviour so that existing
+  callers keep working.
+states:
+  - id: s0
+    date: "2023-01-19"
+    label: "pandas 1.5.3"
+    env: {python: "3.11", packages: {pandas: "1.5.3", numpy: "1.26.4"}}
+  - id: s1
+    date: "2023-04-03"
+    label: "pandas 2.0.3"
+    env: {python: "3.11", packages: {pandas: "2.0.3", numpy: "1.26.4"}}
+    event:
+      id: pandas-2.0
+      kind: tool
+      title: "pandas 2.0: removal of deprecated APIs (DataFrame/Series.append, iteritems) and numeric_only defaults"
+      source: "https://github.com/pandas-dev/pandas/blob/v2.0.0/doc/source/whatsnew/v2.0.0.rst"
+      doc: docs/pandas-2.0.md
+  - id: s2
+    date: "2026-01-21"
+    label: "pandas 3.0.6"
+    env: {python: "3.11", packages: {pandas: "3.0.6", numpy: "2.4.6"}}
+    event:
+      id: pandas-3.0
+      kind: tool
+      title: "pandas 3.0: default str dtype, Copy-on-Write always on, removed applymap/offset aliases/literal JSON input"
+      source: "https://github.com/pandas-dev/pandas/blob/v3.0.0/doc/source/whatsnew/v3.0.0.rst"
+      doc: docs/pandas-3.0.md
+skills:
+  - id: ledger
+    file: skills/ledger.py
+    visible_tests: visible/test_ledger.py
+    hidden_tests: hidden/test_ledger.py
+    purpose: "Append-only transaction ledger (date, account, amount, memo) held in a DataFrame."
+    components:
+      - {id: add_entry, requirement: "add_entry returns a new ledger with one row appended at the end, a 0..n-1 index, memo defaulting to '', and the input ledger unchanged."}
+      - {id: add_entries, requirement: "add_entries appends a list of entry dicts in order (missing memo becomes ''); an empty list returns an equal copy."}
+      - {id: balance, requirement: "balance returns the float sum of amounts, optionally for one account (0.0 when no rows match)."}
+      - {id: running_balance, requirement: "running_balance returns the cumulative sums of amounts in ledger order as a list of floats."}
+  - id: monthly_report
+    file: skills/monthly_report.py
+    visible_tests: visible/test_monthly_report.py
+    hidden_tests: hidden/test_monthly_report.py
+    purpose: "Calendar-period roll-ups (month, quarter, year, day) of dated amounts."
+    components:
+      - {id: monthly_totals, requirement: "monthly_totals returns a Series of sums indexed by month-end timestamps, with 0 for months between the first and last row that have no rows."}
+      - {id: quarterly_totals, requirement: "quarterly_totals returns sums indexed by calendar quarter-end timestamps."}
+      - {id: yearly_totals, requirement: "yearly_totals returns sums indexed by year-end (31 December) timestamps, with 0 for empty years in the range."}
+      - {id: daily_average, requirement: "daily_average returns the mean per calendar day for days that have rows, indexed by the day."}
+      - {id: month_label_totals, requirement: "month_label_totals returns a dict mapping 'YYYY-MM' to the float total for each month that has rows."}
+  - id: cleaning
+    file: skills/cleaning.py
+    visible_tests: visible/test_cleaning.py
+    hidden_tests: hidden/test_cleaning.py
+    purpose: "Tidy-up helpers for tables imported from spreadsheets and CSV exports."
+    components:
+      - {id: strip_whitespace, requirement: "strip_whitespace returns a copy with surrounding whitespace removed from every string cell; non-strings and missing values are unchanged."}
+      - {id: text_columns, requirement: "text_columns returns, in column order, the names of columns holding string values (missing values allowed); numeric, boolean and datetime columns are excluded."}
+      - {id: null_counts, requirement: "null_counts returns a dict mapping every column name to its int count of missing values."}
+      - {id: drop_empty_rows, requirement: "drop_empty_rows removes rows whose values are all missing and renumbers the index from 0."}
+      - {id: normalise_headers, requirement: "normalise_headers lower-cases and trims column names and replaces runs of non-alphanumerics with a single '_' (no leading/trailing '_')."}
+  - id: flagging
+    file: skills/flagging.py
+    visible_tests: visible/test_flagging.py
+    hidden_tests: hidden/test_flagging.py
+    purpose: "Rule-based flagging and capping of numeric columns."
+    components:
+      - {id: flag_above, requirement: "flag_above returns a copy with a boolean flag column that is True exactly where the value is strictly greater than the threshold; the input is unchanged."}
+      - {id: cap_values, requirement: "cap_values returns a copy in which values above the cap are replaced by the cap; other columns and the input are unchanged."}
+      - {id: mark_missing, requirement: "mark_missing returns a copy with a boolean column that is True where the given column is missing."}
+      - {id: flag_count, requirement: "flag_count returns the int number of True values in the flag column."}
+  - id: json_records
+    file: skills/json_records.py
+    visible_tests: visible/test_json_records.py
+    hidden_tests: hidden/test_json_records.py
+    purpose: "Convert JSON payloads (passed as str) to DataFrames and back."
+    components:
+      - {id: records_to_frame, requirement: "records_to_frame parses a JSON array of flat objects given as a str into a DataFrame with one row per object and native numeric types."}
+      - {id: lines_to_frame, requirement: "lines_to_frame parses newline-delimited JSON given as a str; keys absent from a line become missing values."}
+      - {id: frame_to_records, requirement: "frame_to_records serialises a DataFrame to a JSON array of objects with missing values as null."}
+      - {id: flatten_nested, requirement: "flatten_nested flattens nested objects into 'outer.inner' columns."}
+  - id: grouping
+    file: skills/grouping.py
+    visible_tests: visible/test_grouping.py
+    hidden_tests: hidden/test_grouping.py
+    purpose: "Group-wise aggregation helpers for reports."
+    components:
+      - {id: group_totals, requirement: "group_totals returns a dict mapping each group key to the sum of the value column."}
+      - {id: group_means, requirement: "group_means returns a DataFrame of per-group means of the numeric columns, indexed by the key; non-numeric columns are left out."}
+      - {id: top_n_per_group, requirement: "top_n_per_group returns the n largest rows per group, ordered by the value descending, with a 0..n-1 index."}
+      - {id: share_of_total, requirement: "share_of_total returns, aligned to the input rows, each row's fraction of its group's total."}
+      - {id: pivot_summary, requirement: "pivot_summary returns a pivot table of sums with missing combinations filled with 0."}

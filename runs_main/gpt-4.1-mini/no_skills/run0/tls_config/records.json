@@ -1,0 +1,596 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s0",
+  "date": "2020-07-24",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nimport sys\n\n# Mozilla Server Side TLS guidelines 5.6 \"intermediate\" profile relevant data extracted:\n_mozilla_intermediate = {\n    \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n    \"openssl_ciphers\": [\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n    ],\n    \"server_preferred_order\": False,\n    \"hsts_min_age\": 63072000,\n}\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for the public HTTPS API that supports current browsers and TLS 1.2 clients,\n    matching the Mozilla Server Side TLS guidelines \"intermediate\" profile.\n\n    Raises PermissionError if the resulting context would violate the organisation's TLS configuration rule.\n    \"\"\"\n    # Create SSLContext for TLS server supporting TLS 1.2 and TLS 1.3\n    # Python 3.11.16 ssl module supports PROTOCOL_TLS_SERVER which negotiates TLS 1.2 and 1.3 by default,\n    # but we must restrict to exactly the profile's TLS versions.\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions exactly to profile's versions\n    # TLSv1.2 and TLSv1.3 are supported in ssl.TLSVersion enum\n    # We must enforce min_version=TLSv1_2 and max_version=TLSv1_3\n    context.minimum_version = ssl.TLSVersion.TLSv1_2\n    context.maximum_version = ssl.TLSVersion.TLSv1_3\n\n    # Set ciphers to exactly the intermediate profile's OpenSSL cipher list for TLS 1.2 and below\n    # TLS 1.3 ciphersuites are set separately in Python 3.6+\n    # The profile's ciphersuites for TLS 1.3 are:\n    #   TLS_AES_128_GCM_SHA256\n    #   TLS_AES_256_GCM_SHA384\n    #   TLS_CHACHA20_POLY1305_SHA256\n    # Python ssl module sets TLS 1.3 ciphersuites automatically and does not allow setting them explicitly,\n    # so we only set TLS 1.2 and below ciphers via set_ciphers.\n\n    # Compose cipher string from the profile's openssl ciphers, colon separated\n    cipher_string = \":\".join(_mozilla_intermediate[\"openssl_ciphers\"])\n    try:\n        context.set_ciphers(cipher_string)\n    except ssl.SSLError as e:\n        raise PermissionError(f\"Failed to set ciphers to profile's list: {e}\")\n\n    # Set server cipher preference order according to profile\n    # The profile says server_preferred_order is False, so we do NOT set context.options to prefer server order.\n    # By default, server_preferred_order is False in ssl.SSLContext, so no action needed.\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # The profile specifies dh_param_size=2048 and ecdh_param_size=256\n    # Python ssl module does not expose direct DH param size setting easily,\n    # but we can set ECDH curve to prime256v1 (256 bits) for compatibility.\n    # TLS curves in profile: [\"X25519\", \"prime256v1\", \"secp384r1\"]\n    # Python ssl module supports set_ecdh_curve, but only one curve at a time.\n    # We'll set to \"prime256v1\" as recommended ecdh_param_size=256.\n    try:\n        context.set_ecdh_curve(\"prime256v1\")\n    except ssl.SSLError as e:\n        # If not supported, ignore as best effort\n        pass\n\n    # HSTS max-age is a header, not part of SSLContext, so no action here.\n\n    # Verify that the context matches the organisation's TLS configuration rule:\n    # - TLS versions exactly profile's tls_versions\n    if [context.minimum_version.name, context.maximum_version.name] != [\"TLSv1_2\", \"TLSv1_3\"]:\n        raise PermissionError(\"TLS versions do not match the intermediate profile\")\n\n    # - Every TLS 1.2-and-below cipher suite enabled must be in the profile's OpenSSL cipher list\n    # We set ciphers explicitly to the profile list, so this is guaranteed.\n\n    # - Cipher order preference matches profile (False)\n    # Default is False, so OK.\n\n    # - HSTS max-age follows profile (63072000)\n    # Not applicable here, but noted.\n\n    return context\n",
+    "prompt_sha": "9321d65013e7b42f",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 5.6 profiles relevant data extracted for checking\n_MOZILLA_PROFILES = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n        },\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n    },\n}\n\n# Map TLS version strings from Mozilla profile to ssl.TLSVersion enum values\n_TLS_VERSION_MAP = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\n\ndef _context_tls_versions(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"\n    Determine the set of TLS version strings enabled by the context's minimum_version and maximum_version.\n    \"\"\"\n    minv = ctx.minimum_version\n    maxv = ctx.maximum_version\n    if minv is None or maxv is None:\n        # If not set, defaults depend on Python version and OpenSSL defaults.\n        # We conservatively treat as all versions enabled (not compliant).\n        return set()\n    # Collect all TLS versions between minv and maxv inclusive\n    enabled_versions = set()\n    for ver_str, ver_enum in _TLS_VERSION_MAP.items():\n        if minv <= ver_enum <= maxv:\n            enabled_versions.add(ver_str)\n    return enabled_versions\n\n\ndef _context_tls12_and_below_ciphers(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"\n    Extract the set of OpenSSL cipher names enabled by the context that are TLS 1.2 or below.\n    \"\"\"\n    ciphers = ctx.get_ciphers()\n    tls12_and_below_ciphers = set()\n    for c in ciphers:\n        # c is a dict with keys including 'name' and 'protocol'\n        # 'protocol' string like 'TLSv1.2' or 'TLSv1.3'\n        # We consider only TLS 1.2 and below ciphers here\n        proto = c.get(\"protocol\", \"\")\n        if proto.startswith(\"TLSv1.3\"):\n            # TLS 1.3 ciphersuites are not in openssl cipher string list and are not checked here\n            continue\n        # Accept only TLS 1.2 and below ciphers\n        if proto.startswith(\"TLSv1.2\") or proto.startswith(\"TLSv1.1\") or proto.startswith(\"TLSv1\"):\n            tls12_and_below_ciphers.add(c[\"name\"])\n    return tls12_and_below_ciphers\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Returns True if and only if the given server-side SSLContext satisfies the organisation's TLS configuration rule\n    for protocol version range (minimum_version / maximum_version) and enabled TLS 1.2-and-below cipher suites.\n\n    The context must match exactly one of the Mozilla profiles' TLS versions and TLS 1.2-and-below cipher suites.\n    \"\"\"\n    # Determine enabled TLS versions in context\n    ctx_tls_versions = _context_tls_versions(ctx)\n    if not ctx_tls_versions:\n        # Could not determine or no versions enabled: not compliant\n        return False\n\n    # Determine enabled TLS 1.2 and below cipher suites in context\n    ctx_tls12_ciphers = _context_tls12_and_below_ciphers(ctx)\n\n    # Check each profile for compliance\n    for profile_name, profile_data in _MOZILLA_PROFILES.items():\n        profile_tls_versions = set(profile_data[\"tls_versions\"])\n        if ctx_tls_versions != profile_tls_versions:\n            continue  # TLS versions mismatch, try next profile\n\n        # For modern profile, no TLS 1.2 or below ciphers allowed, so ctx_tls12_ciphers must be empty\n        profile_ciphers = profile_data[\"openssl_ciphers\"]\n        # Check that all TLS 1.2 and below ciphers enabled by context are in profile's allowed list\n        if ctx_tls12_ciphers.issubset(profile_ciphers):\n            # Matches profile\n            return True\n\n    # No profile matched\n    return False\n",
+    "prompt_sha": "f12d995c6b2b05c0",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify the server certificate against the CA bundle cafile\n    and the host name (server_hostname, defaulting to host), and return the server's greeting:\n    the bytes it sends up to and including the first newline (or until it closes the connection,\n    at most 4096 bytes).\n    Verification failures raise ssl.SSLError or ssl.CertificateError.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create SSL context for client with verification enabled\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until newline\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = ssock.recv(4096 - len(data))\n                if not chunk:\n                    # Connection closed\n                    break\n                data.extend(chunk)\n                if b'\\n' in chunk:\n                    # Stop reading after first newline\n                    break\n            # Return bytes up to and including first newline if present\n            idx = data.find(b'\\n')\n            if idx != -1:\n                return bytes(data[:idx+1])\n            else:\n                return bytes(data)\n",
+    "prompt_sha": "dd70b40c7773a9c4",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\nfrom typing import List\n\n_mozilla_tls_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": [],\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": [\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n        ],\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": [\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        ],\n        \"server_preferred_order\": True,\n        \"hsts_min_age\": 63072000,\n    },\n}\n\n\ndef _openssl_ciphers_to_str(ciphers: List[str]) -> str:\n    # Join cipher list with colon for OpenSSL cipher string\n    return \":\".join(ciphers)\n\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a TLS server SSLContext for payment terminals that only support TLS 1.0.\n    This context must comply with Mozilla's Server Side TLS guidelines profiles.\n    Only the 'old' profile supports TLS 1.0, so this context must match that profile.\n\n    Raises PermissionError if the requested TLS versions or ciphers do not match the profile.\n    \"\"\"\n    profile = _mozilla_tls_profiles[\"old\"]\n\n    # Check TLS versions: must be exactly the profile's versions\n    # The context in Python ssl module is set by minimum and maximum version.\n    # The old profile supports TLSv1 through TLSv1.3.\n    # We want to allow TLS 1.0 only for the terminals, so TLSv1 minimum and maximum.\n    # But the profile's TLS versions include TLSv1.0 to TLSv1.3.\n    # The standing rule requires the context's TLS versions to be the profile's tls_versions.\n    # So we must allow all TLS versions in the profile, not restrict to TLSv1 only.\n    # However, the terminals only support TLS 1.0, so the server must support at least TLS 1.0.\n    # The standing rule says \"Every TLS server context must match a configuration profile published in the current version\".\n    # So the context must support all TLS versions in the profile, not less.\n    # Therefore, the server context must enable TLSv1 through TLSv1.3 as in \"old\" profile.\n    # The terminals will connect with TLS 1.0, but the server context must allow all profile versions.\n\n    # Create SSLContext with TLS server method supporting all versions in profile\n    # Python 3.11 ssl module supports TLSVersion enums for min and max versions\n    # We'll set minimum to TLSv1 and maximum to TLSv1_3\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n    context.minimum_version = ssl.TLSVersion.TLSv1\n    context.maximum_version = ssl.TLSVersion.TLSv1_3\n\n    # Set ciphers to exactly the profile's OpenSSL cipher list\n    # The standing rule requires every TLS 1.2-and-below cipher suite enabled must be in the profile's OpenSSL cipher list.\n    # The old profile's cipher list is as given.\n    ciphers_str = _openssl_ciphers_to_str(profile[\"openssl_ciphers\"])\n    context.set_ciphers(ciphers_str)\n\n    # Set server cipher preference order as per profile\n    context.options |= ssl.OP_NO_TICKET  # Disable session tickets for security (optional)\n    if profile[\"server_preferred_order\"]:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # HSTS max-age is a header, not part of SSLContext, so no action here.\n\n    return context\n",
+    "prompt_sha": "a25c2dc7f4cf6974",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 terminal could not connect [test_tls_legacy_terminal.py:21]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: TLSv1 client could not connect [test_tls_legacy_terminal.py:35]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s1",
+  "date": "2023-05-15",
+  "split": "dev",
+  "event": "mozilla-tls-5.7",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nfrom typing import Set\n\n# Mozilla Server Side TLS guidelines 5.7 server profiles relevant data for validation and context creation\n_MOZILLA_TLS_PROFILES = {\n    \"modern\": {\n        \"tls_versions\": {\"TLSv1.3\"},\n        \"openssl_ciphers\": set(),\n        \"ciphersuites\": [\n            \"TLS_AES_128_GCM_SHA256\",\n            \"TLS_AES_256_GCM_SHA384\",\n            \"TLS_CHACHA20_POLY1305_SHA256\",\n        ],\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"intermediate\": {\n        \"tls_versions\": {\"TLSv1.2\", \"TLSv1.3\"},\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n        \"ciphersuites\": [\n            \"TLS_AES_128_GCM_SHA256\",\n            \"TLS_AES_256_GCM_SHA384\",\n            \"TLS_CHACHA20_POLY1305_SHA256\",\n        ],\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"old\": {\n        \"tls_versions\": {\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"},\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n        \"ciphersuites\": [\n            \"TLS_AES_128_GCM_SHA256\",\n            \"TLS_AES_256_GCM_SHA384\",\n            \"TLS_CHACHA20_POLY1305_SHA256\",\n        ],\n        \"server_preferred_order\": True,\n        \"hsts_min_age\": 63072000,\n    },\n}\n\n# Map profile TLS version strings to ssl.TLSVersion enums\n_TLS_VERSION_MAP = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\n# We want to serve current browsers and API clients that only support TLS 1.2,\n# so the \"intermediate\" profile is the best fit (supports TLS 1.2 and 1.3).\n_PROFILE_NAME = \"intermediate\"\n_PROFILE = _MOZILLA_TLS_PROFILES[_PROFILE_NAME]\n\n\ndef _openssl_ciphers_to_string(ciphers: Set[str]) -> str:\n    # OpenSSL cipher list string is colon-separated cipher names\n    return \":\".join(sorted(ciphers))\n\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for the public HTTPS API that:\n    - Serves current browsers and TLS 1.2-only clients\n    - Matches the Mozilla Server Side TLS guidelines profile \"intermediate\"\n    - Enforces TLS versions, cipher suites, cipher order, and HSTS max-age per profile\n\n    Raises:\n        PermissionError: If the context cannot be configured to match the profile.\n    \"\"\"\n    # Create SSL context for server side with TLS\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions according to profile\n    tls_versions = _PROFILE[\"tls_versions\"]\n    try:\n        min_version = min(_TLS_VERSION_MAP[v] for v in tls_versions)\n        max_version = max(_TLS_VERSION_MAP[v] for v in tls_versions)\n    except KeyError as e:\n        raise PermissionError(f\"Unsupported TLS version in profile: {e.args[0]}\")\n\n    context.minimum_version = min_version\n    context.maximum_version = max_version\n\n    # Set cipher suites for TLS 1.2 and below from profile's OpenSSL cipher list\n    # TLS 1.3 ciphersuites are set separately via context.set_ciphersuites()\n    openssl_ciphers = _PROFILE[\"openssl_ciphers\"]\n    if openssl_ciphers:\n        cipher_string = _openssl_ciphers_to_string(openssl_ciphers)\n        try:\n            context.set_ciphers(cipher_string)\n        except ssl.SSLError as e:\n            raise PermissionError(f\"Failed to set ciphers for profile {_PROFILE_NAME}: {e}\")\n    else:\n        # No TLS 1.2-and-below ciphers in profile (e.g. modern)\n        # Set empty cipher string to disable TLS 1.2 and below ciphers\n        context.set_ciphers(\"\")\n\n    # Set TLS 1.3 ciphersuites from profile\n    # The profile lists ciphersuites by IANA names, which match Python ssl ciphersuite names\n    # Join with colon for set_ciphersuites\n    ciphersuites = _PROFILE[\"ciphersuites\"]\n    if ciphersuites:\n        try:\n            context.set_ciphersuites(\":\".join(ciphersuites))\n        except ssl.SSLError as e:\n            raise PermissionError(f\"Failed to set TLS 1.3 ciphersuites for profile {_PROFILE_NAME}: {e}\")\n\n    # Set server cipher preference order according to profile\n    # Python ssl module uses context.options to set SSL_OP_CIPHER_SERVER_PREFERENCE\n    # If server_preferred_order is True, enable the option; else disable it\n    if _PROFILE[\"server_preferred_order\"]:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # HSTS max-age is a header setting, not part of SSLContext; just validate presence here\n    # (No direct enforcement possible in SSLContext)\n    hsts_min_age = _PROFILE.get(\"hsts_min_age\")\n    if hsts_min_age is None:\n        raise PermissionError(f\"Profile {_PROFILE_NAME} missing required hsts_min_age\")\n\n    # Return the configured SSLContext\n    return context\n",
+    "prompt_sha": "bfd450c9d9377466",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ciphersuites' [solution.py:141]"
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ciphersuites' [solution.py:141]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ciphersuites' [solution.py:141]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 5.7 relevant data for server TLS versions and TLS 1.2-and-below ciphersuites\n# We only consider the \"openssl\" cipher list for TLS 1.2-and-below ciphers, as ctx.get_ciphers() returns OpenSSL cipher names.\n# TLS versions are mapped to ssl.TLSVersion enums for comparison.\n\n_mozilla_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # no TLS 1.2-and-below ciphers allowed\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n    },\n}\n\n# Mapping from profile tls_versions strings to ssl.TLSVersion enums\n_tls_version_map = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\ndef _ctx_tls_versions(ctx: ssl.SSLContext) -> set[int]:\n    \"\"\"Return the set of TLSVersion enums enabled by ctx's minimum_version and maximum_version.\"\"\"\n    # ctx.minimum_version and ctx.maximum_version are ssl.TLSVersion enums or None\n    # If None, fallback to defaults per ssl module docs (but we treat None as no restriction)\n    minv = ctx.minimum_version or ssl.TLSVersion.MINIMUM_SUPPORTED\n    maxv = ctx.maximum_version or ssl.TLSVersion.MAXIMUM_SUPPORTED\n    # Collect all TLS versions between minv and maxv inclusive\n    versions = set()\n    for v in ssl.TLSVersion:\n        if minv <= v <= maxv:\n            versions.add(v)\n    return versions\n\ndef _ctx_tls12_and_below_ciphers(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"Return the set of OpenSSL cipher names enabled by ctx that are TLS 1.2 or below.\"\"\"\n    # ctx.get_ciphers() returns a list of dicts with keys including 'name' and 'protocol'\n    # We consider only ciphers with protocol <= TLSv1.2 (i.e. 'TLSv1', 'TLSv1.1', 'TLSv1.2')\n    # The 'protocol' field is a string like 'TLSv1.2' or 'TLSv1.3'\n    ciphers = ctx.get_ciphers()\n    tls12_and_below = set()\n    for c in ciphers:\n        proto = c.get(\"protocol\", \"\")\n        # Accept only TLSv1, TLSv1.1, TLSv1.2 protocols\n        if proto in (\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\"):\n            name = c.get(\"name\")\n            if name:\n                tls12_and_below.add(name)\n    return tls12_and_below\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True if the given server-side SSLContext complies with the organisation's TLS configuration rule:\n    - The context's TLS versions must exactly match one of the Mozilla profiles' tls_versions.\n    - Every TLS 1.2-and-below cipher suite enabled must be in that profile's OpenSSL cipher list.\n    Ignore certificate, curves, cipher order, and HSTS.\n    \"\"\"\n    ctx_versions = _ctx_tls_versions(ctx)\n    ctx_tls_versions_str = set()\n    # Convert ctx_versions back to string names for matching profiles\n    for v in ctx_versions:\n        for name, enumv in _tls_version_map.items():\n            if enumv == v:\n                ctx_tls_versions_str.add(name)\n                break\n\n    # Find which profile matches the TLS versions exactly\n    matched_profile = None\n    for prof_name, prof_data in _mozilla_profiles.items():\n        prof_tls_versions = set(prof_data[\"tls_versions\"])\n        if ctx_tls_versions_str == prof_tls_versions:\n            matched_profile = prof_data\n            break\n    if matched_profile is None:\n        return False\n\n    # Check TLS 1.2-and-below cipher suites enabled are subset of profile's allowed ciphers\n    ctx_ciphers = _ctx_tls12_and_below_ciphers(ctx)\n    allowed_ciphers = matched_profile[\"openssl_ciphers\"]\n\n    # All TLS 1.2-and-below ciphers must be in allowed_ciphers\n    if not ctx_ciphers.issubset(allowed_ciphers):\n        return False\n\n    return True\n",
+    "prompt_sha": "eda8a251cac93791",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm', 'tls12-dhe-chacha'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import socket\nimport ssl\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create an SSLContext for client with verification enabled (org-client-verification)\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    # Open a TCP connection and wrap it in TLS with verification\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until first newline (inclusive)\n            greeting = bytearray()\n            while len(greeting) < 4096:\n                chunk = ssock.recv(4096 - len(greeting))\n                if not chunk:\n                    # Connection closed before newline\n                    break\n                greeting.extend(chunk)\n                if b'\\n' in chunk:\n                    # Stop reading after first newline inclusive\n                    newline_index = greeting.find(b'\\n')\n                    greeting = greeting[:newline_index+1]\n                    break\n            return bytes(greeting)\n",
+    "prompt_sha": "eefc0dc2b7c68780",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\nfrom typing import Set\n\n# Mozilla Server Side TLS guidelines 5.7 \"old\" profile relevant data for TLS 1.0 support\n# We must match the \"old\" profile exactly for server TLS context:\n# - tls_versions: [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"]\n# - openssl ciphers for TLS 1.2 and below (TLS 1.3 ciphersuites are separate)\n# - server_preferred_order: True\n# - hsts_min_age: 63072000 (not used in SSLContext, but noted)\n\n_OLD_PROFILE = {\n    \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n    \"openssl_ciphers\": [\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n        \"DHE-RSA-CHACHA20-POLY1305\",\n        \"ECDHE-ECDSA-AES128-SHA256\",\n        \"ECDHE-RSA-AES128-SHA256\",\n        \"ECDHE-ECDSA-AES128-SHA\",\n        \"ECDHE-RSA-AES128-SHA\",\n        \"ECDHE-ECDSA-AES256-SHA384\",\n        \"ECDHE-RSA-AES256-SHA384\",\n        \"ECDHE-ECDSA-AES256-SHA\",\n        \"ECDHE-RSA-AES256-SHA\",\n        \"DHE-RSA-AES128-SHA256\",\n        \"DHE-RSA-AES256-SHA256\",\n        \"AES128-GCM-SHA256\",\n        \"AES256-GCM-SHA384\",\n        \"AES128-SHA256\",\n        \"AES256-SHA256\",\n        \"AES128-SHA\",\n        \"AES256-SHA\",\n        \"DES-CBC3-SHA\",\n    ],\n    \"server_preferred_order\": True,\n}\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for payment terminals supporting only TLS 1.0,\n    matching Mozilla's \"old\" profile from Server Side TLS guidelines 5.7.\n    \"\"\"\n    # Create context with highest protocol to enable all versions, then restrict versions\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions according to profile\n    # TLSv1.3 is included in profile, but terminals only support TLS 1.0,\n    # so we must allow all versions in profile to be compliant.\n    # However, since terminals only support TLS 1.0, server must allow TLS 1.0.\n    # We set min_version to TLSv1 and max_version to TLSv1_3 to match profile.\n    context.minimum_version = ssl.TLSVersion.TLSv1\n    context.maximum_version = ssl.TLSVersion.TLSv1_3\n\n    # Set server cipher suites for TLS 1.2 and below from the profile openssl cipher list\n    # TLS 1.3 ciphersuites are set separately by default in Python 3.11+\n    # Compose cipher string from profile list joined by ':'\n    cipher_string = \":\".join(_OLD_PROFILE[\"openssl_ciphers\"])\n    context.set_ciphers(cipher_string)\n\n    # Set server preference for cipher order as per profile\n    context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE if _OLD_PROFILE[\"server_preferred_order\"] else 0\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Note: HSTS max-age is a HTTP header setting, not part of SSLContext\n\n    return context\n",
+    "prompt_sha": "2f3e6a1568f79a00",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 terminal could not connect [test_tls_legacy_terminal.py:21]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: TLSv1 client could not connect [test_tls_legacy_terminal.py:35]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s2",
+  "date": "2023-10-02",
+  "split": "dev",
+  "event": "python-3.12",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nfrom typing import Optional\n\n# Mozilla Server Side TLS guidelines 5.7 \"intermediate\" profile relevant data for validation and config\n_MOZILLA_INTERMEDIATE = {\n    \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n    \"openssl_ciphers\": {\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n        \"DHE-RSA-CHACHA20-POLY1305\",\n    },\n    \"server_preferred_order\": False,\n    \"hsts_min_age\": 63072000,\n}\n\n# Mapping from TLS version strings in Mozilla profile to ssl module protocol options\n_TLS_VERSION_OPTIONS = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\ndef _openssl_cipherlist_to_openssl_string(cipher_list):\n    # Join ciphers with colon for OpenSSL cipher string\n    return \":\".join(cipher_list)\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for the public HTTPS API that:\n    - Supports TLS 1.2 and TLS 1.3 (intermediate profile)\n    - Enables only cipher suites allowed by Mozilla intermediate profile for TLS 1.2 and below\n    - Uses the recommended cipher order preference\n    - Sets minimum TLS versions accordingly\n    - Loads the given certificate and private key files\n    - Enforces the organisation's TLS server context policy (mozilla server side TLS)\n    \"\"\"\n    # Create SSLContext for TLS server with maximum protocol TLS 1.3\n    # Use PROTOCOL_TLS_SERVER to get a server context with sane defaults\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Configure TLS versions: set minimum and maximum versions according to intermediate profile\n    # minimum version is TLS 1.2, maximum TLS 1.3\n    # Mozilla intermediate supports TLSv1.2 and TLSv1.3\n    min_version = _TLS_VERSION_OPTIONS[\"TLSv1.2\"]\n    max_version = _TLS_VERSION_OPTIONS[\"TLSv1.3\"]\n    context.minimum_version = min_version\n    context.maximum_version = max_version\n\n    # Configure cipher suites for TLS 1.2 and below using the intermediate profile openssl cipher list\n    # Compose cipher string from intermediate openssl ciphers\n    cipher_string = _openssl_cipherlist_to_openssl_string(sorted(_MOZILLA_INTERMEDIATE[\"openssl_ciphers\"]))\n    context.set_ciphers(cipher_string)\n\n    # Set server cipher preference according to profile (False means client preference)\n    context.options |= ssl.OP_NO_COMPRESSION  # Disable compression for security best practice\n    context.options |= ssl.OP_NO_TICKET       # Disable session tickets (optional, but often recommended)\n    # server_preferred_order is False for intermediate profile, so do not set SSL_OP_CIPHER_SERVER_PREFERENCE\n    if _MOZILLA_INTERMEDIATE[\"server_preferred_order\"]:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # DH parameters size recommended by profile is 2048 bits\n    # Python ssl module does not provide direct API to set DH params from size,\n    # but we can set it by loading DH params file if available.\n    # Since no DH params file is provided, we skip this step.\n    # (If needed, caller can set context.load_dh_params(dh_params_file))\n\n    # ECDH curve selection: intermediate profile uses prime256v1 and secp384r1 and X25519\n    # Python ssl module uses set_ecdh_curve() to set ECDH curve.\n    # We set it to prime256v1 as a safe default.\n    # Python 3.12 ssl module supports set_ecdh_curve\n    # We'll set to prime256v1 as it is widely supported.\n    try:\n        context.set_ecdh_curve(\"prime256v1\")\n    except AttributeError:\n        # set_ecdh_curve may not be available in some Python builds, ignore if not present\n        pass\n\n    # HSTS max-age is a header setting, not part of SSLContext, so not set here.\n\n    # OCSP stapling recommended by profile, but Python ssl module does not expose direct API to enable it,\n    # so we do not set it here.\n\n    # Return the configured context\n    return context\n",
+    "prompt_sha": "1cba0323542b0229",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 5.7 relevant data for server TLS versions and TLS 1.2-and-below ciphersuites\n# We only check minimum_version, maximum_version and enabled TLS 1.2-and-below cipher suites.\n# Cipher suites for TLS 1.2 and below are listed under \"openssl\" in each profile's \"ciphers\".\n# TLS versions are listed under \"tls_versions\".\n# TLS 1.3 ciphersuites are not checked here because Python ssl.get_ciphers() returns only TLS 1.2 and below ciphers.\n\n_mozilla_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # empty list means no TLS 1.2-and-below ciphers allowed\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n    },\n}\n\n# Map Mozilla TLS version strings to ssl.TLSVersion enum values for comparison\n_tls_version_map = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\n\ndef _context_tls_versions(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"Return the set of TLS version strings enabled by the context, from minimum_version to maximum_version inclusive.\"\"\"\n    minv = ctx.minimum_version\n    maxv = ctx.maximum_version\n    if minv is None or maxv is None:\n        # If either is None, fallback to defaults (Python 3.12 default min=TLSv1_2, max=TLSv1_3)\n        minv = minv or ssl.TLSVersion.TLSv1_2\n        maxv = maxv or ssl.TLSVersion.TLSv1_3\n    # Collect all TLS versions between minv and maxv inclusive, from the known TLS versions\n    enabled_versions = set()\n    for ver_str, ver_enum in _tls_version_map.items():\n        if minv <= ver_enum <= maxv:\n            enabled_versions.add(ver_str)\n    return enabled_versions\n\n\ndef _context_tls12_and_below_ciphers(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"\n    Return the set of OpenSSL cipher suite names enabled by the context for TLS 1.2 and below.\n    ctx.get_ciphers() returns a list of dicts with keys including 'name' and 'protocol'.\n    We only consider ciphers with protocol <= TLSv1.2.\n    \"\"\"\n    ciphers = ctx.get_ciphers()\n    enabled_ciphers = set()\n    for c in ciphers:\n        # c['protocol'] is a string like 'TLSv1.2', 'TLSv1.3', or 'SSLv3'\n        proto = c.get('protocol', '')\n        # We consider only TLS 1.2 and below protocols\n        # Accept protocols: TLSv1, TLSv1.1, TLSv1.2, SSLv3 (SSLv3 is legacy but some ciphers may report it)\n        # Exclude TLSv1.3 and above\n        if proto in {\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"SSLv3\"}:\n            # Cipher name is OpenSSL style name\n            name = c.get('name')\n            if name:\n                enabled_ciphers.add(name)\n    return enabled_ciphers\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True if and only if the given server-side SSLContext satisfies the organisation's TLS configuration rule:\n    - The context's TLS versions enabled (minimum_version to maximum_version) must exactly match one of the Mozilla profiles' tls_versions.\n    - Every TLS 1.2-and-below cipher suite enabled by the context must be in the profile's OpenSSL cipher list.\n    Ignore certificates, curves, cipher order and HSTS.\n    \"\"\"\n    # Get enabled TLS versions as strings\n    ctx_versions = _context_tls_versions(ctx)\n\n    # Check each Mozilla profile for a match\n    for profile_name, profile_data in _mozilla_profiles.items():\n        profile_versions = set(profile_data[\"tls_versions\"])\n        if ctx_versions == profile_versions:\n            # TLS versions match exactly, now check ciphers\n            profile_ciphers = profile_data[\"openssl_ciphers\"]\n            ctx_ciphers = _context_tls12_and_below_ciphers(ctx)\n            # Check all enabled ciphers are in profile's allowed ciphers\n            if ctx_ciphers.issubset(profile_ciphers):\n                return True\n            else:\n                return False\n    # No profile matched TLS versions exactly\n    return False\n",
+    "prompt_sha": "b8586cc25d496a9a",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm', 'tls12-dhe-chacha'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify the server certificate against the CA bundle cafile\n    and the host name (server_hostname, defaulting to host), and return the server's greeting:\n    the bytes it sends up to and including the first newline (or until it closes the connection,\n    at most 4096 bytes).\n    Verification failures raise ssl.SSLError or ssl.CertificateError.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create SSL context for client with verification enabled\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    # Connect and wrap socket with SSL\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until newline inclusive\n            received = bytearray()\n            while len(received) < 4096:\n                chunk = ssock.recv(4096 - len(received))\n                if not chunk:\n                    # Connection closed\n                    break\n                received.extend(chunk)\n                if b'\\n' in chunk:\n                    # Found newline, stop reading\n                    break\n            # Return bytes up to and including the first newline, or all if none\n            newline_index = received.find(b'\\n')\n            if newline_index != -1:\n                return bytes(received[:newline_index+1])\n            return bytes(received)\n",
+    "prompt_sha": "1944c91eb813c696",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 5.7 profiles\n_MOZILLA_TLS_PROFILES = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n        \"server_preferred_order\": True,\n        \"hsts_min_age\": 63072000,\n    },\n}\n\n\ndef _openssl_protocol_names_to_ssl_options(tls_versions: list[str]) -> int:\n    \"\"\"\n    Convert Mozilla TLS version strings to ssl.OP_NO_* options to disable all other versions.\n    We enable only the versions in tls_versions.\n    \"\"\"\n    # Mapping from Mozilla TLS version string to minimum ssl.TLSVersion enum\n    # We will disable all versions not in tls_versions by setting OP_NO_* flags.\n    # Python 3.12 ssl.TLSVersion enum values:\n    # TLSv1 = 0x0301, TLSv1_1 = 0x0302, TLSv1_2 = 0x0303, TLSv1_3 = 0x0304\n    # But ssl.OP_NO_TLSv1 etc. are available for disabling.\n    # We disable all versions not in tls_versions.\n    # Supported versions in ssl module:\n    # TLSv1, TLSv1_1, TLSv1_2, TLSv1_3\n    # We will disable all versions not in tls_versions.\n\n    # Map Mozilla strings to ssl.OP_NO_TLSvX flags\n    version_to_op_no = {\n        \"TLSv1\": ssl.OP_NO_TLSv1,\n        \"TLSv1.1\": ssl.OP_NO_TLSv1_1,\n        \"TLSv1.2\": ssl.OP_NO_TLSv1_2,\n        \"TLSv1.3\": ssl.OP_NO_TLSv1_3,\n    }\n\n    # We want to disable all versions NOT in tls_versions\n    disable_options = 0\n    for ver, op_no in version_to_op_no.items():\n        if ver not in tls_versions:\n            disable_options |= op_no\n    return disable_options\n\n\ndef _validate_server_context(ctx: ssl.SSLContext, profile: dict) -> None:\n    \"\"\"\n    Validate that the server context matches the Mozilla profile constraints:\n    - TLS versions match exactly\n    - For TLS 1.2 and below, all enabled cipher suites are in the profile's OpenSSL cipher list\n    - server_preferred_order matches\n    \"\"\"\n    # Validate TLS versions\n    # We check that the context disables all versions not in profile[\"tls_versions\"]\n    # and enables all versions in profile[\"tls_versions\"].\n    # We check by trying to create contexts with min/max versions and comparing.\n\n    # Check TLS versions by inspecting context options\n    # The context disables versions by options OP_NO_TLSvX.\n    # We check that all versions not in profile[\"tls_versions\"] are disabled.\n    # And that all versions in profile[\"tls_versions\"] are enabled.\n\n    # Check disabled versions\n    expected_disable_options = _openssl_protocol_names_to_ssl_options(profile[\"tls_versions\"])\n    actual_disable_options = ctx.options & (\n        ssl.OP_NO_TLSv1 | ssl.OP_NO_TLSv1_1 | ssl.OP_NO_TLSv1_2 | ssl.OP_NO_TLSv1_3\n    )\n    if actual_disable_options != expected_disable_options:\n        raise PermissionError(\n            \"Server context TLS versions do not match the Mozilla profile requirements\"\n        )\n\n    # Check cipher suites for TLS 1.2 and below\n    # The context.ciphers() returns a list of dicts with keys including 'name' (OpenSSL cipher name)\n    # We check that all ciphers that are not TLS 1.3 ciphers are subset of profile openssl ciphers.\n\n    # TLS 1.3 ciphersuites are set via ctx.set_ciphersuites(), but Python ssl module does not expose\n    # a direct way to get them, so we only check ciphers() which are TLS 1.2 and below.\n\n    # Get all cipher names enabled in context for TLS 1.2 and below\n    enabled_ciphers = {cipher[\"name\"] for cipher in ctx.get_ciphers()}\n\n    # TLS 1.3 ciphersuites are not in get_ciphers(), so all returned are TLS 1.2 and below\n    # Check all enabled ciphers are in profile openssl ciphers\n    if not enabled_ciphers.issubset(profile[\"openssl_ciphers\"]):\n        raise PermissionError(\n            \"Server context enables TLS 1.2-and-below cipher suites not allowed by the Mozilla profile\"\n        )\n\n    # Check server preferred order\n    if ctx.options & ssl.OP_CIPHER_SERVER_PREFERENCE:\n        server_pref_order = True\n    else:\n        server_pref_order = False\n    if server_pref_order != profile[\"server_preferred_order\"]:\n        raise PermissionError(\n            \"Server context cipher order preference does not match the Mozilla profile\"\n        )\n\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for payment terminals supporting only TLS 1.0.\n    The context must match a Mozilla Server Side TLS profile.\n\n    Since terminals only support TLS 1.0, the only matching Mozilla profile is \"old\",\n    which includes TLSv1 in its tls_versions.\n\n    Raises PermissionError if the context does not match the profile.\n    \"\"\"\n    profile = _MOZILLA_TLS_PROFILES[\"old\"]\n\n    # Create SSLContext for server with TLS (TLSv1.3 is max in Python 3.12)\n    # We create a context with PROTOCOL_TLS_SERVER which supports all versions,\n    # then disable versions not in profile[\"tls_versions\"].\n    ctx = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Disable all TLS versions not in profile\n    ctx.options |= _openssl_protocol_names_to_ssl_options(profile[\"tls_versions\"])\n\n    # Set cipher suites for TLS 1.2 and below\n    # Join the profile openssl ciphers with colon separator as OpenSSL cipher list string\n    # The profile ciphers are a set, convert to sorted list for deterministic order\n    cipher_list = \":\".join(sorted(profile[\"openssl_ciphers\"]))\n    ctx.set_ciphers(cipher_list)\n\n    # Set TLS 1.3 cipher suites\n    # The profile[\"ciphersuites\"] for old profile:\n    # [\"TLS_AES_128_GCM_SHA256\", \"TLS_AES_256_GCM_SHA384\", \"TLS_CHACHA20_POLY1305_SHA256\"]\n    # We set them as colon-separated string\n    tls13_ciphersuites = \":\".join(profile.get(\"ciphersuites\", []))\n    if tls13_ciphersuites:\n        ctx.set_ciphersuites(tls13_ciphersuites)\n\n    # Set server preferred order\n    if profile[\"server_preferred_order\"]:\n        ctx.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        ctx.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load server certificate and private key\n    ctx.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Validate the context matches the profile constraints\n    _validate_server_context(ctx, profile)\n\n    return ctx\n",
+    "prompt_sha": "f404d2918a856ebe",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Server context enables TLS 1.2-and-below cipher suites not allowed by the Mozilla profile [solution.py:134]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Server context enables TLS 1.2-and-below cipher suites not allowed by the Mozilla profile [solution.py:134]"
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Server context enables TLS 1.2-and-below cipher suites not allowed by the Mozilla profile [solution.py:134]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s3",
+  "date": "2026-04-06",
+  "split": "test",
+  "event": "mozilla-tls-6.0",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nimport sys\n\n# Mozilla Server Side TLS guidelines 6.0 relevant profiles (modern and intermediate)\n# We must support TLS 1.2 clients, so \"intermediate\" profile is the correct choice.\n# The \"intermediate\" profile details:\n# - tls_versions: [\"TLSv1.2\", \"TLSv1.3\"]\n# - openssl ciphers for TLS 1.2 and below:\n#   [\n#     \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n#     \"ECDHE-RSA-AES128-GCM-SHA256\",\n#     \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n#     \"ECDHE-RSA-AES256-GCM-SHA384\",\n#     \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n#     \"ECDHE-RSA-CHACHA20-POLY1305\",\n#     \"DHE-RSA-AES128-GCM-SHA256\",\n#     \"DHE-RSA-AES256-GCM-SHA384\",\n#     \"DHE-RSA-CHACHA20-POLY1305\"\n#   ]\n# - server_preferred_order: false\n# - hsts_min_age: 63072000 (seconds, i.e. 2 years)\n\n# We must enforce the organisation's rule that every TLS server context matches a published profile.\n# So we must:\n# - Limit TLS versions to TLSv1.2 and TLSv1.3 exactly.\n# - Set the cipher suites for TLS 1.2 and below to exactly those in the intermediate profile.\n# - Set TLS 1.3 ciphersuites to those in the intermediate profile.\n# - Set cipher order preference to false (default in Python ssl).\n# - HSTS max-age is a header setting, not part of SSLContext, so not set here.\n# - Use the recommended curves (X25519MLKEM768, X25519, prime256v1, secp384r1) if possible.\n# - DH param size is 2048 bits, but Python ssl does not expose dh param setting directly.\n# - ECDH param size 256 bits is default in OpenSSL 1.1+ and Python 3.12.\n# - OCSP stapling is recommended but not settable in ssl.SSLContext in Python stdlib.\n# - Certificate loading is done by caller with certfile and keyfile.\n\n# Python 3.12 ssl module notes:\n# - ssl.TLSVersion enum for setting minimum and maximum TLS versions.\n# - SSLContext.set_ciphers() sets TLS 1.2 and below ciphers.\n# - SSLContext.set_ciphersuites() sets TLS 1.3 ciphersuites.\n# - SSLContext.options can be used to disable older protocols.\n# - SSLContext.set_ecdh_curve() can set ECDH curve (only one curve at a time).\n#   Python 3.12 added SSLContext.set_ciphersuites() and SSLContext.set_ecdh_curve().\n\n# We will set the TLS versions to min TLSv1.2 and max TLSv1.3.\n# We will set the ciphers to the intermediate profile openssl ciphers.\n# We will set the TLS 1.3 ciphersuites to intermediate profile ciphersuites.\n# We will set the ECDH curve to \"X25519\" (one of the recommended curves).\n# We will not set DH params because Python ssl does not expose it.\n# We will not set server cipher order preference because intermediate profile says false.\n# We will load certfile and keyfile as requested.\n\n# The intermediate profile ciphersuites for TLS 1.3:\nTLS13_CIPHERSUITES = [\n    \"TLS_AES_128_GCM_SHA256\",\n    \"TLS_AES_256_GCM_SHA384\",\n    \"TLS_CHACHA20_POLY1305_SHA256\"\n]\n\n# The intermediate profile openssl ciphers for TLS 1.2 and below:\nTLS12_CIPHERS = \":\".join([\n    \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n    \"ECDHE-RSA-AES128-GCM-SHA256\",\n    \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n    \"ECDHE-RSA-AES256-GCM-SHA384\",\n    \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n    \"ECDHE-RSA-CHACHA20-POLY1305\",\n    \"DHE-RSA-AES128-GCM-SHA256\",\n    \"DHE-RSA-AES256-GCM-SHA384\",\n    \"DHE-RSA-CHACHA20-POLY1305\"\n])\n\n# TLS versions for intermediate profile:\nTLS_VERSIONS = (ssl.TLSVersion.TLSv1_2, ssl.TLSVersion.TLSv1_3)\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create an SSLContext for a TLS server that supports TLS 1.2 and TLS 1.3 clients,\n    matching the Mozilla Server Side TLS intermediate profile 6.0 exactly.\n    \"\"\"\n    # Create SSLContext for TLS server\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions exactly as per intermediate profile\n    context.minimum_version = TLS_VERSIONS[0]\n    context.maximum_version = TLS_VERSIONS[1]\n\n    # Set TLS 1.2 and below ciphers to intermediate profile openssl ciphers\n    try:\n        context.set_ciphers(TLS12_CIPHERS)\n    except ssl.SSLError as e:\n        # If the ciphers are not supported by the underlying OpenSSL, raise PermissionError\n        raise PermissionError(f\"Configured TLS 1.2 ciphers not supported by OpenSSL: {e}\")\n\n    # Set TLS 1.3 ciphersuites to intermediate profile ciphersuites\n    # This method is new in Python 3.12\n    try:\n        context.set_ciphersuites(\":\".join(TLS13_CIPHERSUITES))\n    except AttributeError:\n        # If set_ciphersuites is not available (should not happen in 3.12), raise error\n        raise PermissionError(\"TLS 1.3 ciphersuites configuration not supported in this Python version\")\n    except ssl.SSLError as e:\n        raise PermissionError(f\"Configured TLS 1.3 ciphersuites not supported by OpenSSL: {e}\")\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Set ECDH curve to one of the recommended curves: \"X25519\"\n    # Python 3.12 supports set_ecdh_curve()\n    try:\n        context.set_ecdh_curve(\"X25519\")\n    except AttributeError:\n        # If not supported, silently ignore (older Python versions)\n        pass\n    except ssl.SSLError as e:\n        raise PermissionError(f\"Failed to set ECDH curve: {e}\")\n\n    # Set server cipher preference to false as per intermediate profile (default is false)\n    # Python SSLContext does not provide a direct method to set this; it's default false.\n    # So no action needed.\n\n    # HSTS max-age is not settable in SSLContext; it is an HTTP header set by the HTTP server.\n\n    # Return the configured SSLContext\n    return context\n",
+    "prompt_sha": "c0775afe1f9efa24",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: TLS 1.3 ciphersuites configuration not supported in this Python version [solution.py:100]"
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: TLS 1.3 ciphersuites configuration not supported in this Python version [solution.py:100]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: TLS 1.3 ciphersuites configuration not supported in this Python version [solution.py:100]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 6.0 relevant data for server TLS versions and TLS 1.2-and-below ciphers\n# Only \"modern\" and \"intermediate\" profiles exist in 6.0; \"old\" profile removed.\n# We consider only TLS versions and TLS 1.2-and-below cipher suites (OpenSSL names) for compliance.\n\n_mozilla_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # no TLS 1.2-and-below ciphers enabled\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n    },\n}\n\n# Map profile TLS version strings to ssl.TLSVersion enum values for comparison\n_tls_version_map = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\ndef _profile_tls_versions_to_min_max(profile_tls_versions):\n    # Given a list of TLS version strings, return (min_version_enum, max_version_enum)\n    versions = sorted((_tls_version_map[v] for v in profile_tls_versions))\n    return versions[0], versions[-1]\n\n# Precompute min/max TLS versions for profiles\n_profile_tls_version_bounds = {}\nfor prof, data in _mozilla_profiles.items():\n    _profile_tls_version_bounds[prof] = _profile_tls_versions_to_min_max(data[\"tls_versions\"])\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True if the given server-side SSLContext matches one of the Mozilla Server Side TLS\n    guidelines 6.0 profiles (\"modern\" or \"intermediate\") in terms of:\n      - TLS protocol version range (minimum_version and maximum_version)\n      - enabled TLS 1.2-and-below cipher suites (OpenSSL names)\n    Ignore certificates, curves, cipher order, and HSTS.\n    \"\"\"\n    # Check that ctx is a server context by heuristic: server contexts usually have minimum_version and maximum_version set\n    # (No explicit check needed per spec, assume given ctx is server-side)\n\n    # Extract enabled TLS versions from ctx\n    ctx_min = ctx.minimum_version\n    ctx_max = ctx.maximum_version\n\n    # Get enabled TLS 1.2-and-below cipher suites OpenSSL names from ctx.get_ciphers()\n    # ctx.get_ciphers() returns a list of dicts with keys including 'name' (OpenSSL cipher name) and 'protocol' (e.g. 'TLSv1.2')\n    # We consider only ciphers usable in TLS 1.2 and below for the check.\n    # TLS 1.3 ciphersuites are not in get_ciphers() output; they are set separately in Python 3.7+ via set_ciphersuites.\n    # So get_ciphers() only returns TLS 1.2 and below ciphers.\n\n    # Collect enabled TLS 1.2-and-below cipher names\n    enabled_ciphers = {c['name'] for c in ctx.get_ciphers()}\n\n    # We must check if ctx matches one of the profiles exactly in TLS versions and cipher sets.\n    # The profile TLS versions must match exactly the ctx TLS versions.\n    # The enabled TLS 1.2-and-below ciphers must be a subset of the profile's allowed ciphers.\n    # The profile's TLS versions are a list; ctx has min and max version enums.\n    # We check that ctx_min and ctx_max correspond exactly to the profile min and max TLS versions.\n    # For TLS versions, the profile's list is a contiguous range, so min and max define it fully.\n\n    for prof, data in _mozilla_profiles.items():\n        prof_min, prof_max = _profile_tls_version_bounds[prof]\n\n        # Check TLS version range exact match\n        if ctx_min != prof_min or ctx_max != prof_max:\n            continue\n\n        # Check TLS 1.2-and-below ciphers enabled are subset of profile allowed ciphers\n        # Note: modern profile has no TLS 1.2-and-below ciphers allowed, so enabled_ciphers must be empty\n        if not enabled_ciphers.issubset(data[\"openssl_ciphers\"]):\n            continue\n\n        # If both checks pass, context is compliant with this profile\n        return True\n\n    # No profile matched\n    return False\n",
+    "prompt_sha": "df1fe89534b2eb08",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify server certificate against CA bundle `cafile`\n    and hostname `server_hostname` (defaulting to `host`), then read and return the server's\n    greeting bytes up to and including the first newline or up to 4096 bytes if connection closes.\n    \n    Raises ssl.SSLError or ssl.CertificateError on verification failure.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create SSL context for client with certificate verification enabled\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until first newline is found\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = ssock.recv(4096 - len(data))\n                if not chunk:\n                    # Connection closed\n                    break\n                data.extend(chunk)\n                if b'\\n' in chunk:\n                    # Stop after first newline\n                    break\n            # Return bytes up to and including first newline if present\n            newline_index = data.find(b'\\n')\n            if newline_index != -1:\n                return bytes(data[:newline_index + 1])\n            else:\n                return bytes(data)\n",
+    "prompt_sha": "18203ed0f4799c8e",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for payment terminals that only support TLS 1.0.\n\n    This is disallowed by the organisation's standing rule org-mozilla-server-side-tls,\n    because TLS 1.0 is not part of any current Mozilla Server Side TLS guideline profile.\n\n    Raises:\n        PermissionError: Always, because TLS 1.0 server contexts are prohibited.\n    \"\"\"\n    raise PermissionError(\n        \"TLS 1.0 server contexts are disallowed by org-mozilla-server-side-tls policy; \"\n        \"no current Mozilla Server Side TLS guideline profile supports TLS 1.0.\"\n    )\n",
+    "prompt_sha": "1220ad2f903d2327",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "legacy_profile_withdrawn",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ }
+]

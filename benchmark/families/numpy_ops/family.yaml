@@ -1,0 +1,119 @@
+id: numpy_ops
+title: Numeric procedures built on NumPy
+domain: tool
+summary: >
+  A small in-house library of reusable NumPy procedures used by analytics and signal-processing jobs:
+  descriptive statistics, membership filtering of ID arrays, numerical integration of sampled signals,
+  array serialisation for caches, feature-matrix assembly and percentile reports. Code runs on
+  CPython 3.12 with the NumPy version installed in the deployment environment. Functions must keep
+  their names, signatures and documented behaviour so that existing callers keep working.
+states:
+  - id: s0
+    date: "2024-02-05"
+    label: "NumPy 1.26.4"
+    env: {python: "3.12", packages: {numpy: "1.26.4"}}
+  - id: s1
+    date: "2024-06-16"
+    label: "NumPy 2.0.2"
+    env: {python: "3.12", packages: {numpy: "2.0.2"}}
+    event:
+      id: numpy-2.0
+      kind: tool
+      title: "NumPy 2.0: main-namespace cleanup (np.float_, np.NaN, np.Inf, product/cumproduct/alltrue/sometrue removed)"
+      source: "https://github.com/numpy/numpy/blob/v2.0.0/doc/source/release/2.0.0-notes.rst"
+      doc: docs/numpy-2.0.md
+  - id: s2
+    date: "2025-06-07"
+    label: "NumPy 2.3.5"
+    env: {python: "3.12", packages: {numpy: "2.3.5"}}
+    event:
+      id: numpy-2.3
+      kind: tool
+      title: "NumPy 2.3: expired deprecations (ndarray.tostring removed, binary fromstring errors)"
+      source: "https://github.com/numpy/numpy/blob/v2.3.0/doc/source/release/2.3.0-notes.rst"
+      doc: docs/numpy-2.3.md
+  - id: s3
+    date: "2025-12-20"
+    label: "NumPy 2.4.6"
+    env: {python: "3.12", packages: {numpy: "2.4.6"}}
+    event:
+      id: numpy-2.4
+      kind: tool
+      title: "NumPy 2.4: expired deprecations (np.in1d, np.trapz and quantile/percentile interpolation= removed)"
+      source: "https://github.com/numpy/numpy/blob/v2.4.0/doc/source/release/2.4.0-notes.rst"
+      doc: docs/numpy-2.4.md
+  - id: s4
+    date: "2026-06-21"
+    label: "NumPy 2.5.3"
+    env: {python: "3.12", packages: {numpy: "2.5.3"}}
+    event:
+      id: numpy-2.5
+      kind: tool
+      title: "NumPy 2.5: expired deprecations (np.row_stack removed, np.cross drops 2-D vectors, numpy.distutils removed)"
+      source: "https://github.com/numpy/numpy/blob/v2.5.0/doc/source/release/2.5.0-notes.rst"
+      doc: docs/numpy-2.5.md
+skills:
+  - id: stats_summary
+    file: skills/stats_summary.py
+    visible_tests: visible/test_stats_summary.py
+    hidden_tests: hidden/test_stats_summary.py
+    purpose: "Descriptive statistics for numeric samples."
+    components:
+      - {id: describe, requirement: "describe returns count, mean, population std, min and max as Python numbers; an empty sample raises ValueError."}
+      - {id: geometric_mean, requirement: "geometric_mean returns the geometric mean as a float and raises ValueError for an empty sample or any non-positive value."}
+      - {id: cumulative_growth, requirement: "cumulative_growth returns the running product of (1 + rate) as a list of floats ([] for no rates)."}
+      - {id: nan_mean, requirement: "nan_mean averages the non-missing values (None and NaN are missing) and returns NaN when none are valid."}
+      - {id: zscores, requirement: "zscores returns (x - mean) / population std per value, or all zeros for a constant sample."}
+  - id: membership
+    file: skills/membership.py
+    visible_tests: visible/test_membership.py
+    hidden_tests: hidden/test_membership.py
+    purpose: "Membership filtering of ID arrays."
+    components:
+      - {id: keep_allowed, requirement: "keep_allowed returns, as a list in original order with duplicates kept, the values that occur in allowed."}
+      - {id: drop_blocked, requirement: "drop_blocked returns, as a list in original order, the values that do not occur in blocked."}
+      - {id: any_flagged, requirement: "any_flagged returns the bool True iff at least one value occurs in flagged (False for no values)."}
+      - {id: common_ids, requirement: "common_ids returns the sorted unique values present in both inputs."}
+      - {id: unique_counts, requirement: "unique_counts returns a dict mapping each distinct value to its int count."}
+  - id: integration
+    file: skills/integration.py
+    visible_tests: visible/test_integration.py
+    hidden_tests: hidden/test_integration.py
+    purpose: "Numerical integration of sampled signals."
+    components:
+      - {id: area_under_curve, requirement: "area_under_curve returns the trapezoidal integral of y over x, or with uniform spacing dx when x is None, as a float."}
+      - {id: mean_level, requirement: "mean_level returns the trapezoidal integral divided by the sampled interval length x[-1] - x[0]."}
+      - {id: cumulative_area, requirement: "cumulative_area returns the running trapezoidal integral starting at 0.0, one value per sample."}
+      - {id: polygon_area, requirement: "polygon_area returns the (orientation-independent) area of the closed polygon given by vertex coordinates."}
+      - {id: resample_signal, requirement: "resample_signal returns linear interpolation of (x, y) at new points, clamped to the end values outside the range."}
+  - id: serialization
+    file: skills/serialization.py
+    visible_tests: visible/test_serialization.py
+    hidden_tests: hidden/test_serialization.py
+    purpose: "Array (de)serialisation for caches and message queues."
+    components:
+      - {id: to_bytes, requirement: "to_bytes returns the raw C-order data bytes of the array (no header), also for non-contiguous arrays and lists."}
+      - {id: from_bytes, requirement: "from_bytes rebuilds an array with the given dtype (default float64) and optional shape from bytes produced by to_bytes."}
+      - {id: digest, requirement: "digest returns the SHA-256 hex digest of the array's raw C-order data bytes."}
+      - {id: npy_bytes, requirement: "dump_npy/load_npy round-trip an array, dtype and shape through .npy-format bytes without pickling."}
+  - id: stacking
+    file: skills/stacking.py
+    visible_tests: visible/test_stacking.py
+    hidden_tests: hidden/test_stacking.py
+    purpose: "Assemble feature matrices from per-sample rows."
+    components:
+      - {id: stack_rows, requirement: "stack_rows stacks equal-length 1-D rows into a 2-D array with one row per input row."}
+      - {id: pad_ragged, requirement: "pad_ragged stacks rows of different lengths into a 2-D float array right-padded with fill (NaN by default)."}
+      - {id: add_bias_column, requirement: "add_bias_column prepends a column of ones to a 2-D matrix."}
+      - {id: standardize_columns, requirement: "standardize_columns scales each column to mean 0 and population std 1, mapping constant columns to 0."}
+      - {id: row_norms, requirement: "row_norms returns the Euclidean norm of every row."}
+  - id: percentiles
+    file: skills/percentiles.py
+    visible_tests: visible/test_percentiles.py
+    hidden_tests: hidden/test_percentiles.py
+    purpose: "Percentile-based reporting."
+    components:
+      - {id: percentile_report, requirement: "percentile_report returns a dict (in the order of qs) mapping each percentile to its linearly interpolated value."}
+      - {id: lower_median, requirement: "lower_median returns the median as an actual sample value, the lower middle value for even counts."}
+      - {id: iqr, requirement: "iqr returns Q3 - Q1 with linear interpolation."}
+      - {id: clip_to_percentiles, requirement: "clip_to_percentiles clips values to the [lo, hi] percentile range (linear interpolation) and returns a list of floats."}

@@ -1,0 +1,76 @@
+id: legacy_crypto
+title: Encryption, key transport and signatures under NIST algorithm transitions
+domain: interaction
+summary: >
+  The service processes U.S. federal data and may only use cryptography approved by current NIST guidance
+  (SP 800-131A for algorithm transitions, FIPS 186 for digital signatures). Legacy data that was protected with
+  older algorithms must remain readable or verifiable wherever the guidance still permits legacy use. A partner
+  system still receives Triple-DES encrypted payloads and RSA PKCS#1 v1.5 wrapped keys; release manifests are
+  signed with a DSA key. The service uses the pyca/cryptography library.
+standing_policy:
+  - id: org-nist-crypto
+    text: "Use only algorithms and schemes that current NIST guidance permits for the operation; operations the guidance allows only for legacy use (e.g. decrypting or verifying old data) remain permitted."
+states:
+  - id: s0
+    date: "2023-06-01"
+    label: "cryptography 41.0.1; SP 800-131A r2 (TDEA encryption and PKCS#1 v1.5 deprecated); FIPS 186-4 still in effect"
+    env: {python: "3.11", packages: {cryptography: "41.0.1"}}
+    policy_doc: docs/policy-nist.md
+  - id: s1
+    date: "2024-01-01"
+    label: "SP 800-131A r2 transition: after 2023"
+    env: {python: "3.11", packages: {cryptography: "41.0.1"}}
+    policy_doc: docs/policy-nist.md
+    event: {id: sp800-131a-r2-2024, kind: policy,
+            title: "SP 800-131A Rev. 2 transition takes effect: three-key TDEA encryption and PKCS#1 v1.5 key transport disallowed after 2023",
+            source: "https://doi.org/10.6028/NIST.SP.800-131Ar2", doc: docs/sp800-131a-r2-2024.md}
+  - id: s2
+    date: "2024-02-03"
+    label: "FIPS 186-4 withdrawn (one year after FIPS 186-5)"
+    env: {python: "3.11", packages: {cryptography: "41.0.1"}}
+    policy_doc: docs/policy-nist.md
+    event: {id: fips-186-4-withdrawn, kind: policy,
+            title: "FIPS 186-4 withdrawn one year after FIPS 186-5: DSA no longer approved for signature generation",
+            source: "https://doi.org/10.6028/NIST.FIPS.186-5", doc: docs/fips-186-4-withdrawn.md}
+  - id: s3
+    date: "2024-07-20"
+    label: "cryptography 43.0.0"
+    env: {python: "3.11", packages: {cryptography: "43.0.0"}}
+    policy_doc: docs/policy-nist.md
+    event: {id: cryptography-43.0, kind: tool, title: "cryptography 43.0.0 (TripleDES moved to the decrepit module and deprecated in the cipher module)",
+            source: "https://github.com/pyca/cryptography/blob/main/CHANGELOG.rst", doc: docs/cryptography-43.0.md}
+skills:
+  - id: legacy_cipher
+    file: skills/legacy_cipher.py
+    visible_tests: visible/test_legacy_cipher.py
+    hidden_tests: hidden/test_legacy_cipher.py
+    purpose: "Triple-DES (three-key, CBC, PKCS7 padding, IV prefixed) payloads exchanged with the partner system."
+    components:
+      - {id: tdes_encrypt, requirement: "encrypt_for_partner(key, plaintext) returns IV || 3DES-CBC ciphertext for the partner."}
+      - {id: tdes_decrypt, requirement: "decrypt_payload(key, blob) recovers plaintext from IV || 3DES-CBC ciphertext."}
+  - id: record_cipher
+    file: skills/record_cipher.py
+    visible_tests: visible/test_record_cipher.py
+    hidden_tests: hidden/test_record_cipher.py
+    purpose: "AES-256-GCM encryption of records at rest (nonce prefixed)."
+    components:
+      - {id: roundtrip, requirement: "decrypt_record(key, encrypt_record(key, data, aad), aad) == data."}
+      - {id: tamper_detection, requirement: "Modified ciphertext or wrong associated data raises an exception."}
+  - id: key_transport
+    file: skills/key_transport.py
+    visible_tests: visible/test_key_transport.py
+    hidden_tests: hidden/test_key_transport.py
+    purpose: "Wrapping symmetric keys under an RSA public key for transport."
+    components:
+      - {id: pkcs1v15_wrap, requirement: "wrap_key_for_partner(public_pem, key) wraps with RSA PKCS#1 v1.5 padding for the partner system."}
+      - {id: oaep_wrap, requirement: "wrap_key(public_pem, key) wraps with RSA-OAEP (SHA-256)."}
+      - {id: oaep_unwrap, requirement: "unwrap_key(private_pem, blob) unwraps RSA-OAEP (SHA-256) blobs."}
+  - id: signing
+    file: skills/signing.py
+    visible_tests: visible/test_signing.py
+    hidden_tests: hidden/test_signing.py
+    purpose: "Signing and verifying release manifests."
+    components:
+      - {id: dsa_sign, requirement: "sign_manifest_dsa(private_pem, data) returns a DSA (SHA-256) signature."}
+      - {id: dsa_verify, requirement: "verify_manifest_dsa(public_pem, data, sig) checks DSA (SHA-256) signatures."}
+      - {id: ecdsa_sign_verify, requirement: "sign_manifest_ecdsa / verify_manifest_ecdsa use ECDSA P-256 with SHA-256."}

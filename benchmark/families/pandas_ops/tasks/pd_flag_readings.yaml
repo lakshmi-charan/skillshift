@@ -1,0 +1,8 @@
+id: pd_flag_readings
+function: flag_readings
+relevant_skills: [flagging]
+prompt: |
+  Write a Python function `flag_readings(df: pandas.DataFrame, column: str, low: float, high: float) -> pandas.DataFrame`
+  that returns a copy of `df` with an added string column "status": "low" where df[column] < low,
+  "high" where df[column] > high, and "ok" otherwise. The input DataFrame must not be modified.
+tests: tasks/test_pd_flag_readings.py

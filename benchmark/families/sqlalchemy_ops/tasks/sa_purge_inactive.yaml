@@ -1,0 +1,10 @@
+id: sa_purge_inactive
+function: purge_inactive
+relevant_skills: [bulk_ops]
+prompt: |
+  Write a Python function `purge_inactive(db_url: str, cutoff: str) -> int` that uses SQLAlchemy to
+  delete, from the table `customers(id INTEGER PRIMARY KEY, name TEXT, last_seen TEXT)` of the database at
+  `db_url`, every customer whose ISO-date `last_seen` is earlier than `cutoff` (also an ISO date string).
+  The deletion must be permanent (visible to other connections afterwards). Return the number of
+  customers deleted.
+tests: tasks/test_sa_purge_inactive.py

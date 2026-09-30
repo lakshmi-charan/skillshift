@@ -1,0 +1,7 @@
+id: lc_read_archive
+function: read_archived_payload
+relevant_skills: [legacy_cipher]
+prompt: |
+  Our archive contains partner files encrypted with three-key Triple-DES in CBC mode (PKCS7 padding, 8-byte IV
+  prepended). Write `read_archived_payload(key: bytes, blob: bytes) -> bytes` that returns the plaintext.
+tests: tasks/test_lc_read_archive.py

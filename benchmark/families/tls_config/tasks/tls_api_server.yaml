@@ -1,0 +1,8 @@
+id: tls_api_server
+function: make_api_server_context
+relevant_skills: [intermediate_server]
+prompt: |
+  Write a Python function `make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext` that
+  returns the server-side SSL context for our public HTTPS API. It must serve current browsers as well as
+  API clients that only support TLS 1.2, and it must satisfy the organisation's TLS configuration rule.
+tests: tasks/test_tls_api_server.py

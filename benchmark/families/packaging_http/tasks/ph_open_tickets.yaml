@@ -1,0 +1,11 @@
+id: ph_open_tickets
+function: open_ticket_titles
+relevant_skills: [api_fetch, http_client]
+prompt: |
+  Write a Python function `open_ticket_titles(client: httpx.Client, project: str) -> list[str]`.
+  `client` is an httpx.Client already configured with the API's base URL. GET `/tickets` with query
+  parameters `status=open` and `project=<project>`. Each response is JSON
+  `{"items": [{"title": ...}, ...], "next": <relative URL of the next page, or null>}`; the `next` URL
+  carries the page cursor in its query string. The server requires `status` and `project` on every
+  request, so send them with each page request too. Return all titles in order.
+tests: tasks/test_ph_open_tickets.py

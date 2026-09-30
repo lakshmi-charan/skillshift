@@ -1,0 +1,386 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "packaging_http",
+  "state": "s0",
+  "date": "2024-08-27",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from __future__ import annotations\n\nfrom importlib import metadata\nfrom typing import Dict, List, Optional\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"\n    Map each provided distribution name (exactly as given) to the installed\n    version string, or None if not installed.\n\n    Matching is case-insensitive.\n    \"\"\"\n    # Build a case-insensitive lookup of installed distributions.\n    installed: dict[str, str] = {}\n    for dist in metadata.distributions():\n        try:\n            dist_name = dist.metadata.get(\"Name\")\n        except Exception:\n            # Be defensive: a broken metadata entry should not break reporting.\n            continue\n        if not dist_name:\n            continue\n        key = dist_name.casefold()\n        # If duplicates exist, keep the first encountered; generally should not happen.\n        installed.setdefault(key, dist.version)\n\n    result: Dict[str, Optional[str]] = {}\n    for requested in names:\n        result[requested] = installed.get(requested.casefold())\n    return result\n",
+    "prompt_sha": "d4e097482cfa9442",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\nfrom urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit\n\nimport httpx\n\n\ndef _merge_next_params(next_url: str, *, required_params: dict[str, str]) -> str:\n    \"\"\"\n    Merge required params into the query string of a relative next URL.\n    Values from required_params override any existing values for the same keys.\n    \"\"\"\n    parts = urlsplit(next_url)\n    query_pairs = dict(parse_qsl(parts.query, keep_blank_values=True))\n\n    # Ensure required params are present (and override if duplicated)\n    query_pairs.update(required_params)\n\n    new_query = urlencode(query_pairs, doseq=True)\n    return urlunsplit((parts.scheme, parts.netloc, parts.path, new_query, parts.fragment))\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"\n    Fetch all open ticket titles for a given project using cursor-based pagination.\n\n    Sends `status=open` and `project=<project>` with every page request, including\n    subsequent pages referenced by the server's `next` field.\n\n    Args:\n        client: An httpx.Client already configured with the API's base URL.\n        project: Project identifier passed to the server.\n\n    Returns:\n        List of ticket titles in order.\n    \"\"\"\n    required_params = {\"status\": \"open\", \"project\": project}\n    titles: list[str] = []\n\n    # First page\n    resp = client.get(\"/tickets\", params=required_params)\n    resp.raise_for_status()\n\n    data: Any = resp.json()\n    while True:\n        items = data.get(\"items\") or []\n        for item in items:\n            # Be resilient to missing/None title, while keeping type expectations.\n            titles.append(item.get(\"title\"))\n\n        next_rel = data.get(\"next\")\n        if not next_rel:\n            break\n\n        # Merge required params into the next URL query and request the page.\n        next_with_params = _merge_next_params(next_rel, required_params=required_params)\n        resp = client.get(next_with_params)\n        resp.raise_for_status()\n        data = resp.json()\n\n    return titles\n",
+    "prompt_sha": "ace559fb711a0918",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "\"\"\"\nHTTP client helpers.\n\nThis module provides an httpx client factory that routes both HTTP and HTTPS\ntraffic through a proxy and applies a default User-Agent header.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"\n    Create an httpx.Client that sends all requests to `base_url`, routing both\n    HTTP and HTTPS traffic through `proxy_url`.\n\n    - Timeout: 5 seconds (applies to connect/read/write/overall via httpx.Timeout default)\n    - Header: User-Agent: inventory-sync/1.0 on every request\n\n    Args:\n        proxy_url: Proxy URL to use for both http and https.\n        base_url: Base URL for the client.\n\n    Returns:\n        Configured httpx.Client instance.\n    \"\"\"\n    if not proxy_url:\n        raise ValueError(\"proxy_url must be a non-empty string\")\n    if not base_url:\n        raise ValueError(\"base_url must be a non-empty string\")\n\n    timeout = httpx.Timeout(5.0)\n\n    return httpx.Client(\n        base_url=base_url,\n        proxies={\"http://\": proxy_url, \"https://\": proxy_url},\n        timeout=timeout,\n        headers={\"User-Agent\": \"inventory-sync/1.0\"},\n    )\n",
+    "prompt_sha": "5c49405e1308b323",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "\"\"\"\nHelper for validating sign-up payloads.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport re\nfrom typing import Any\n\n\n_EMAIL_RE = re.compile(\n    # Simple, pragmatic email validator (sufficient for API input validation)\n    r\"^(?=.{1,254}$)(?P<local>[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+)@\"\n    r\"(?P<domain>[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?(?:\\.[A-Za-z0-9]\"\n    r\"(?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?)*)$\"\n)\n\n_ALLOWED_PLANS = {\"free\", \"pro\", \"team\"}\n\n\nclass ValidationError(ValueError):\n    \"\"\"Validation error with per-field messages.\"\"\"\n\n    def __init__(self, messages: dict[str, list[str]]):\n        super().__init__(\"Invalid sign-up data\")\n        self.messages = messages\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"\n    Validate and clean sign-up endpoint payload.\n\n    Required:\n      - username: alphanumeric string\n      - email: valid email address\n\n    Optional:\n      - plan: default \"free\", must be one of \"free\", \"pro\", \"team\"\n      - age: integer, 16..120 inclusive\n\n    Unknown keys are dropped.\n\n    Returns:\n      cleaned dict with default plan filled in.\n\n    Raises:\n      ValueError (with .messages attribute) on invalid input.\n    \"\"\"\n    if not isinstance(data, dict):\n        raise ValidationError({\"data\": [\"Must be an object/dict.\"]})\n\n    cleaned: dict[str, Any] = {}\n    errors: dict[str, list[str]] = {}\n\n    def add_error(field: str, msg: str) -> None:\n        errors.setdefault(field, []).append(msg)\n\n    # username (required)\n    username = data.get(\"username\", None)\n    if username is None:\n        add_error(\"username\", \"This field is required.\")\n    else:\n        if not isinstance(username, str):\n            add_error(\"username\", \"Must be a string.\")\n        else:\n            if not username:\n                add_error(\"username\", \"Must not be empty.\")\n            # Alphanumeric string only\n            if not re.fullmatch(r\"[A-Za-z0-9]+\", username or \"\"):\n                add_error(\"username\", \"Must contain only alphanumeric characters.\")\n\n    # email (required)\n    email = data.get(\"email\", None)\n    if email is None:\n        add_error(\"email\", \"This field is required.\")\n    else:\n        if not isinstance(email, str):\n            add_error(\"email\", \"Must be a string.\")\n        else:\n            email_stripped = email.strip()\n            if not _EMAIL_RE.match(email_stripped):\n                add_error(\"email\", \"Must be a valid email address.\")\n            else:\n                cleaned[\"email\"] = email_stripped\n\n    # plan (optional, default \"free\")\n    plan = data.get(\"plan\", \"free\")\n    if plan is None:\n        # If explicitly provided as None, treat as invalid.\n        add_error(\"plan\", 'Must be one of \"free\", \"pro\", \"team\".')\n    else:\n        if not isinstance(plan, str):\n            add_error(\"plan\", 'Must be one of \"free\", \"pro\", \"team\".')\n        else:\n            plan_stripped = plan.strip()\n            if plan_stripped not in _ALLOWED_PLANS:\n                add_error(\"plan\", 'Must be one of \"free\", \"pro\", \"team\".')\n            else:\n                cleaned[\"plan\"] = plan_stripped\n\n    # age (optional)\n    if \"age\" in data:\n        age = data.get(\"age\", None)\n        if age is None:\n            add_error(\"age\", \"Must be an integer between 16 and 120.\")\n        else:\n            # Allow bool? In Python bool is subclass of int; usually not desired.\n            if isinstance(age, bool) or not isinstance(age, int):\n                add_error(\"age\", \"Must be an integer between 16 and 120.\")\n            else:\n                if age < 16 or age > 120:\n                    add_error(\"age\", \"Must be between 16 and 120 inclusive.\")\n                else:\n                    cleaned[\"age\"] = age\n\n    # username cleaned if no errors for it\n    if \"username\" not in errors and username is not None and isinstance(username, str):\n        cleaned[\"username\"] = username\n\n    # Ensure default plan filled in even if not provided and no plan errors\n    if \"plan\" not in cleaned and \"plan\" not in errors:\n        cleaned[\"plan\"] = \"free\"\n\n    if errors:\n        raise ValidationError(errors)\n\n    # Drop unknown keys by only returning cleaned.\n    return cleaned\n",
+    "prompt_sha": "df7d771de5dd1ccf",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "packaging_http",
+  "state": "s1",
+  "date": "2024-11-28",
+  "split": "test",
+  "event": "httpx-0.28",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from __future__ import annotations\n\nfrom typing import TypedDict\nimport importlib.metadata\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"\n    Map each provided distribution name (as given) to its installed version string,\n    matching names case-insensitively, or None if not installed.\n\n    Example:\n        dependency_report([\"HttpX\", \"missing\"]) -> {\"HttpX\": \"0.28.1\", \"missing\": None}\n    \"\"\"\n    # Build a lookup of installed distributions: lowercase name -> version\n    installed: dict[str, str] = {}\n    for dist in importlib.metadata.distributions():\n        try:\n            dist_name = dist.metadata.get(\"Name\")\n            if not dist_name:\n                continue\n            version = dist.version\n            installed[dist_name.lower()] = version\n        except Exception:\n            # Be defensive: a single problematic dist shouldn't break reporting\n            continue\n\n    report: dict[str, str | None] = {}\n    for requested in names:\n        version = installed.get(requested.lower())\n        report[requested] = version\n    return report\n",
+    "prompt_sha": "52e62d3d321e7328",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\nfrom urllib.parse import urljoin\n\nimport httpx\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"\n    Fetch all open ticket titles for a given project, following pagination.\n\n    The endpoint is GET /tickets with query params:\n      - status=open\n      - project=<project>\n\n    Responses:\n      {\n        \"items\": [{\"title\": ...}, ...],\n        \"next\": \"<relative URL>\" | null\n      }\n    \"\"\"\n    if not isinstance(project, str) or not project:\n        raise ValueError(\"project must be a non-empty string\")\n\n    titles: list[str] = []\n\n    # Always send required params on every request.\n    params = {\"status\": \"open\", \"project\": project}\n\n    next_url: Optional[str] = \"/tickets\"\n    while next_url is not None:\n        if next_url == \"/tickets\":\n            url = next_url\n            resp = client.get(url, params=params)\n        else:\n            # next is a relative URL that includes the page cursor.\n            # The server still requires status and project, so we send them again.\n            base = str(client.base_url) if client.base_url is not None else \"\"\n            url = urljoin(base, next_url)\n            resp = client.get(url, params=params)\n\n        resp.raise_for_status()\n        data = resp.json()\n\n        items = data.get(\"items\", [])\n        for item in items:\n            # If server returns malformed entries, fail fast.\n            titles.append(item[\"title\"])\n\n        next_url = data.get(\"next\")\n\n    return titles\n",
+    "prompt_sha": "f9f39905b63fc940",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "HTTPStatusError: Client error '404 Not Found' for url 'https://tracker.example/tickets?status=open&project=web'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404 [_models.py:829]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\nimport httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"\n    Create an httpx.Client that routes both HTTP and HTTPS requests through the given proxy.\n\n    - base_url: Base URL for requests.\n    - proxy_url: Proxy URL used for all outbound HTTP/HTTPS traffic.\n    - timeout: 5 seconds.\n    - Adds header: User-Agent: inventory-sync/1.0 to every request.\n    \"\"\"\n    headers = {\"User-Agent\": \"inventory-sync/1.0\"}\n\n    # httpx 0.28 removed the deprecated `proxies=` and `app=` constructor arguments.\n    # Use the transport-level proxy configuration instead.\n    transport = httpx.HTTPTransport(proxy=proxy_url)\n\n    return httpx.Client(\n        base_url=base_url,\n        transport=transport,\n        timeout=5.0,\n        headers=headers,\n    )\n",
+    "prompt_sha": "e4a53b77340cddcf",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "import re\nfrom typing import Any\n\n\n_EMAIL_RE = re.compile(\n    # Reasonable RFC-ish email pattern for input validation (not fully RFC-complete).\n    r\"(?i)^(?P<local>[a-z0-9.!#$%&'*+/=?^_`{|}~-]+)\"\n    r\"@(?P<domain>[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*)$\"\n)\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"\n    Validate and clean sign-up payload.\n\n    Required:\n      - username: alphanumeric string\n      - email: valid email address\n\n    Optional:\n      - plan: defaults to \"free\", must be one of {\"free\",\"pro\",\"team\"}\n      - age: integer in [16, 120] inclusive\n\n    Unknown keys are dropped.\n\n    On invalid input, raise ValueError with a `messages` attribute:\n      {field_name: [error_message, ...], ...}\n    \"\"\"\n    if not isinstance(data, dict):\n        err = ValueError(\"Invalid signup data\")\n        err.messages = {\"data\": [\"Expected an object/dict.\"]}\n        raise err\n\n    cleaned: dict[str, Any] = {}\n    messages: dict[str, list[str]] = {}\n\n    # username\n    username = data.get(\"username\", None)\n    if username is None:\n        messages[\"username\"] = [\"This field is required.\"]\n    elif isinstance(username, str):\n        if not username:\n            messages.setdefault(\"username\", []).append(\"Username must not be empty.\")\n        elif not username.isalnum():\n            messages.setdefault(\"username\", []).append(\"Username must be alphanumeric.\")\n        else:\n            cleaned[\"username\"] = username\n    else:\n        messages.setdefault(\"username\", []).append(\"Username must be a string.\")\n\n    # email\n    email = data.get(\"email\", None)\n    if email is None:\n        messages[\"email\"] = [\"This field is required.\"]\n    elif isinstance(email, str):\n        email = email.strip()\n        if not email:\n            messages.setdefault(\"email\", []).append(\"Email must not be empty.\")\n        elif _EMAIL_RE.match(email) is None:\n            messages.setdefault(\"email\", []).append(\"Enter a valid email address.\")\n        else:\n            cleaned[\"email\"] = email\n    else:\n        messages.setdefault(\"email\", []).append(\"Email must be a string.\")\n\n    # plan (optional, default free)\n    plan = data.get(\"plan\", \"free\")\n    if plan is None:\n        plan = \"free\"\n    if isinstance(plan, str):\n        plan = plan.strip()\n        allowed = {\"free\", \"pro\", \"team\"}\n        if plan not in allowed:\n            messages.setdefault(\"plan\", []).append('Plan must be one of: \"free\", \"pro\", \"team\".')\n        else:\n            cleaned[\"plan\"] = plan\n    else:\n        messages.setdefault(\"plan\", []).append('Plan must be one of: \"free\", \"pro\", \"team\".')\n\n    # age (optional)\n    if \"age\" in data and data.get(\"age\") is not None:\n        age = data.get(\"age\")\n        if isinstance(age, bool):\n            # bool is a subclass of int; reject explicitly\n            messages.setdefault(\"age\", []).append(\"Age must be an integer between 16 and 120.\")\n        elif isinstance(age, int):\n            if age < 16 or age > 120:\n                messages.setdefault(\"age\", []).append(\"Age must be between 16 and 120.\")\n            else:\n                cleaned[\"age\"] = age\n        else:\n            messages.setdefault(\"age\", []).append(\"Age must be an integer between 16 and 120.\")\n\n    if messages:\n        err = ValueError(\"Invalid signup data\")\n        err.messages = messages\n        raise err\n\n    return cleaned\n",
+    "prompt_sha": "5ac883e8eac8f5be",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "packaging_http",
+  "state": "s2",
+  "date": "2025-04-16",
+  "split": "test",
+  "event": "marshmallow-4.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\ntry:\n    import pkg_resources\nexcept ImportError as e:  # pragma: no cover\n    # setuptools should ship pkg_resources in this environment\n    raise RuntimeError(\"pkg_resources is required but could not be imported\") from e\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"\n    Map each provided distribution name (as given) to its installed version string,\n    matching names case-insensitively. If a distribution is not installed, map to None.\n\n    Example:\n        dependency_report([\"requests\", \"NonexistentPkg\"])\n        -> {\"requests\": \"2.32.3\", \"NonexistentPkg\": None}\n    \"\"\"\n    # Build a case-insensitive lookup from all installed distributions.\n    # Use .project_name (canonicalized) rather than the key's casing.\n    installed_versions: dict[str, str] = {}\n    for dist in pkg_resources.working_set:\n        # Ensure a predictable string version (dist.version is already str)\n        installed_versions[dist.project_name.lower()] = dist.version\n\n    report: dict[str, Optional[str]] = {}\n    for name in names:\n        report[name] = installed_versions.get(name.lower())\n\n    return report\n",
+    "prompt_sha": "a53e8f63a1cc4a91",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\nfrom urllib.parse import parse_qsl, urlencode, urlsplit\n\nimport httpx\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"\n    Fetch all open ticket titles for the given project.\n\n    The API GET /tickets endpoint is paginated via a relative `next` URL returned\n    in the JSON response:\n      {\"items\": [{\"title\": ...}, ...], \"next\": <relative URL or null>}\n\n    The server requires `status=open` and `project=<project>` on every request,\n    so these parameters are included on each page request.\n    \"\"\"\n    status = \"open\"\n\n    params: dict[str, str] = {\"status\": status, \"project\": project}\n    titles: list[str] = []\n\n    # First page uses the endpoint path.\n    next_url: str | None = \"/tickets\"\n\n    while next_url is not None:\n        # If the server provides a next URL that already contains query params,\n        # merge in the required ones (overriding any provided values).\n        request_params: dict[str, str] = dict(params)\n\n        if next_url != \"/tickets\":\n            parts = urlsplit(next_url)\n            if parts.query:\n                # Merge cursor params from `next` while still forcing status/project.\n                for k, v in parse_qsl(parts.query, keep_blank_values=True):\n                    request_params.setdefault(k, v)\n                # Force required params to match this function's inputs.\n                request_params[\"status\"] = status\n                request_params[\"project\"] = project\n            # Keep only the relative path (including leading slash) and any fragment.\n            # httpx will use the client's base_url to resolve it.\n            # We ignore the `next` query because we pass params separately.\n            next_url = parts.path or \"/tickets\"\n\n        resp = client.get(next_url, params=request_params)\n        resp.raise_for_status()\n\n        payload: Any = resp.json()\n        if not isinstance(payload, dict):\n            raise ValueError(\"Unexpected response payload: expected a JSON object.\")\n\n        items = payload.get(\"items\", [])\n        if not isinstance(items, list):\n            raise ValueError(\"Unexpected response payload: expected 'items' to be a list.\")\n\n        for item in items:\n            if not isinstance(item, dict):\n                raise ValueError(\"Unexpected response payload: expected each item to be an object.\")\n            # Title is required for correctness; let it KeyError/TypeError surface clearly.\n            title = item[\"title\"]\n            titles.append(str(title))\n\n        next_val = payload.get(\"next\", None)\n        if next_val is None:\n            next_url = None\n        elif isinstance(next_val, str):\n            next_url = next_val\n        else:\n            raise ValueError(\"Unexpected response payload: expected 'next' to be a string or null.\")\n\n    return titles\n",
+    "prompt_sha": "e8ab4aa293d926af",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "from __future__ import annotations\n\nimport httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"\n    Create a synchronous httpx client that routes both HTTP and HTTPS requests through\n    the given proxy URL, uses a 5-second timeout, and sets User-Agent on every request.\n\n    Notes:\n    - Compatible with httpx>=0.28 where `proxies=` and `app=` arguments are removed.\n    - Uses HTTPTransport(proxy=...) to ensure proxying for both schemes.\n    \"\"\"\n    transport = httpx.HTTPTransport(proxy=proxy_url)\n    timeout = httpx.Timeout(5.0)\n\n    return httpx.Client(\n        base_url=base_url,\n        headers={\"User-Agent\": \"inventory-sync/1.0\"},\n        transport=transport,\n        timeout=timeout,\n    )\n",
+    "prompt_sha": "6c5b101e825408d5",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "from __future__ import annotations\n\nimport re\nfrom typing import Any\n\n\n_USERNAME_RE = re.compile(r\"^[A-Za-z0-9]+$\")\n\n# Simple, pragmatic email pattern suitable for input validation.\n# (Not fully RFC-complete, but adequate for typical API sign-up flows.)\n_EMAIL_RE = re.compile(\n    r\"^(?P<local>[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+)\"\n    r\"@\"\n    r\"(?P<domain>[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*)$\"\n)\n\n\nclass _SignupValidationError(ValueError):\n    def __init__(self, messages: dict[str, list[str]]):\n        super().__init__(\"Invalid sign-up data\")\n        self.messages = messages\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"\n    Validate and clean sign-up endpoint input.\n\n    Required:\n      - username: alphanumeric string\n      - email: valid e-mail address\n\n    Optional:\n      - plan: one of {\"free\",\"pro\",\"team\"} (default \"free\")\n      - age: integer in [16, 120]\n\n    Unknown keys are dropped.\n\n    On invalid input, raises ValueError with a `messages` attribute:\n      {field_name: [error_message, ...], ...}\n    \"\"\"\n    if not isinstance(data, dict):\n        raise _SignupValidationError({\"_schema\": [\"Input must be a JSON object.\"]})\n\n    errors: dict[str, list[str]] = {}\n    cleaned: dict[str, Any] = {}\n\n    # username\n    username = data.get(\"username\", None)\n    if username is None:\n        errors.setdefault(\"username\", []).append(\"Missing data for required field.\")\n    elif not isinstance(username, str) or not _USERNAME_RE.fullmatch(username):\n        errors.setdefault(\"username\", []).append(\n            \"Must be an alphanumeric string containing only letters and digits.\"\n        )\n    else:\n        cleaned[\"username\"] = username\n\n    # email\n    email = data.get(\"email\", None)\n    if email is None:\n        errors.setdefault(\"email\", []).append(\"Missing data for required field.\")\n    elif not isinstance(email, str) or not _EMAIL_RE.fullmatch(email.strip()):\n        errors.setdefault(\"email\", []).append(\"Must be a valid e-mail address.\")\n    else:\n        cleaned[\"email\"] = email.strip()\n\n    # plan (optional, default \"free\")\n    plan = data.get(\"plan\", \"free\")\n    if plan is None:\n        plan = \"free\"\n\n    if isinstance(plan, str):\n        plan_str = plan\n    else:\n        plan_str = None\n\n    allowed_plans = {\"free\", \"pro\", \"team\"}\n    if plan_str is None:\n        errors.setdefault(\"plan\", []).append(\"Must be one of: free, pro, team.\")\n    elif plan_str not in allowed_plans:\n        errors.setdefault(\"plan\", []).append(\"Must be one of: free, pro, team.\")\n    else:\n        cleaned[\"plan\"] = plan_str\n\n    # age (optional)\n    if \"age\" in data:\n        age = data.get(\"age\", None)\n        if age is None:\n            errors.setdefault(\"age\", []).append(\"Age must be an integer between 16 and 120.\")\n        elif isinstance(age, bool) or not isinstance(age, int):\n            errors.setdefault(\"age\", []).append(\"Age must be an integer between 16 and 120.\")\n        elif age < 16 or age > 120:\n            errors.setdefault(\"age\", []).append(\"Age must be between 16 and 120 (inclusive).\")\n        else:\n            cleaned[\"age\"] = age\n\n    if errors:\n        raise _SignupValidationError(errors)\n\n    return cleaned\n",
+    "prompt_sha": "39dc988ba4c53929",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "packaging_http",
+  "state": "s3",
+  "date": "2026-02-08",
+  "split": "test",
+  "event": "setuptools-82",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from __future__ import annotations\n\nfrom importlib import metadata\nfrom typing import Iterable\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"\n    Map each requested distribution name (as provided, case-sensitive key)\n    to its installed version string, or None if not installed.\n\n    Resolution is case-insensitive: a request name matches an installed\n    distribution name case-insensitively.\n    \"\"\"\n    # Build a lookup from lowercased installed distribution names to version\n    installed: dict[str, str] = {}\n    for dist in metadata.distributions():\n        name = dist.metadata.get(\"Name\")\n        if not name:\n            continue\n        key = name.casefold()\n        # In normal environments, distribution names are unique ignoring case.\n        # Prefer the first seen version.\n        installed.setdefault(key, dist.version)\n\n    result: dict[str, str | None] = {}\n    for requested in names:\n        result[requested] = installed.get(requested.casefold())\n    return result\n",
+    "prompt_sha": "e1355c795ca0c974",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from __future__ import annotations\n\nimport typing as _t\n\nimport httpx\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"\n    Fetch all open ticket titles for a given project using the API's pagination.\n\n    The API endpoint:\n      GET /tickets?status=open&project=<project>\n\n    Response shape:\n      {\"items\": [{\"title\": ...}, ...], \"next\": <relative URL or null>}\n\n    Returns:\n      A list of titles in order across all pages.\n    \"\"\"\n    if not isinstance(project, str) or not project:\n        # Keep strictness minimal; allow non-empty strings only.\n        raise ValueError(\"project must be a non-empty string\")\n\n    titles: list[str] = []\n    params = {\"status\": \"open\", \"project\": project}\n\n    url: str | None = \"/tickets\"\n    while url is not None:\n        resp = client.get(url, params=params)\n        resp.raise_for_status()\n\n        payload: _t.Any = resp.json()\n        if not isinstance(payload, dict):\n            raise ValueError(\"Unexpected response JSON: expected an object\")\n\n        items = payload.get(\"items\", [])\n        if not isinstance(items, list):\n            raise ValueError(\"Unexpected response JSON: 'items' must be a list\")\n\n        for item in items:\n            if not isinstance(item, dict):\n                raise ValueError(\"Unexpected response JSON: each item must be an object\")\n            title = item.get(\"title\")\n            if title is None:\n                raise ValueError(\"Unexpected response JSON: item missing 'title'\")\n            titles.append(str(title))\n\n        next_url = payload.get(\"next\")\n        url = next_url if next_url is not None else None\n\n        # The server requires status and project on every request, so keep them.\n        # Even when 'next' already includes query parameters, httpx will update the\n        # request with the provided params (and not merge stale values incorrectly).\n        params = {\"status\": \"open\", \"project\": project}\n\n    return titles\n",
+    "prompt_sha": "b049e5c232a683ad",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "_Timeout: test exceeded 20s [child_runner.py:57]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "from __future__ import annotations\n\nimport httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"\n    Create an httpx.Client that sends all HTTP/HTTPS requests through the given proxy.\n\n    - base_url: Prefix for all requests.\n    - proxy_url: Proxy URL used for both http and https.\n    - timeout: 5 seconds.\n    - Adds header: User-Agent: inventory-sync/1.0 to every request.\n    \"\"\"\n    return httpx.Client(\n        base_url=base_url,\n        proxy=proxy_url,\n        timeout=httpx.Timeout(5.0),\n        headers={\"User-Agent\": \"inventory-sync/1.0\"},\n    )\n",
+    "prompt_sha": "712ed5fe78a06e87",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "\"\"\"\nHTTP client/schema/package helpers (signup validation).\n\nThis module currently provides `validate_signup` as requested.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport re\nfrom typing import Any\n\n\n_EMAIL_RE = re.compile(\n    # Pragmatic, non-RFC regex suitable for typical validations.\n    r\"^(?P<local>[A-Za-z0-9.!#$%&'*+/=?^_`{|}~-]+)\"\n    r\"@\"\n    r\"(?P<domain>[A-Za-z0-9-]+(?:\\.[A-Za-z0-9-]+)*)$\"\n)\n\n\nclass SignupValidationError(ValueError):\n    \"\"\"Validation error that exposes per-field messages via `messages`.\"\"\"\n\n    def __init__(self, messages: dict[str, list[str]]):\n        super().__init__(\"Invalid sign-up data\")\n        self.messages = messages\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"\n    Validate and clean sign-up payload.\n\n    Required:\n      - username: alphanumeric string\n      - email: valid email address (basic validation)\n\n    Optional:\n      - plan: defaults to \"free\"; must be one of {\"free\", \"pro\", \"team\"}\n      - age: integer in [16, 120] inclusive\n\n    Unknown keys are dropped.\n\n    Returns the cleaned dict with default plan filled in.\n\n    Raises:\n      - ValueError with a `messages` attribute mapping each invalid field\n        name to a list of error messages.\n    \"\"\"\n    if not isinstance(data, dict):\n        raise SignupValidationError({\"data\": [\"Expected an object/dict.\"]})\n\n    allowed_keys = {\"username\", \"email\", \"plan\", \"age\"}\n    cleaned: dict[str, Any] = {k: v for k, v in data.items() if k in allowed_keys}\n\n    errors: dict[str, list[str]] = {}\n\n    # username (required)\n    username = cleaned.get(\"username\", None)\n    if username is None:\n        errors.setdefault(\"username\", []).append(\"Missing data for required field.\")\n    elif not isinstance(username, str):\n        errors.setdefault(\"username\", []).append(\"Must be a string.\")\n    elif not username:\n        errors.setdefault(\"username\", []).append(\"Must not be empty.\")\n    elif not username.isalnum():\n        errors.setdefault(\"username\", []).append(\"Must be alphanumeric.\")\n\n    # email (required)\n    email = cleaned.get(\"email\", None)\n    if email is None:\n        errors.setdefault(\"email\", []).append(\"Missing data for required field.\")\n    elif not isinstance(email, str):\n        errors.setdefault(\"email\", []).append(\"Must be a string.\")\n    elif not _EMAIL_RE.match(email):\n        errors.setdefault(\"email\", []).append(\"Not a valid email address.\")\n\n    # plan (optional, default \"free\")\n    plan = cleaned.get(\"plan\", \"free\")\n    if \"plan\" not in cleaned:\n        cleaned[\"plan\"] = \"free\"\n    if plan is None:\n        errors.setdefault(\"plan\", []).append(\"Must be one of: free, pro, team.\")\n    elif not isinstance(plan, str):\n        errors.setdefault(\"plan\", []).append(\"Must be a string.\")\n    else:\n        allowed_plans = {\"free\", \"pro\", \"team\"}\n        if plan not in allowed_plans:\n            errors.setdefault(\"plan\", []).append(\"Must be one of: free, pro, team.\")\n\n    # age (optional)\n    if \"age\" in cleaned:\n        age = cleaned.get(\"age\")\n        if not isinstance(age, int) or isinstance(age, bool):\n            errors.setdefault(\"age\", []).append(\"Must be an integer.\")\n        else:\n            if age < 16 or age > 120:\n                errors.setdefault(\"age\", []).append(\"Must be between 16 and 120 inclusive.\")\n\n    if errors:\n        raise SignupValidationError(errors)\n\n    return cleaned\n",
+    "prompt_sha": "bd090cf1d43bf4a3",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ }
+]

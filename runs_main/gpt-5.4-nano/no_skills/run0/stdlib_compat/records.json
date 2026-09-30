@@ -1,0 +1,529 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "stdlib_compat",
+  "state": "s0",
+  "date": "2022-10-24",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "\"\"\"\nStandard-library utilities across CPython upgrades.\n\nThis module provides helpers for describing upload content.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Optional, Dict\n\n\ndef _parse_content_type_header(content_type: str) -> tuple[str, Dict[str, str]]:\n    \"\"\"\n    Parse an HTTP Content-Type header value into (media_type, params).\n\n    - Returns media_type lower-cased without parameters.\n    - Parameter keys are lower-cased.\n    - Parameter values may be quoted; quotes are removed and surrounding whitespace trimmed.\n    - This is a lightweight parser intended for typical Content-Type usage.\n    \"\"\"\n    if content_type is None:\n        raise TypeError(\"content_type must be a string\")\n\n    s = str(content_type).strip()\n    if not s:\n        return \"\", {}\n\n    parts = [p.strip() for p in s.split(\";\")]\n    media_type = parts[0].strip().lower()\n    params: Dict[str, str] = {}\n\n    for part in parts[1:]:\n        if not part:\n            continue\n        if \"=\" not in part:\n            continue\n        k, v = part.split(\"=\", 1)\n        k = k.strip().lower()\n        v = v.strip()\n\n        # Remove surrounding quotes (parameter values may be quoted).\n        if len(v) >= 2 and v[0] == '\"' and v[-1] == '\"':\n            v = v[1:-1]\n        params[k] = v.strip()\n\n    return media_type, params\n\n\ndef _detect_image_from_signature(data: bytes) -> Optional[str]:\n    \"\"\"\n    Detect common image types from the leading signature bytes.\n    Returns one of: \"png\", \"jpeg\", \"gif\", or None.\n    \"\"\"\n    if not data:\n        return None\n\n    # PNG: 89 50 4E 47 0D 0A 1A 0A\n    if len(data) >= 8 and data[:8] == b\"\\x89PNG\\r\\n\\x1a\\n\":\n        return \"png\"\n\n    # JPEG: FF D8 FF ... (SOI marker + third byte often varies)\n    if len(data) >= 3 and data[:3] == b\"\\xFF\\xD8\\xFF\":\n        return \"jpeg\"\n\n    # GIF: \"GIF87a\" or \"GIF89a\"\n    if len(data) >= 6 and (data[:6] == b\"GIF87a\" or data[:6] == b\"GIF89a\"):\n        return \"gif\"\n\n    return None\n\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    \"\"\"\n    Describe an upload request body based on Content-Type and signature bytes.\n\n    Args:\n        content_type: Value of the request's Content-Type header.\n        data: First bytes of the request body.\n\n    Returns:\n        dict with keys:\n          - \"mime\": lower-cased media type without parameters (string)\n          - \"charset\": lower-cased charset parameter or None\n          - \"image\": \"png\", \"jpeg\", \"gif\" or None (detected from data signature)\n    \"\"\"\n    media_type, params = _parse_content_type_header(content_type)\n\n    charset = params.get(\"charset\")\n    if charset is not None:\n        charset = charset.strip().lower()\n        if not charset:\n            charset = None\n\n    image = _detect_image_from_signature(data)\n\n    return {\"mime\": media_type, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "dc92de20a924302f",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    \"\"\"\n    Return the highest dotted release version from `versions` that is >= `minimum`,\n    comparing numerically component-by-component.\n\n    The returned version is the exact string from the input list.\n\n    Examples:\n      newest_compatible([\"1.9\", \"1.10\"], \"1.9\") -> \"1.10\"\n      newest_compatible([\"1.9\", \"1.10\"], \"1.11\") -> None\n    \"\"\"\n\n    def parse_dotted(v: str) -> tuple[int, ...]:\n        # Expected format: dotted numeric components, e.g. \"1.10.2\".\n        # Any non-integer component will raise ValueError (fail fast).\n        if v == \"\":\n            raise ValueError(\"Version string must not be empty\")\n        return tuple(int(part) for part in v.split(\".\"))\n\n    def padded_compare_key(nums: tuple[int, ...], target_len: int) -> tuple[int, ...]:\n        # Pad with zeros to make different lengths comparable.\n        if len(nums) >= target_len:\n            return nums[:target_len]\n        return nums + (0,) * (target_len - len(nums))\n\n    min_nums = parse_dotted(minimum)\n    max_parts = max([len(min_nums)] + [len(parse_dotted(v)) for v in versions] or [len(min_nums)])\n\n    min_key = padded_compare_key(min_nums, max_parts)\n\n    best_version: Optional[str] = None\n    best_key: Optional[tuple[int, ...]] = None\n\n    for v in versions:\n        v_nums = parse_dotted(v)\n        v_key = padded_compare_key(v_nums, max_parts)\n\n        if v_key < min_key:\n            continue\n\n        if best_key is None or v_key > best_key:\n            best_key = v_key\n            best_version = v\n\n    return best_version\n",
+    "prompt_sha": "b44a0f2cabbfeefc",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "from __future__ import annotations\n\nimport shlex\n\n\ndef rsync_command(sources: list[str], host: str, dest: str) -> str:\n    \"\"\"\n    Return a single POSIX shell command line that runs:\n        rsync -az <sources...> <host>:<dest>\n\n    Each path/target is shell-escaped so the shell passes them to rsync unchanged\n    as separate arguments, even if they contain spaces, quotes, '$', or other\n    shell metacharacters.\n    \"\"\"\n    target = f\"{host}:{dest}\"\n    quoted_args = [shlex.quote(\"rsync\"), shlex.quote(\"-az\")]\n    quoted_args.extend(shlex.quote(s) for s in sources)\n    quoted_args.append(shlex.quote(target))\n    return \" \".join(quoted_args)\n",
+    "prompt_sha": "e77275a93ab86919",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "from __future__ import annotations\n\nimport asyncio\nfrom typing import Any, Awaitable, List\n\n\ndef run_with_deadline(coros: list, seconds: float) -> list:\n    \"\"\"\n    Run the given coroutines concurrently with a single deadline.\n\n    Returns a list of results in input order. If a coroutine does not finish\n    within `seconds`, it is cancelled and the corresponding return value is None.\n\n    This function is intended for ordinary synchronous code (no event loop\n    running in the current thread). It may be called repeatedly in the same\n    process.\n    \"\"\"\n    if seconds is None:\n        raise TypeError(\"seconds must be a float (not None)\")\n    if seconds < 0:\n        # Treat negative deadline as \"already expired\"\n        seconds = 0.0\n\n    # Create a new loop per call so it can be invoked repeatedly safely.\n    loop = asyncio.new_event_loop()\n    try:\n        asyncio.set_event_loop(loop)\n\n        tasks = [loop.create_task(c) for c in coros]  # may raise if not awaitable\n        pending = set(tasks)\n        results: List[Any] = [None] * len(tasks)\n\n        if not tasks:\n            return results\n\n        done, pending = loop.run_until_complete(\n            asyncio.wait(pending, timeout=seconds, return_when=asyncio.ALL_COMPLETED)\n        )\n\n        # Fill results for completed tasks (may raise if underlying coroutine failed).\n        task_to_index = {task: i for i, task in enumerate(tasks)}\n        for task in done:\n            idx = task_to_index[task]\n            results[idx] = task.result()\n\n        # Cancel anything still pending and wait for cancellation to complete.\n        if pending:\n            for task in pending:\n                task.cancel()\n            loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))\n\n        return results\n    finally:\n        # Ensure we always detach/close the loop.\n        try:\n            if asyncio.get_event_loop() is loop:\n                asyncio.set_event_loop(None)\n        except RuntimeError:\n            # In case the loop was already unset/detached.\n            pass\n        loop.close()\n",
+    "prompt_sha": "c9e6f30dc227989e",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "stdlib_compat",
+  "state": "s1",
+  "date": "2023-10-02",
+  "split": "dev",
+  "event": "python-3.12",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\n\ndef _strip_quotes(value: str) -> str:\n    value = value.strip()\n    if len(value) >= 2 and value[0] == value[-1] and value[0] in (\"'\", '\"'):\n        return value[1:-1].strip()\n    return value\n\n\ndef _parse_content_type(content_type: str) -> tuple[str, Optional[str]]:\n    \"\"\"\n    Parse a Content-Type header value into (mime, charset).\n\n    - Returns mime lower-cased, without parameters.\n    - Returns charset lower-cased or None.\n    - Parameter values may be quoted.\n    \"\"\"\n    if not isinstance(content_type, str):\n        raise TypeError(\"content_type must be a str\")\n\n    parts = [p.strip() for p in content_type.split(\";\")]\n    mime = parts[0].strip().lower()\n\n    charset: Optional[str] = None\n    for param in parts[1:]:\n        if not param:\n            continue\n        if \"=\" not in param:\n            continue\n        key, val = param.split(\"=\", 1)\n        key = key.strip().lower()\n        val = _strip_quotes(val)\n        if key == \"charset\":\n            charset = val.lower() if val else None\n\n    return mime, charset\n\n\ndef _detect_image_from_signature(data: bytes) -> Optional[str]:\n    \"\"\"\n    Detect common image formats from the first bytes signature.\n\n    Returns one of: \"png\", \"jpeg\", \"gif\" or None.\n    \"\"\"\n    if not data:\n        return None\n\n    # PNG: 89 50 4E 47 0D 0A 1A 0A\n    if data.startswith(b\"\\x89PNG\\r\\n\\x1a\\n\"):\n        return \"png\"\n\n    # JPEG: FF D8 FF (also allow common variants where third byte can vary)\n    if len(data) >= 3 and data[0:3] == b\"\\xFF\\xD8\\xFF\":\n        return \"jpeg\"\n\n    # GIF: ASCII \"GIF87a\" or \"GIF89a\"\n    if data.startswith(b\"GIF87a\") or data.startswith(b\"GIF89a\"):\n        return \"gif\"\n\n    return None\n\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    \"\"\"\n    Given the request's Content-Type header value and the first bytes of the body,\n    return a dict of:\n      {\n        \"mime\": <lower-cased media type without parameters>,\n        \"charset\": <lower-cased charset parameter or None>,\n        \"image\": <\"png\"|\"jpeg\"|\"gif\"|None, detected from the data's signature bytes>\n      }\n    \"\"\"\n    mime, charset = _parse_content_type(content_type)\n    image = _detect_image_from_signature(data)\n    return {\"mime\": mime, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "ca689c0130f93781",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "\"\"\"\nStandard-library utility: newest_compatible\n\nImplements comparison of dotted version strings component-by-component,\ntreating missing trailing components as 0 (e.g. 1.2 == 1.2.0).\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import List, Tuple, Optional\n\n\ndef _parse_dotted(version: str) -> Tuple[Tuple[int, ...], str]:\n    \"\"\"\n    Parse a dotted version string into a tuple of integer components.\n\n    Non-integer components are not supported; they raise ValueError.\n    \"\"\"\n    # Preserve exact original string for returning to caller.\n    parts = version.split(\".\")\n    if any(p == \"\" for p in parts):\n        raise ValueError(f\"Invalid dotted version {version!r}: empty component\")\n    nums: List[int] = []\n    for p in parts:\n        # Allow leading + (int(\"+1\") works) and leading zeros.\n        try:\n            nums.append(int(p, 10))\n        except ValueError as e:\n            raise ValueError(\n                f\"Invalid dotted version {version!r}: component {p!r} is not an integer\"\n            ) from e\n    return tuple(nums), version\n\n\ndef _cmp_components(a: Tuple[int, ...], b: Tuple[int, ...]) -> int:\n    \"\"\"\n    Compare two version component tuples numerically, component by component,\n    with missing components treated as 0.\n\n    Returns:\n        -1 if a < b\n         0 if a == b\n         1 if a > b\n    \"\"\"\n    n = max(len(a), len(b))\n    # Compare up to max length; treat missing as 0.\n    for i in range(n):\n        ai = a[i] if i < len(a) else 0\n        bi = b[i] if i < len(b) else 0\n        if ai < bi:\n            return -1\n        if ai > bi:\n            return 1\n    return 0\n\n\ndef newest_compatible(versions: List[str], minimum: str) -> Optional[str]:\n    \"\"\"\n    Return the highest of the given dotted release versions that is at least\n    `minimum`, comparing versions numerically component by component.\n\n    Versions are compared as dotted integer components. Trailing missing\n    components are treated as 0 (e.g. 1.2 == 1.2.0).\n\n    Args:\n        versions: List of version strings (e.g. [\"1.10.2\", \"1.9.9\"])\n        minimum: Minimum required version string\n\n    Returns:\n        The version string exactly as given from `versions`, for the highest\n        version >= minimum. If no version qualifies, returns None.\n    \"\"\"\n    min_parsed, _ = _parse_dotted(minimum)\n\n    best_version: Optional[str] = None\n    best_parsed: Optional[Tuple[int, ...]] = None\n\n    for v in versions:\n        parsed, original = _parse_dotted(v)\n        if _cmp_components(parsed, min_parsed) >= 0:\n            if best_parsed is None or _cmp_components(parsed, best_parsed) > 0:\n                best_parsed = parsed\n                best_version = original\n\n    return best_version\n",
+    "prompt_sha": "a9c1dde67df75aa2",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "from __future__ import annotations\n\nimport shlex\nfrom typing import List\n\n\ndef rsync_command(sources: List[str], host: str, dest: str) -> str:\n    \"\"\"\n    Build a single POSIX-shell command line that runs:\n\n        rsync -az <sources...> <host>:<dest>\n\n    The shell must pass each source and the host:dest target to rsync as separate\n    arguments unchanged, even if file names contain spaces, quotes, $, or other\n    metacharacters. This is achieved by POSIX-safe shell quoting.\n\n    Parameters\n    ----------\n    sources:\n        List of source paths/files to pass to rsync.\n    host:\n        Destination host.\n    dest:\n        Destination path.\n\n    Returns\n    -------\n    str\n        A POSIX shell command line.\n    \"\"\"\n    if not isinstance(sources, list):\n        raise TypeError(\"sources must be a list of strings\")\n    if not all(isinstance(s, str) for s in sources):\n        raise TypeError(\"sources must be a list of strings\")\n    if not isinstance(host, str):\n        raise TypeError(\"host must be a string\")\n    if not isinstance(dest, str):\n        raise TypeError(\"dest must be a string\")\n\n    target = f\"{host}:{dest}\"\n    args = [shlex.quote(s) for s in sources] + [shlex.quote(target)]\n    return \"rsync -az \" + \" \".join(args)\n",
+    "prompt_sha": "c5abd12923c123f2",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "from __future__ import annotations\n\nimport asyncio\nfrom typing import Any, Coroutine, List\n\n\ndef run_with_deadline(coros: list, seconds: float) -> list:\n    \"\"\"\n    Run coroutines concurrently from synchronous code (no event loop running)\n    and return results in input order.\n\n    - Results are returned for coroutines that finish within `seconds`.\n    - If a coroutine has not finished within `seconds`, it is cancelled and\n      `None` is returned for that input position.\n    - If a finished coroutine raises an exception, that exception is re-raised.\n    - Works when called repeatedly in the same process.\n    \"\"\"\n    if seconds is None:\n        raise TypeError(\"seconds must be a number, not None\")\n\n    # Ensure we are given coroutine-like objects; don't strictly validate type\n    # to keep compatibility with internal coroutine wrappers.\n    tasks: List[asyncio.Task[Any]]\n\n    loop = asyncio.new_event_loop()\n    try:\n        asyncio.set_event_loop(loop)\n\n        tasks = [loop.create_task(c) for c in coros]\n\n        if not tasks:\n            return []\n\n        done, pending = loop.run_until_complete(\n            asyncio.wait(tasks, timeout=float(seconds), return_when=asyncio.FIRST_COMPLETED)\n        )\n\n        # If not all tasks are done yet, wait until timeout expires or all finish.\n        if pending:\n            # Compute remaining time based on monotonic clock.\n            deadline = loop.time() + 0  # placeholder; we'll replace below\n\n        # To properly respect the original deadline, we implement a second wait\n        # using monotonic timing inside the loop.\n        if pending:\n            start = loop.time()\n            timeout = float(seconds)\n            # Wait until all complete or time runs out.\n            done, pending = loop.run_until_complete(asyncio.wait(tasks, timeout=timeout, return_when=asyncio.ALL_COMPLETED))\n\n            # If still pending after deadline, cancel them.\n            if pending:\n                for t in pending:\n                    t.cancel()\n\n                # Await cancellations to avoid warnings and ensure tasks settle.\n                loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))\n\n        # At this point, all tasks are either done or cancelled.\n        results: List[Any] = [None] * len(tasks)\n        for i, t in enumerate(tasks):\n            if t.cancelled():\n                results[i] = None\n            else:\n                # If it finished (within deadline), return result (or raise if exception).\n                results[i] = t.result()\n\n        return results\n    finally:\n        try:\n            # Avoid leaking references; ensure pending tasks are cleaned up.\n            pending = asyncio.all_tasks(loop)\n            if pending:\n                for t in pending:\n                    t.cancel()\n                loop.run_until_complete(asyncio.gather(*pending, return_exceptions=True))\n        except Exception:\n            # Don't mask the original exception (if any).\n            pass\n        finally:\n            asyncio.set_event_loop(None)\n            loop.close()\n",
+    "prompt_sha": "f74039824ebb952d",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "version_compare": "active",
+   "plugin_loader": "active",
+   "shell_cmd": "active",
+   "web_utils": "active",
+   "ast_tools": "active",
+   "async_bridge": "active",
+   "data_files": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "stdlib_compat",
+  "state": "s2",
+  "date": "2024-10-07",
+  "split": "test",
+  "event": "python-3.13",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "from __future__ import annotations\n\nfrom typing import Dict, Optional\n\n\ndef _parse_content_type(content_type: str) -> tuple[str, Optional[str]]:\n    \"\"\"\n    Parse a Content-Type header value into (media_type, charset).\n\n    Rules:\n    - Media type is lower-cased and excludes parameters.\n    - charset parameter is lower-cased; if absent -> None.\n    - Parameter values may be quoted.\n    \"\"\"\n    if not isinstance(content_type, str):\n        raise TypeError(\"content_type must be a str\")\n\n    # Split on semicolons; Content-Type values can have parameters.\n    parts = [p.strip() for p in content_type.split(\";\")]\n    media_type = parts[0].strip().lower() if parts and parts[0].strip() else \"\"\n\n    charset: Optional[str] = None\n    for param in parts[1:]:\n        if not param:\n            continue\n        if \"=\" not in param:\n            continue\n        key, value = param.split(\"=\", 1)\n        key = key.strip().lower()\n        value = value.strip()\n\n        # Remove optional surrounding quotes (including cases like charset=\"utf-8\")\n        if len(value) >= 2 and value[0] == value[-1] == '\"':\n            value = value[1:-1]\n        if key == \"charset\":\n            charset = value.strip().lower() or None\n\n    return media_type, charset\n\n\ndef _detect_image_from_signature(data: bytes) -> Optional[str]:\n    \"\"\"\n    Detect image type based on signature bytes (magic numbers).\n    Supported: png, jpeg, gif -> return \"png\" | \"jpeg\" | \"gif\" or None.\n    \"\"\"\n    if not data:\n        return None\n\n    # PNG signature: 89 50 4E 47 0D 0A 1A 0A\n    if len(data) >= 8 and data[:8] == b\"\\x89PNG\\r\\n\\x1a\\n\":\n        return \"png\"\n\n    # JPEG signature: FF D8 FF (SOI marker + start of image)\n    if len(data) >= 3 and data[:3] == b\"\\xFF\\xD8\\xFF\":\n        return \"jpeg\"\n\n    # GIF signatures: \"GIF87a\" or \"GIF89a\"\n    if len(data) >= 6 and (data[:6] == b\"GIF87a\" or data[:6] == b\"GIF89a\"):\n        return \"gif\"\n\n    return None\n\n\ndef describe_upload(content_type: str, data: bytes) -> Dict[str, object]:\n    \"\"\"\n    Given the request's Content-Type header value and the first bytes of the body,\n    return:\n\n      {\n        \"mime\": <lower-cased media type without parameters>,\n        \"charset\": <lower-cased charset parameter or None>,\n        \"image\": <\"png\", \"jpeg\", \"gif\" or None>\n      }\n\n    Parameter values in Content-Type may be quoted.\n    \"\"\"\n    media_type, charset = _parse_content_type(content_type)\n    image = _detect_image_from_signature(data)\n    return {\"mime\": media_type, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "d13a6ee4a6cea03d",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\nfrom packaging.version import Version, InvalidVersion\n\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    \"\"\"\n    Return the highest version from `versions` that is >= `minimum`, comparing\n    dotted release versions component-by-component (numeric-aware) using\n    packaging.version.Version.\n\n    The returned version string is exactly as given in `versions`.\n    If no version qualifies, return None.\n    \"\"\"\n    try:\n        min_v = Version(minimum)\n    except InvalidVersion:\n        # If the caller provides an invalid minimum, nothing can be compared reliably.\n        return None\n\n    best_version_str: Optional[str] = None\n    best_version_obj: Optional[Version] = None\n\n    for v_str in versions:\n        try:\n            v_obj = Version(v_str)\n        except InvalidVersion:\n            # Skip unparseable versions rather than failing hard.\n            continue\n\n        if v_obj < min_v:\n            continue\n\n        if best_version_obj is None or v_obj > best_version_obj:\n            best_version_obj = v_obj\n            best_version_str = v_str\n\n    return best_version_str\n",
+    "prompt_sha": "ec2e3beea777e0d2",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "from __future__ import annotations\n\nimport shlex\n\n\ndef rsync_command(sources: list[str], host: str, dest: str) -> str:\n    \"\"\"\n    Build a single POSIX shell command line:\n\n        rsync -az <sources...> <host>:<dest>\n\n    Each source and the <host>:<dest> target are safely shell-quoted so the shell\n    passes them to rsync unchanged as separate arguments, even when filenames\n    contain spaces, quotes, '$', or other shell metacharacters.\n    \"\"\"\n    if sources is None:\n        raise TypeError(\"sources must be a list of strings, not None\")\n    if host is None or dest is None:\n        raise TypeError(\"host and dest must be non-None strings\")\n\n    quoted_sources = [shlex.quote(s) for s in sources]\n    target = f\"{host}:{dest}\"\n    quoted_target = shlex.quote(target)\n\n    parts = [\"rsync\", \"-az\", *quoted_sources, quoted_target]\n    return \" \".join(parts)\n",
+    "prompt_sha": "43659fe1149627b2",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "from __future__ import annotations\n\nimport asyncio\nfrom typing import Any, Coroutine, List\n\n\ndef run_with_deadline(coros: list[Coroutine[Any, Any, Any]], seconds: float) -> list[Any]:\n    \"\"\"\n    Run the given coroutines concurrently from synchronous code, without any\n    existing event loop.\n\n    Results are returned in input order. If a coroutine does not finish\n    within `seconds`, it is cancelled and the corresponding result is None.\n\n    This function creates and tears down its own event loop per call, so it\n    can be invoked repeatedly in the same process.\n    \"\"\"\n    if seconds is None:\n        raise TypeError(\"seconds must be a float, not None\")\n    if seconds < 0:\n        # A negative deadline means nothing can finish in time.\n        seconds = 0.0\n\n    # Create a fresh loop per invocation so repeated calls work reliably.\n    loop = asyncio.new_event_loop()\n    try:\n        asyncio.set_event_loop(loop)\n\n        tasks = [loop.create_task(coro) for coro in coros]\n        n = len(tasks)\n        if n == 0:\n            return []\n\n        # Wait up to the deadline for all tasks to complete.\n        done, pending = loop.run_until_complete(asyncio.wait(tasks, timeout=seconds))\n\n        # Prepare results in input order.\n        results: list[Any] = [None] * n\n\n        # Mark completed tasks.\n        task_to_index = {t: i for i, t in enumerate(tasks)}\n        for t in done:\n            i = task_to_index[t]\n            # If a task raised (for reasons other than cancellation), surface it.\n            results[i] = t.result()\n\n        # Cancel those that did not finish in time.\n        if pending:\n            for t in pending:\n                t.cancel()\n\n            # Ensure cancellations are processed; ignore CancelledError.\n            loop.run_until_complete(\n                asyncio.gather(*pending, return_exceptions=True)\n            )\n\n            # Those remain as None by default.\n\n        return results\n    finally:\n        try:\n            # Avoid warnings about pending tasks (shouldn't happen, but be safe).\n            if not loop.is_closed():\n                loop.run_until_complete(loop.shutdown_asyncgens())\n        except Exception:\n            pass\n        asyncio.set_event_loop(None)\n        loop.close()\n",
+    "prompt_sha": "03171a722e25be6b",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "version_compare": "active",
+   "plugin_loader": "active",
+   "shell_cmd": "active",
+   "web_utils": "active",
+   "ast_tools": "active",
+   "async_bridge": "active",
+   "data_files": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "stdlib_compat",
+  "state": "s3",
+  "date": "2025-10-07",
+  "split": "test",
+  "event": "python-3.14",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\n\n_PNG_MAGIC = b\"\\x89PNG\\r\\n\\x1a\\n\"\n_GIF87A_MAGIC = b\"GIF87a\"\n_GIF89A_MAGIC = b\"GIF89a\"\n# JPEG starts with 0xFFD8 and typically has a third byte 0xFF.\n_JPEG_MAGIC_PREFIX = b\"\\xff\\xd8\\xff\"\n\n\ndef _split_content_type_header(value: str) -> tuple[str, list[str]]:\n    \"\"\"\n    Split a Content-Type header into the media-type and parameter segments.\n\n    This is a minimal parser that supports quoted parameter values.\n    \"\"\"\n    s = value.strip()\n    if not s:\n        return \"\", []\n\n    parts: list[str] = []\n    buf: list[str] = []\n    in_quotes = False\n    escape = False\n\n    for ch in s:\n        if escape:\n            buf.append(ch)\n            escape = False\n            continue\n        if ch == \"\\\\\" and in_quotes:\n            # allow escaping within quotes\n            buf.append(ch)\n            escape = True\n            continue\n        if ch == '\"':\n            in_quotes = not in_quotes\n            buf.append(ch)\n            continue\n        if ch == \";\" and not in_quotes:\n            parts.append(\"\".join(buf).strip())\n            buf = []\n            continue\n        buf.append(ch)\n\n    if buf or not parts:\n        parts.append(\"\".join(buf).strip())\n\n    media_type = parts[0] if parts else \"\"\n    params = parts[1:] if len(parts) > 1 else []\n    return media_type, params\n\n\ndef _parse_parameter(param_segment: str) -> tuple[str, str] | None:\n    \"\"\"\n    Parse one parameter segment: key=value or key.\n\n    Returns (key, value_as_unquoted_str) where value may be empty string.\n    \"\"\"\n    seg = param_segment.strip()\n    if not seg:\n        return None\n\n    if \"=\" not in seg:\n        key = seg.strip().lower()\n        return key, \"\"\n\n    key, raw_val = seg.split(\"=\", 1)\n    key = key.strip().lower()\n    raw_val = raw_val.strip()\n\n    # Unquote if wrapped in double quotes.\n    if len(raw_val) >= 2 and raw_val[0] == raw_val[-1] == '\"':\n        # Handle backslash-escaped quotes/backslashes in a minimal way.\n        # We unescape \\\" and \\\\; leave other escapes as-is.\n        inner = raw_val[1:-1]\n        out = []\n        i = 0\n        while i < len(inner):\n            ch = inner[i]\n            if ch == \"\\\\\" and i + 1 < len(inner):\n                nxt = inner[i + 1]\n                if nxt in ['\"', \"\\\\\"]:\n                    out.append(nxt)\n                    i += 2\n                    continue\n            out.append(ch)\n            i += 1\n        val = \"\".join(out)\n    else:\n        val = raw_val\n\n    return key, val.strip()\n\n\ndef _detect_image_from_signature(data: bytes) -> Optional[str]:\n    \"\"\"\n    Detect common image types from the beginning of `data` using signature bytes.\n    Returns \"png\", \"jpeg\", \"gif\" or None.\n    \"\"\"\n    # PNG: 8 bytes magic\n    if data.startswith(_PNG_MAGIC):\n        return \"png\"\n\n    # JPEG: usually starts with FF D8 FF (SOI + marker prefix)\n    # We only require the first 3 bytes to avoid false positives.\n    if len(data) >= 3 and data.startswith(_JPEG_MAGIC_PREFIX):\n        return \"jpeg\"\n\n    # GIF: GIF87a / GIF89a\n    if data.startswith(_GIF87A_MAGIC) or data.startswith(_GIF89A_MAGIC):\n        return \"gif\"\n\n    return None\n\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    \"\"\"\n    Given a Content-Type header value and the first bytes of the body, return:\n\n        {\n          \"mime\": <lower-cased media type without parameters>,\n          \"charset\": <lower-cased charset parameter or None>,\n          \"image\": <\"png\", \"jpeg\", \"gif\" or None>\n        }\n\n    Parameter values may be quoted.\n    \"\"\"\n    media_type, params = _split_content_type_header(content_type)\n\n    mime = media_type.strip().lower() if media_type else \"\"\n    charset: Optional[str] = None\n\n    for seg in params:\n        parsed = _parse_parameter(seg)\n        if parsed is None:\n            continue\n        key, val = parsed\n        if key == \"charset\":\n            charset = val.lower() if val else None\n            break\n\n    image = _detect_image_from_signature(data)\n\n    return {\"mime\": mime, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "4594f18e13b115f4",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\n\ndef _split_numeric_components(v: str) -> list[int]:\n    # Assumes dotted numeric version strings like \"1.10.2\".\n    # Non-numeric components raise ValueError to surface bad inputs early.\n    if v == \"\":\n        raise ValueError(\"version string must be non-empty\")\n    parts = v.split(\".\")\n    comps: list[int] = []\n    for p in parts:\n        if p == \"\":\n            raise ValueError(f\"invalid version component in {v!r}\")\n        comps.append(int(p))\n    return comps\n\n\ndef _cmp_components(a: list[int], b: list[int]) -> int:\n    # Compare numeric components component-by-component, padding the shorter\n    # list with zeros (e.g. 1.2 == 1.2.0).\n    n = max(len(a), len(b))\n    for i in range(n):\n        ai = a[i] if i < len(a) else 0\n        bi = b[i] if i < len(b) else 0\n        if ai < bi:\n            return -1\n        if ai > bi:\n            return 1\n    return 0\n\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    \"\"\"\n    Return the highest dotted release version in `versions` that is >= `minimum`,\n    comparing versions numerically component-by-component.\n\n    If no version qualifies, return None.\n    The returned string is taken exactly from the input list.\n    \"\"\"\n    if not versions:\n        return None\n\n    min_comps = _split_numeric_components(minimum)\n\n    best_version: Optional[str] = None\n    best_comps: Optional[list[int]] = None\n\n    for v in versions:\n        v_comps = _split_numeric_components(v)\n\n        # Check qualification: v >= minimum\n        if _cmp_components(v_comps, min_comps) < 0:\n            continue\n\n        if best_version is None:\n            best_version = v\n            best_comps = v_comps\n            continue\n\n        # Select the newest: v > best\n        assert best_comps is not None\n        if _cmp_components(v_comps, best_comps) > 0:\n            best_version = v\n            best_comps = v_comps\n\n    return best_version\n",
+    "prompt_sha": "113a48ad5b897ec9",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "from __future__ import annotations\n\nimport shlex\n\n\ndef rsync_command(sources: list[str], host: str, dest: str) -> str:\n    \"\"\"\n    Build a single POSIX shell command line to run:\n\n        rsync -az <sources...> <host>:<dest>\n\n    File names may contain spaces, quotes, $, and other shell metacharacters.\n    This function quotes each path/argument so the shell passes every source\n    and the <host>:<dest> target to rsync unchanged as separate arguments.\n\n    Note: This only escapes for POSIX shell parsing; it assumes rsync is\n    available on PATH.\n    \"\"\"\n    if not isinstance(sources, list):\n        raise TypeError(\"sources must be a list[str]\")\n    for s in sources:\n        if not isinstance(s, str):\n            raise TypeError(\"all sources must be str\")\n    if not isinstance(host, str) or not isinstance(dest, str):\n        raise TypeError(\"host and dest must be str\")\n\n    target = f\"{host}:{dest}\"\n    quoted_sources = \" \".join(shlex.quote(s) for s in sources)\n    quoted_target = shlex.quote(target)\n    if quoted_sources:\n        return f\"rsync -az {quoted_sources} {quoted_target}\"\n    return f\"rsync -az {quoted_target}\"\n",
+    "prompt_sha": "90d967422f30d768",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "\"\"\"\nStandard-library utilities.\n\nThis module provides run_with_deadline(), which runs multiple coroutines\nconcurrently from synchronous code, without relying on any pre-existing\nevent loop.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport asyncio\nfrom typing import Any, Coroutine\n\n\ndef run_with_deadline(coros: list, seconds: float) -> list:\n    \"\"\"\n    Run coroutines concurrently from ordinary synchronous code.\n\n    Args:\n        coros: A list of coroutine objects.\n        seconds: Deadline in seconds. Coroutines not finished within the\n            deadline are cancelled.\n\n    Returns:\n        A list of results in the same order as input.\n        For any coroutine that does not complete before the deadline,\n        returns None.\n    \"\"\"\n    if seconds is None:\n        raise TypeError(\"seconds must be a number, not None\")\n    try:\n        deadline = float(seconds)\n    except (TypeError, ValueError) as e:\n        raise TypeError(\"seconds must be a number\") from e\n    if deadline < 0:\n        # Treat negative as immediate timeout.\n        deadline = 0.0\n\n    tasks: list[asyncio.Task[Any]] = []\n\n    # asyncio.get_event_loop() is no longer safe/implicit for creating a loop,\n    # and this function must work when called repeatedly.\n    # asyncio.Runner creates and closes a new loop per invocation.\n    with asyncio.Runner() as runner:\n        for c in coros:\n            if not asyncio.iscoroutine(c):\n                raise TypeError(\n                    \"All items in coros must be coroutine objects; \"\n                    f\"got {type(c).__name__}\"\n                )\n            tasks.append(runner.get_loop().create_task(c))\n\n        async def _run() -> list[Any]:\n            results: list[Any] = [None] * len(tasks)\n            done: set[asyncio.Task[Any]]\n            pending: set[asyncio.Task[Any]]\n\n            if not tasks:\n                return results\n\n            # Wait for tasks up to the deadline.\n            done, pending = await asyncio.wait(\n                tasks,\n                timeout=deadline,\n                return_when=asyncio.FIRST_COMPLETED\n                if deadline == 0.0\n                else asyncio.ALL_COMPLETED,\n            )\n            # The above isn't sufficient when deadline > 0.0:\n            # We want \"wait until deadline OR all completed\". Use FIRST_COMPLETED\n            # would return too early. So use a single wait with timeout and\n            # check pending.\n            # Re-run with correct return_when for general case.\n            if deadline != 0.0:\n                done, pending = await asyncio.wait(\n                    tasks,\n                    timeout=deadline,\n                    return_when=asyncio.ALL_COMPLETED,\n                )\n\n            # Collect completed results; if a completed task raised, re-raise.\n            for t in done:\n                idx = tasks.index(t)\n                results[idx] = t.result()\n\n            # Cancel remaining tasks and wait for cancellation to propagate.\n            if pending:\n                for t in pending:\n                    t.cancel()\n                # Suppress CancelledError when awaiting.\n                await asyncio.gather(*pending, return_exceptions=True)\n\n                # Ensure their result slots remain None.\n                # (They might have been cancelled, which is treated as timeout.)\n                for t in pending:\n                    idx = tasks.index(t)\n                    results[idx] = None\n\n            return results\n\n        return runner.run(_run())\n",
+    "prompt_sha": "800782015f588980",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "version_compare": "active",
+   "plugin_loader": "active",
+   "shell_cmd": "active",
+   "web_utils": "active",
+   "ast_tools": "active",
+   "async_bridge": "active",
+   "data_files": "active"
+  },
+  "tombstones": 0
+ }
+]

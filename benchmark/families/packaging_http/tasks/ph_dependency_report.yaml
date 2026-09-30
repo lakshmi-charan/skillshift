@@ -1,0 +1,8 @@
+id: ph_dependency_report
+function: dependency_report
+relevant_skills: [pkg_info]
+prompt: |
+  Write a Python function `dependency_report(names: list[str]) -> dict[str, str | None]` that maps each given
+  distribution name, exactly as given, to the version string of the installed distribution (names match
+  case-insensitively), or None if it is not installed in the running environment.
+tests: tasks/test_ph_dependency_report.py

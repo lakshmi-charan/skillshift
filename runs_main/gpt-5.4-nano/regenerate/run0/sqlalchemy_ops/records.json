@@ -1,0 +1,2414 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regenerate",
+  "run": 0,
+  "family": "sqlalchemy_ops",
+  "state": "s0",
+  "date": "2024-09-05",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "sql_reports": {
+    "cases": [
+     {
+      "name": "h_grouped_with_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_params",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_string_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar_empty",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_columns",
+      "component": "report_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_wide_cells",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_empty",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bulk_ops": {
+    "cases": [
+     {
+      "name": "h_create",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_idempotent",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_persists",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_empty_and_generator",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_persists",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_multi_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_requires_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "row_access": {
+    "cases": [
+     {
+      "name": "h_dicts_select",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dicts_text",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_column",
+      "component": "fetch_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tuples",
+      "component": "fetch_tuples",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column_not_values",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keys",
+      "component": "result_keys",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_repository": {
+    "cases": [
+     {
+      "name": "h_add_user",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_order",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_find",
+      "component": "find_by_email",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_get",
+      "component": "get_by_id",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for_status",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner_missing",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "sales_reports": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "totals_by_customer",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_big",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_big_none",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count_grouped",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly",
+      "component": "monthly_revenue",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "session_helpers": {
+    "cases": [
+     {
+      "name": "h_factory_no_expire",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_factory_no_autoflush",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_commit",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_rollback",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_flushes_not_commits",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_joins_outer",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_error",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_query_dicts",
+      "component": "query_to_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_shutdown",
+      "component": "shutdown",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "sa_order_owner",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\nfrom sqlalchemy import Column, Integer, MetaData, String, Table, select\nfrom sqlalchemy.engine import Engine\nfrom sqlalchemy import create_engine\n\n\ndef order_owner_email(db_url: str, order_id: int) -> Optional[str]:\n    \"\"\"\n    Look up the email of the user who placed the order with primary key `order_id`\n    in the database at `db_url`.\n\n    Returns the email string, or None if the order does not exist.\n    \"\"\"\n    metadata = MetaData()\n\n    users = Table(\n        \"users\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String(255), nullable=True),\n        Column(\"email\", String(255), nullable=True),\n    )\n\n    orders = Table(\n        \"orders\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"user_id\", Integer, nullable=True),\n        Column(\"total\", Integer, nullable=True),\n    )\n\n    engine: Engine = create_engine(db_url)\n    try:\n        stmt = (\n            select([users.c.email])\n            .select_from(orders.join(users, orders.c.user_id == users.c.id))\n            .where(orders.c.id == order_id)\n        )\n        with engine.connect() as conn:\n            row = conn.execute(stmt).fetchone()\n            return None if row is None else row[0]\n    finally:\n        engine.dispose()\n",
+    "prompt_sha": "fcecd6b23367dc70",
+    "cases": [
+     {
+      "name": "t_owner",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_purge_inactive",
+    "code": "from __future__ import annotations\n\nfrom sqlalchemy import Column, Integer, MetaData, String, Table, delete, select\nfrom sqlalchemy.engine import Engine\nfrom sqlalchemy import create_engine\n\n\ndef purge_inactive(db_url: str, cutoff: str) -> int:\n    \"\"\"\n    Permanently delete from `customers` all rows whose ISO-date `last_seen` is earlier than `cutoff`.\n\n    Args:\n        db_url: SQLAlchemy database URL.\n        cutoff: ISO date string (e.g. \"2026-01-31\"). Rows with last_seen < cutoff are deleted.\n\n    Returns:\n        The number of customers deleted.\n    \"\"\"\n    engine: Engine = create_engine(db_url)\n\n    metadata = MetaData()\n    customers = Table(\n        \"customers\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"last_seen\", String),\n    )\n\n    with engine.begin() as conn:\n        stmt = delete(customers).where(customers.c.last_seen < cutoff)\n        result = conn.execute(stmt)\n        # For SQLite and SQLAlchemy Core deletes, rowcount is the number deleted.\n        return int(result.rowcount or 0)\n",
+    "prompt_sha": "f245e7c6e1d60799",
+    "cases": [
+     {
+      "name": "t_purge_persists",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_nothing_to_purge",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_query_dicts",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\nfrom sqlalchemy import create_engine, text\nfrom sqlalchemy.engine import Engine\n\n\ndef query_dicts(db_url: str, sql: str, params: dict | None = None) -> list[dict[str, Any]]:\n    \"\"\"\n    Execute `sql` against the database at `db_url` and return rows as plain dicts.\n\n    `sql` may use SQLAlchemy-style named placeholders like `:region`.\n    \"\"\"\n    engine: Engine = create_engine(db_url)\n\n    stmt = text(sql)\n    bind_params = params or {}\n\n    with engine.connect() as conn:\n        result = conn.execute(stmt, bind_params)\n        # mappings() yields rows as mapping objects keyed by column name/label.\n        return [dict(row) for row in result.mappings()]\n",
+    "prompt_sha": "cb51407717f80a96",
+    "cases": [
+     {
+      "name": "t_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_region_totals",
+    "code": "from __future__ import annotations\n\nfrom typing import List, Tuple\n\nfrom sqlalchemy import MetaData, Table, bindparam, create_engine, func, select\n\n\ndef region_totals(db_url: str, min_total: int) -> List[Tuple[str, int]]:\n    \"\"\"\n    Return [(region, total)] for regions whose summed amount >= min_total.\n\n    Results are ordered by total descending, then by region name ascending.\n    Uses a bound parameter for min_total (no string formatting).\n    \"\"\"\n    engine = create_engine(db_url)\n\n    metadata = MetaData()\n    sales = Table(\"sales\", metadata, autoload_with=engine)\n\n    min_total_param = bindparam(\"min_total\", value=min_total)\n\n    stmt = (\n        select([sales.c.region, func.sum(sales.c.amount).label(\"total\")])\n        .group_by(sales.c.region)\n        .having(func.sum(sales.c.amount) >= min_total_param)\n        .order_by(func.sum(sales.c.amount).desc(), sales.c.region.asc())\n    )\n\n    with engine.connect() as conn:\n        rows = conn.execute(stmt, {\"min_total\": min_total}).all()\n\n    return [(region, total) for region, total in rows]\n",
+    "prompt_sha": "4d3b92c936f7e981",
+    "cases": [
+     {
+      "name": "t_threshold",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regenerate",
+  "run": 0,
+  "family": "sqlalchemy_ops",
+  "state": "s1",
+  "date": "2023-01-26",
+  "split": "dev",
+  "event": "sqlalchemy-2.0",
+  "event_kind": "tool",
+  "pre": {
+   "sql_reports": {
+    "cases": [
+     {
+      "name": "h_grouped_with_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'execute' [sql_reports.py:6]",
+      "missing": null
+     },
+     {
+      "name": "h_no_params",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'execute' [sql_reports.py:6]",
+      "missing": null
+     },
+     {
+      "name": "h_string_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'execute' [sql_reports.py:6]",
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'scalar' [sql_reports.py:12]",
+      "missing": null
+     },
+     {
+      "name": "h_scalar_empty",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'scalar' [sql_reports.py:12]",
+      "missing": null
+     },
+     {
+      "name": "h_columns",
+      "component": "report_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'execute' [sql_reports.py:17]",
+      "missing": null
+     },
+     {
+      "name": "h_render",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_wide_cells",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_empty",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bulk_ops": {
+    "cases": [
+     {
+      "name": "h_create",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_idempotent",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_persists",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'execute' [bulk_ops.py:16]",
+      "missing": null
+     },
+     {
+      "name": "h_insert_empty_and_generator",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'Engine' object has no attribute 'execute' [bulk_ops.py:16]",
+      "missing": null
+     },
+     {
+      "name": "h_delete_persists",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: the deletion must be committed [test_bulk_ops.py:72]",
+      "missing": null
+     },
+     {
+      "name": "h_delete_multi_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_bulk_ops.py:83]",
+      "missing": null
+     },
+     {
+      "name": "h_delete_requires_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.functions.count at 0x7bee6e8d9280; count>]. Did you mean to say select(<sqlalchemy.sql.functions.count at 0x7bee6e8d9280; count>)? [coercions.py:519]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "row_access": {
+    "cases": [
+     {
+      "name": "h_dicts_select",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: cannot convert dictionary update sequence element #0 to a sequence [row_access.py:6]",
+      "missing": null
+     },
+     {
+      "name": "h_dicts_text",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: dictionary update sequence element #0 has length 4; 2 is required [row_access.py:6]",
+      "missing": null
+     },
+     {
+      "name": "h_column",
+      "component": "fetch_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: tuple indices must be integers or slices, not str [resultproxy.pyx:54]",
+      "missing": null
+     },
+     {
+      "name": "h_tuples",
+      "component": "fetch_tuples",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_row_access.py:64]",
+      "missing": null
+     },
+     {
+      "name": "h_has_column_not_values",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_row_access.py:74]",
+      "missing": null
+     },
+     {
+      "name": "h_keys",
+      "component": "result_keys",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_repository": {
+    "cases": [
+     {
+      "name": "h_add_user",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_order",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_find",
+      "component": "find_by_email",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_get",
+      "component": "get_by_id",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Join target, typically a FROM expression, or ORM relationship attribute expected, got 'user'. [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_orders_for_status",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Join target, typically a FROM expression, or ORM relationship attribute expected, got 'user'. [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_owner",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner_missing",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "sales_reports": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "totals_by_customer",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Column expression, FROM clause, or other columns clause element expected, got [Column('name', String(length=80), table=<customers>, nullable=False), <sqlalchemy.sql.functions.sum at 0x7ec9e29538f0; sum>]. Did you mean to say select(Column('name', String(length=80), table=<customers>, nullable=False) [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_big",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Column expression, FROM clause, or other columns clause element expected, got [Column('customer_id', Integer(), ForeignKey('customers.id'), table=<invoices>, nullable=False), <sqlalchemy.sql.elements.Label at 0x7ec9e266cbc0; total>]. Did you mean to say select(Column('customer_id', Integer(), Foreig [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_big_none",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Column expression, FROM clause, or other columns clause element expected, got [Column('customer_id', Integer(), ForeignKey('customers.id'), table=<invoices>, nullable=False), <sqlalchemy.sql.elements.Label at 0x7ec9e266cd40; total>]. Did you mean to say select(Column('customer_id', Integer(), Foreig [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.functions.count at 0x7ec9e266d2e0; count>]. Did you mean to say select(<sqlalchemy.sql.functions.count at 0x7ec9e266d2e0; count>)? [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_count_grouped",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: Column expression, FROM clause, or other columns clause element expected, got [<sqlalchemy.sql.functions.count at 0x7ec9e266d670; count>]. Did you mean to say select(<sqlalchemy.sql.functions.count at 0x7ec9e266d670; count>)? [coercions.py:519]",
+      "missing": null
+     },
+     {
+      "name": "h_monthly",
+      "component": "monthly_revenue",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "session_helpers": {
+    "cases": [
+     {
+      "name": "h_factory_no_expire",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_factory_no_autoflush",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_commit",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_rollback",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_flushes_not_commits",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Session.begin() got an unexpected keyword argument 'subtransactions' [session_helpers.py:30]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_joins_outer",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Session.begin() got an unexpected keyword argument 'subtransactions' [session_helpers.py:30]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_error",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Session.begin() got an unexpected keyword argument 'subtransactions' [session_helpers.py:30]",
+      "missing": null
+     },
+     {
+      "name": "h_query_dicts",
+      "component": "query_to_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_shutdown",
+      "component": "shutdown",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "sql_reports": {
+    "cases": [
+     {
+      "name": "h_grouped_with_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_params",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_string_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar_empty",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_columns",
+      "component": "report_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_wide_cells",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_empty",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bulk_ops": {
+    "cases": [
+     {
+      "name": "h_create",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_idempotent",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_persists",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_empty_and_generator",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_persists",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_multi_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_requires_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "row_access": {
+    "cases": [
+     {
+      "name": "h_dicts_select",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dicts_text",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_column",
+      "component": "fetch_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tuples",
+      "component": "fetch_tuples",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column_not_values",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keys",
+      "component": "result_keys",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_repository": {
+    "cases": [
+     {
+      "name": "h_add_user",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_order",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_find",
+      "component": "find_by_email",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_get",
+      "component": "get_by_id",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for_status",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner_missing",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "sales_reports": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "totals_by_customer",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_big",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_big_none",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_count_grouped",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_monthly",
+      "component": "monthly_revenue",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "session_helpers": {
+    "cases": [
+     {
+      "name": "h_factory_no_expire",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_factory_no_autoflush",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_commit",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: 'generator' object does not support the context manager protocol [test_session_helpers.py:64]",
+      "missing": null
+     },
+     {
+      "name": "h_scope_rollback",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: 'generator' object does not support the context manager protocol [test_session_helpers.py:74]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_flushes_not_commits",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: work must be flushed [test_session_helpers.py:92]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_joins_outer",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_error",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_query_dicts",
+      "component": "query_to_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_shutdown",
+      "component": "shutdown",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_session_helpers.py:157]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "sa_order_owner",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\nfrom sqlalchemy import Column, Integer, MetaData, Table, String, ForeignKey, select, create_engine\n\n\ndef order_owner_email(db_url: str, order_id: int) -> Optional[str]:\n    \"\"\"\n    Look up and return the email address of the user who placed `order_id` in the\n    SQLite database at `db_url`.\n\n    Returns:\n        The email string, or None if the order does not exist.\n    \"\"\"\n    metadata = MetaData()\n\n    users = Table(\n        \"users\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"email\", String),\n    )\n\n    orders = Table(\n        \"orders\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"user_id\", Integer, ForeignKey(\"users.id\")),\n        Column(\"total\", Integer),\n    )\n\n    engine = create_engine(db_url, future=True)\n    stmt = (\n        select(users.c.email)\n        .select_from(orders.join(users, orders.c.user_id == users.c.id))\n        .where(orders.c.id == order_id)\n        .limit(1)\n    )\n\n    with engine.connect() as conn:\n        # scalar() returns first column of first row, or None\n        return conn.execute(stmt).scalar()\n",
+    "prompt_sha": "654a7983d13e4f29",
+    "cases": [
+     {
+      "name": "t_owner",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_purge_inactive",
+    "code": "from __future__ import annotations\n\nfrom sqlalchemy import create_engine, text\nfrom sqlalchemy.engine import Engine\n\n\ndef purge_inactive(db_url: str, cutoff: str) -> int:\n    \"\"\"\n    Delete permanently from `customers` every row whose ISO-date `last_seen`\n    is earlier than `cutoff`.\n\n    Returns the number of rows deleted.\n    \"\"\"\n    if not isinstance(db_url, str) or not db_url:\n        raise TypeError(\"db_url must be a non-empty string\")\n    if not isinstance(cutoff, str) or not cutoff:\n        raise TypeError(\"cutoff must be a non-empty ISO date string\")\n\n    engine: Engine = create_engine(db_url, future=True)\n\n    # ISO8601 dates (YYYY-MM-DD) sort lexicographically, so string comparison works.\n    stmt = text(\n        \"DELETE FROM customers \"\n        \"WHERE last_seen < :cutoff\"\n    )\n\n    with engine.begin() as conn:  # commits on success\n        result = conn.execute(stmt, {\"cutoff\": cutoff})\n        return int(result.rowcount or 0)\n",
+    "prompt_sha": "5328a9c1c53ae843",
+    "cases": [
+     {
+      "name": "t_purge_persists",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_nothing_to_purge",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_query_dicts",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\n\ndef query_dicts(db_url: str, sql: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:\n    \"\"\"\n    Execute `sql` against the database at `db_url` using SQLAlchemy, optionally binding named\n    placeholders from `params`, and return rows as a list of plain dicts mapping column names\n    to values (in result order).\n    \"\"\"\n    from sqlalchemy import create_engine, text\n\n    if params is not None and not isinstance(params, dict):\n        raise TypeError(\"params must be a dict or None\")\n\n    engine = create_engine(db_url)\n    try:\n        stmt = text(sql)\n        with engine.connect() as conn:\n            result = conn.execute(stmt, params or None)\n            return [dict(row) for row in result.mappings().all()]\n    finally:\n        engine.dispose()\n",
+    "prompt_sha": "caa4fea41debe63a",
+    "cases": [
+     {
+      "name": "t_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_region_totals",
+    "code": "from __future__ import annotations\n\nfrom typing import Any, List, Tuple\n\nfrom sqlalchemy import Engine, Table, Column, Integer, MetaData, String, func, select, text, create_engine\nfrom sqlalchemy.engine import Connection\n\n\ndef region_totals(db_url: str, min_total: int) -> list[Tuple[str, Any]]:\n    \"\"\"\n    Connect to the database at `db_url` and return [(region, total), ...] for each region whose\n    summed amount is >= min_total, ordered by total descending then region ascending.\n\n    `min_total` is passed as a bound parameter.\n    \"\"\"\n    engine: Engine = create_engine(db_url, future=True)\n\n    metadata = MetaData()\n    sales = Table(\n        \"sales\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"region\", String, nullable=True),\n        Column(\"amount\", Integer, nullable=False),\n        autoload_with=engine,\n    )\n\n    stmt = (\n        select(sales.c.region, func.sum(sales.c.amount).label(\"total\"))\n        .group_by(sales.c.region)\n        .having(func.sum(sales.c.amount) >= text(\":min_total\"))\n        .order_by(func.sum(sales.c.amount).desc(), sales.c.region.asc())\n    )\n\n    # Use an explicit bound parameter dict.\n    with engine.connect() as conn:\n        rows = conn.execute(stmt, {\"min_total\": min_total}).all()\n\n    # Normalize output to list of tuples.\n    return [(region, total) for region, total in rows]\n",
+    "prompt_sha": "6ab5664b2107709b",
+    "cases": [
+     {
+      "name": "t_threshold",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 127.84,
+  "adapt_calls": 9,
+  "adapt_input_tokens": 41194,
+  "adapt_output_tokens": 18434,
+  "adapt_cost": 0.0266733,
+  "status": {
+   "sql_reports": "active",
+   "bulk_ops": "active",
+   "row_access": "active",
+   "user_repository": "active",
+   "sales_reports": "active",
+   "session_helpers": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regenerate",
+  "run": 0,
+  "family": "sqlalchemy_ops",
+  "state": "s2",
+  "date": "2026-09-24",
+  "split": "test",
+  "event": "sqlalchemy-2.1",
+  "event_kind": "tool",
+  "pre": {
+   "sql_reports": {
+    "cases": [
+     {
+      "name": "h_grouped_with_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_params",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_string_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar_empty",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_columns",
+      "component": "report_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_wide_cells",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_empty",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bulk_ops": {
+    "cases": [
+     {
+      "name": "h_create",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_idempotent",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_persists",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_empty_and_generator",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_persists",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_multi_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_requires_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "row_access": {
+    "cases": [
+     {
+      "name": "h_dicts_select",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dicts_text",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_column",
+      "component": "fetch_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tuples",
+      "component": "fetch_tuples",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column_not_values",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keys",
+      "component": "result_keys",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_repository": {
+    "cases": [
+     {
+      "name": "h_add_user",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_order",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_find",
+      "component": "find_by_email",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_get",
+      "component": "get_by_id",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for_status",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner_missing",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "sales_reports": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "totals_by_customer",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_big",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_big_none",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_count_grouped",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_monthly",
+      "component": "monthly_revenue",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "session_helpers": {
+    "cases": [
+     {
+      "name": "h_factory_no_expire",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_factory_no_autoflush",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_commit",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: 'generator' object does not support the context manager protocol [test_session_helpers.py:64]",
+      "missing": null
+     },
+     {
+      "name": "h_scope_rollback",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: 'generator' object does not support the context manager protocol [test_session_helpers.py:74]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_flushes_not_commits",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: work must be flushed [test_session_helpers.py:92]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_joins_outer",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_error",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_query_dicts",
+      "component": "query_to_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_shutdown",
+      "component": "shutdown",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_session_helpers.py:157]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "sql_reports": {
+    "cases": [
+     {
+      "name": "h_grouped_with_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_params",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_string_param",
+      "component": "run_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar_empty",
+      "component": "report_scalar",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_columns",
+      "component": "report_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_wide_cells",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_render_empty",
+      "component": "render_table",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bulk_ops": {
+    "cases": [
+     {
+      "name": "h_create",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_idempotent",
+      "component": "ensure_tables",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_persists",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_insert_empty_and_generator",
+      "component": "insert_many",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_persists",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_multi_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_delete_requires_criteria",
+      "component": "delete_matching",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "row_access": {
+    "cases": [
+     {
+      "name": "h_dicts_select",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dicts_text",
+      "component": "fetch_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_column",
+      "component": "fetch_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tuples",
+      "component": "fetch_tuples",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_has_column_not_values",
+      "component": "row_has_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keys",
+      "component": "result_keys",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_repository": {
+    "cases": [
+     {
+      "name": "h_add_user",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_order",
+      "component": "add_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_find",
+      "component": "find_by_email",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_get",
+      "component": "get_by_id",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_for_status",
+      "component": "orders_for",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_owner_missing",
+      "component": "owner_of_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "sales_reports": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "totals_by_customer",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_big",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_big_none",
+      "component": "big_spenders",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_count_grouped",
+      "component": "count_matching",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_monthly",
+      "component": "monthly_revenue",
+      "kind": "valid",
+      "passed": false,
+      "error": "OperationalError: table customers has no column named region [test_sales_reports.py:25]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "session_helpers": {
+    "cases": [
+     {
+      "name": "h_factory_no_expire",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_factory_no_autoflush",
+      "component": "factory_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_commit",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scope_rollback",
+      "component": "session_scope",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_flushes_not_commits",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: work must be flushed [test_session_helpers.py:92]",
+      "missing": null
+     },
+     {
+      "name": "h_txn_joins_outer",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_txn_error",
+      "component": "run_in_transaction",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_query_dicts",
+      "component": "query_to_dicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_shutdown",
+      "component": "shutdown",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_session_helpers.py:157]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "sa_order_owner",
+    "code": "from __future__ import annotations\n\nfrom typing import Optional\n\nfrom sqlalchemy import MetaData, Table, Column, Integer, Text, ForeignKey, select\nfrom sqlalchemy.engine import Engine\nfrom sqlalchemy import create_engine\n\n\ndef order_owner_email(db_url: str, order_id: int) -> Optional[str]:\n    \"\"\"\n    Look up the email address of the user who placed `order_id` in the database at `db_url`.\n\n    Returns:\n        The email string if the order exists, otherwise None.\n    \"\"\"\n    engine: Engine = create_engine(db_url, future=True)\n\n    metadata = MetaData()\n\n    users = Table(\n        \"users\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", Text),\n        Column(\"email\", Text),\n    )\n\n    orders = Table(\n        \"orders\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"user_id\", Integer, ForeignKey(\"users.id\")),\n        Column(\"total\", Integer),\n    )\n\n    stmt = (\n        select(users.c.email)\n        .select_from(orders.join(users, orders.c.user_id == users.c.id))\n        .where(orders.c.id == order_id)\n    )\n\n    with engine.connect() as conn:\n        # scalar_one_or_none() returns None if no row, else the single scalar value\n        return conn.execute(stmt).scalar_one_or_none()\n",
+    "prompt_sha": "9a48df6cb277bedd",
+    "cases": [
+     {
+      "name": "t_owner",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_purge_inactive",
+    "code": "from __future__ import annotations\n\nfrom sqlalchemy import Table, Column, Integer, String, MetaData, create_engine, delete\nfrom sqlalchemy.engine import Engine\n\n# Table definition for the expected schema.\n_METADATA = MetaData()\n\ncustomers = Table(\n    \"customers\",\n    _METADATA,\n    Column(\"id\", Integer, primary_key=True),\n    Column(\"name\", String),\n    Column(\"last_seen\", String),\n)\n\n\ndef purge_inactive(db_url: str, cutoff: str) -> int:\n    \"\"\"\n    Delete from the `customers` table all customers whose ISO-date `last_seen`\n    is earlier than `cutoff`.\n\n    Returns the number of rows deleted. Deletion is committed permanently.\n    \"\"\"\n    engine: Engine = create_engine(db_url)\n\n    # ISO dates in YYYY-MM-DD format compare correctly as strings.\n    stmt = delete(customers).where(customers.c.last_seen < cutoff)\n\n    with engine.begin() as conn:  # begins a transaction and commits on success\n        result = conn.execute(stmt)\n        # rowcount is an integer for this delete statement.\n        return int(result.rowcount or 0)\n",
+    "prompt_sha": "89c18586bf011608",
+    "cases": [
+     {
+      "name": "t_purge_persists",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_nothing_to_purge",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_query_dicts",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\nfrom urllib.parse import urlparse\n\nfrom sqlalchemy import create_engine, text\nfrom sqlalchemy.engine import Engine\n\n\ndef query_dicts(db_url: str, sql: str, params: dict[str, Any] | None = None) -> list[dict[str, Any]]:\n    \"\"\"\n    Execute `sql` against the database at `db_url` and return rows as plain dicts\n    mapping result column names to values.\n\n    `sql` may use named SQLAlchemy placeholders like ':region' which are supplied\n    via `params`.\n    \"\"\"\n    # Basic validation: ensure it's at least a plausible URL.\n    parsed = urlparse(db_url)\n    if not parsed.scheme:\n        raise ValueError(\"db_url must be a valid SQLAlchemy database URL (e.g. sqlite:///file.db)\")\n\n    engine: Engine = create_engine(db_url, future=True)\n    stmt = text(sql)\n\n    if params:\n        stmt = stmt.params(**params)\n\n    with engine.connect() as conn:\n        result = conn.execute(stmt)\n        rows = result.fetchall()\n        return [dict(row._mapping) for row in rows]\n",
+    "prompt_sha": "c74f514e54e71d47",
+    "cases": [
+     {
+      "name": "t_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_region_totals",
+    "code": "from __future__ import annotations\n\nfrom typing import Any, List, Tuple\n\nfrom sqlalchemy import bindparam, create_engine, select, Table, MetaData, column, func\nfrom sqlalchemy.engine import Engine\n\n\ndef region_totals(db_url: str, min_total: int) -> List[Tuple[str, Any]]:\n    \"\"\"\n    Connect to the database at `db_url`, sum `amount` per `region` from `sales`,\n    and return (region, total) for regions with total >= min_total.\n\n    Results are ordered by total descending, then region ascending.\n    \"\"\"\n    engine: Engine = create_engine(db_url)\n\n    metadata = MetaData()\n\n    # Reflect/define only the columns we need. This works with SQLite and other DBs.\n    sales = Table(\n        \"sales\",\n        metadata,\n        column(\"id\"),\n        column(\"region\"),\n        column(\"amount\"),\n        autoload_with=engine,\n    )\n\n    total = func.sum(sales.c.amount).label(\"total\")\n    min_total_param = bindparam(\"min_total\", type_=sales.c.amount.type)\n\n    stmt = (\n        select(sales.c.region, total)\n        .group_by(sales.c.region)\n        .having(total >= min_total_param)\n        .order_by(total.desc(), sales.c.region.asc())\n    )\n\n    with engine.connect() as conn:\n        rows = conn.execute(stmt, {\"min_total\": min_total}).all()\n\n    return [(region, total_value) for region, total_value in rows]\n",
+    "prompt_sha": "2593b5ff6487184c",
+    "cases": [
+     {
+      "name": "t_threshold",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: 'SchemaItem' object, such as a 'Column' or a 'Constraint' expected, got <sqlalchemy.sql.elements.ColumnClause at 0x7189a8d62b40; id> [schema.py:243]"
+     },
+     {
+      "name": "t_all",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "ArgumentError: 'SchemaItem' object, such as a 'Column' or a 'Constraint' expected, got <sqlalchemy.sql.elements.ColumnClause at 0x7189a9b67440; id> [schema.py:243]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 166.97,
+  "adapt_calls": 11,
+  "adapt_input_tokens": 71074,
+  "adapt_output_tokens": 22801,
+  "adapt_cost": 0.03303925,
+  "status": {
+   "sql_reports": "active",
+   "bulk_ops": "active",
+   "row_access": "active",
+   "user_repository": "active",
+   "sales_reports": "active",
+   "session_helpers": "active"
+  },
+  "tombstones": 0
+ }
+]

@@ -1,0 +1,8 @@
+id: lc_sign_release
+function: sign_release
+relevant_skills: [signing]
+prompt: |
+  Release manifests are signed with our DSA signing key so that the update client (which only verifies DSA
+  signatures) accepts them. Write `sign_release(private_key_pem: bytes, manifest: bytes) -> bytes` returning the
+  signature (SHA-256 digest).
+tests: tasks/test_lc_sign_release.py

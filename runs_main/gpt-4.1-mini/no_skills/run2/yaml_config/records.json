@@ -1,0 +1,176 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "yaml_config",
+  "state": "s0",
+  "date": "2021-01-20",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "yaml_env_dsn",
+    "code": "import yaml\nfrom typing import Any, Dict\n\nclass EnvVarLoader(yaml.SafeLoader):\n    pass\n\ndef env_var_constructor(loader: EnvVarLoader, node: yaml.Node) -> str:\n    value = loader.construct_scalar(node)\n    if ':' in value:\n        name, default = value.split(':', 1)\n    else:\n        name, default = value, None\n    if name in loader.env:\n        return loader.env[name]\n    if default is not None:\n        return default\n    raise KeyError(f\"Environment variable '{name}' not found and no default provided\")\n\nEnvVarLoader.add_constructor('!env', env_var_constructor)\n\ndef build_dsn(config_text: str, env: Dict[str, str]) -> str:\n    loader = EnvVarLoader\n    loader.env = env\n    config = yaml.load(config_text, Loader=loader)\n    db = config['database']\n    return f\"postgresql://{db['user']}:{db['password']}@{db['host']}:{db['port']}/{db['name']}\"\n",
+    "prompt_sha": "d709281313b50134",
+    "cases": [
+     {
+      "name": "t_env",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "yaml_service_port",
+    "code": "import yaml\n\ndef service_port(config_text: str) -> int:\n    data = yaml.safe_load(config_text)\n    if not isinstance(data, dict):\n        raise ValueError(\"Top level of YAML document is not a mapping\")\n    try:\n        port = data['service']['port']\n    except KeyError as e:\n        raise KeyError(f\"Missing key: {e.args[0]}\")\n    return port\n",
+    "prompt_sha": "b80055e700f24dfc",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_not_mapping",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "yaml_config",
+  "state": "s1",
+  "date": "2021-10-13",
+  "split": "dev",
+  "event": "pyyaml-6.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "yaml_env_dsn",
+    "code": "import yaml\nfrom yaml.loader import SafeLoader\n\n\nclass EnvVarLoader(SafeLoader):\n    pass\n\n\ndef env_var_constructor(loader, node):\n    value = loader.construct_scalar(node)\n    if ':' in value:\n        name, default = value.split(':', 1)\n    else:\n        name, default = value, None\n    if name in loader.env:\n        return loader.env[name]\n    if default is not None:\n        return default\n    return ''\n\n\nEnvVarLoader.add_constructor('!env', env_var_constructor)\n\n\ndef build_dsn(config_text: str, env: dict) -> str:\n    # Use EnvVarLoader with env attached for constructor access\n    loader = EnvVarLoader(config_text)\n    loader.env = env\n    try:\n        config = loader.get_single_data()\n    finally:\n        loader.dispose()\n    db = config.get('database', {})\n    user = db.get('user', '')\n    password = db.get('password', '')\n    host = db.get('host', '')\n    port = db.get('port', '')\n    name = db.get('name', '')\n    return f\"postgresql://{user}:{password}@{host}:{port}/{name}\"\n",
+    "prompt_sha": "ba764749bd622b7e",
+    "cases": [
+     {
+      "name": "t_env",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "yaml_service_port",
+    "code": "import yaml\n\ndef service_port(config_text: str) -> int:\n    data = yaml.load(config_text, Loader=yaml.SafeLoader)\n    if not isinstance(data, dict):\n        raise ValueError(\"Top level YAML document is not a mapping\")\n    try:\n        port = data['service']['port']\n    except KeyError as e:\n        raise KeyError(f\"Missing key: {e.args[0]}\") from None\n    return port\n",
+    "prompt_sha": "9eb37c65a242acb8",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_not_mapping",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "config_loader": "active",
+   "multi_document": "active",
+   "env_tags": "active",
+   "config_writer": "active"
+  },
+  "tombstones": 0
+ }
+]

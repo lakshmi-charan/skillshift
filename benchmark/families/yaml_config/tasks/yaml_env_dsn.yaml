@@ -1,0 +1,10 @@
+id: yaml_env_dsn
+function: build_dsn
+relevant_skills: [env_tags]
+prompt: |
+  Write a Python function `build_dsn(config_text: str, env: dict) -> str`. The YAML document has a
+  `database` mapping with keys `host`, `port`, `name`, `user`, `password`. Any of these values may be
+  written as `!env NAME` or `!env NAME:default`, meaning "take the value from env[NAME], or use the
+  default after the first colon when NAME is not in env". Return
+  "postgresql://<user>:<password>@<host>:<port>/<name>".
+tests: tasks/test_yaml_env_dsn.py

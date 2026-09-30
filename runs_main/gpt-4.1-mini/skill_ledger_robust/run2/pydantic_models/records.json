@@ -1,0 +1,1529 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "skill_ledger_robust",
+  "run": 2,
+  "family": "pydantic_models",
+  "state": "s0",
+  "date": "2023-06-07",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "signup_form": {
+    "cases": [
+     {
+      "name": "h_username_ok",
+      "component": "username_pattern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_rejected",
+      "component": "username_pattern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_passwords_match",
+      "component": "passwords_match",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_passwords_length",
+      "component": "passwords_match",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_phone_normalised",
+      "component": "phone_normalised",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_phone_rejected",
+      "component": "phone_normalised",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_models": {
+    "cases": [
+     {
+      "name": "h_required",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_display_name",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bio_omitted",
+      "component": "optional_bio",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bio_given",
+      "component": "optional_bio",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_zip_int",
+      "component": "zip_as_string",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_zip_str",
+      "component": "zip_as_string",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_public",
+      "component": "public_view",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_public_with_values",
+      "component": "public_view",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_changes",
+      "component": "apply_changes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_changes_empty",
+      "component": "apply_changes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "orm_schemas": {
+    "cases": [
+     {
+      "name": "h_user_orm",
+      "component": "from_orm_object",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_user_orm_invalid",
+      "component": "from_orm_object",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_orm",
+      "component": "from_orm_list",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_orm_generator_and_invalid",
+      "component": "from_orm_list",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_user_dict",
+      "component": "from_dict",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_field_names",
+      "component": "field_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_field_names_other_model",
+      "component": "field_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required_other_model",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "app_settings": {
+    "cases": [
+     {
+      "name": "h_env",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_env_list_and_bool",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_env_invalid",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_defaults",
+      "component": "defaults_and_overrides",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_overrides",
+      "component": "defaults_and_overrides",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "required_database_url",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required_via_override",
+      "component": "required_database_url",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_export": {
+    "cases": [
+     {
+      "name": "h_content",
+      "component": "json_content",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_content_notes",
+      "component": "json_content",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timestamp",
+      "component": "timestamp_format",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timestamp_aware",
+      "component": "timestamp_format",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pretty",
+      "component": "pretty_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pretty_notes",
+      "component": "pretty_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_json",
+      "component": "from_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_json_invalid",
+      "component": "from_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_total",
+      "component": "invoice_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "catalog_items": {
+    "cases": [
+     {
+      "name": "h_name",
+      "component": "name_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_price",
+      "component": "price_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stock",
+      "component": "stock_and_tags",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tags",
+      "component": "stock_and_tags",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_immutable",
+      "component": "immutable",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_immutable_other_instances",
+      "component": "immutable",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_try_valid",
+      "component": "invalid_returns_none",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_try_invalid",
+      "component": "invalid_returns_none",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pd_export_invoice",
+    "code": "from datetime import datetime, timezone\nfrom decimal import Decimal, ROUND_DOWN, ROUND_HALF_UP\nfrom typing import List, Union\n\nfrom pydantic import BaseModel, conint, validator, ValidationError\n\n\nclass Line(BaseModel):\n    sku: str\n    quantity: conint(ge=1)\n    unit_price: Decimal\n\n    @validator(\"unit_price\", pre=True)\n    def validate_unit_price(cls, v):\n        # Accept str/int/float, convert to Decimal, must be >= 0\n        try:\n            d = Decimal(str(v))\n        except Exception:\n            raise ValueError(\"unit_price must be a decimal number\")\n        if d < 0:\n            raise ValueError(\"unit_price must be >= 0\")\n        # Quantize to 2 decimal places exactly, rounding half up\n        return d.quantize(Decimal(\"0.01\"), rounding=ROUND_HALF_UP)\n\n\nclass Invoice(BaseModel):\n    number: str\n    issued_at: datetime\n    lines: List[Line]\n\n    @validator(\"issued_at\", pre=True)\n    def parse_issued_at(cls, v):\n        # Accept ISO 8601 string or datetime\n        if isinstance(v, datetime):\n            dt = v\n        elif isinstance(v, str):\n            try:\n                dt = datetime.fromisoformat(v)\n            except Exception:\n                raise ValueError(\"issued_at must be ISO 8601 datetime string or datetime\")\n        else:\n            raise ValueError(\"issued_at must be ISO 8601 datetime string or datetime\")\n        # If naive, treat as UTC\n        if dt.tzinfo is None:\n            dt = dt.replace(tzinfo=timezone.utc)\n        else:\n            dt = dt.astimezone(timezone.utc)\n        return dt\n\n\ndef export_invoice(data: dict) -> str:\n    \"\"\"\n    Validate an invoice dict and return JSON text for the billing API with:\n    - number (str)\n    - issued_at formatted as YYYY-MM-DDTHH:MM:SSZ in UTC\n    - lines: list of {sku, quantity, unit_price} with unit_price as string with 2 decimals\n    - total: string with 2 decimals (sum of quantity * unit_price)\n    Raises ValueError for invalid input.\n    \"\"\"\n    try:\n        invoice = Invoice.parse_obj(data)\n    except ValidationError as e:\n        raise ValueError(str(e)) from e\n\n    # Format issued_at as YYYY-MM-DDTHH:MM:SSZ (UTC)\n    issued_at_str = invoice.issued_at.strftime(\"%Y-%m-%dT%H:%M:%SZ\")\n\n    # Prepare lines with unit_price as string with exactly two decimals\n    lines_out = []\n    total = Decimal(\"0.00\")\n    for line in invoice.lines:\n        line_total = line.unit_price * line.quantity\n        total += line_total\n        lines_out.append(\n            {\n                \"sku\": line.sku,\n                \"quantity\": line.quantity,\n                \"unit_price\": f\"{line.unit_price:.2f}\",\n            }\n        )\n\n    total_str = f\"{total.quantize(Decimal('0.01'), rounding=ROUND_HALF_UP):.2f}\"\n\n    import json\n\n    out = {\n        \"number\": invoice.number,\n        \"issued_at\": issued_at_str,\n        \"lines\": lines_out,\n        \"total\": total_str,\n    }\n    return json.dumps(out, separators=(\",\", \":\"))\n",
+    "prompt_sha": "3c9a137f177cac2e",
+    "cases": [
+     {
+      "name": "t_export",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_naive_datetime",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_import_profiles",
+    "code": "from typing import List, Optional\n\nfrom pydantic import BaseModel, validator\n\n\nclass ImportProfile(BaseModel):\n    user_id: int\n    display_name: str\n    bio: Optional[str] = None\n    zip_code: str\n\n    @validator(\"display_name\")\n    def clean_display_name(cls, value: str) -> str:\n        value = \" \".join(value.split())\n        if not value:\n            raise ValueError(\"display_name must not be blank\")\n        return value\n\n    @validator(\"zip_code\", pre=True)\n    def zip_code_to_str(cls, value) -> str:\n        # Accept int or str, store as str\n        return str(value)\n\n\ndef import_profiles(rows: list) -> list:\n    valid_profiles = []\n    for row in rows:\n        try:\n            profile = ImportProfile.parse_obj(row)\n            # Return dict with only required keys in the requested order\n            valid_profiles.append(\n                {\n                    \"user_id\": profile.user_id,\n                    \"display_name\": profile.display_name,\n                    \"bio\": profile.bio,\n                    \"zip_code\": profile.zip_code,\n                }\n            )\n        except Exception:\n            # Silently skip invalid rows\n            pass\n    return valid_profiles\n",
+    "prompt_sha": "5554d7cb5972ef40",
+    "cases": [
+     {
+      "name": "t_import",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_orders_payload",
+    "code": "from orm_schemas import orders_from_orm\n\n\ndef orders_payload(orders: list) -> list:\n    \"\"\"Convert ORM order objects into JSON-ready dicts with selected fields.\n\n    Args:\n        orders: Iterable of ORM order objects with attributes id, customer, items.\n\n    Returns:\n        List of dicts with keys \"id\", \"customer\" (dict), and \"items\" (list of dicts).\n\n    Raises:\n        ValueError: If any required attribute is missing or invalid.\n    \"\"\"\n    order_schemas = orders_from_orm(orders)\n    return [order.dict(include={\"id\", \"customer\", \"items\"}, exclude_none=True) for order in order_schemas]\n",
+    "prompt_sha": "5a07b89834f5ac14",
+    "cases": [
+     {
+      "name": "t_payload",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: expected ValueError [test_pd_orders_payload.py:31]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_validate_signup",
+    "code": "from signup_form import parse_signup\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"Validate a sign-up payload dict with pydantic and return a dict with normalized fields.\n\n    Fields:\n    - username: matches ^[a-z0-9_]{3,20}$\n    - email: must contain '@', returned stripped and lower-cased\n    - phone: spaces, dots, dashes, parentheses removed, must be '+' followed by 8-15 digits\n    - password: at least 8 characters\n    - password_confirm: must equal password\n\n    Returns dict with keys: username, email, phone (compact form).\n    Raises ValueError (pydantic ValidationError) if invalid or missing fields.\n    \"\"\"\n    validated = parse_signup(data)\n    email = validated.email\n    if \"@\" not in email:\n        raise ValueError(\"email must contain '@'\")\n    return {\n        \"username\": validated.username,\n        \"email\": email.strip().lower(),\n        \"phone\": validated.phone,\n    }\n",
+    "prompt_sha": "41a20eedce1bb096",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "skill_ledger_robust",
+  "run": 2,
+  "family": "pydantic_models",
+  "state": "s1",
+  "date": "2023-06-30",
+  "split": "dev",
+  "event": "pydantic-2.0",
+  "event_kind": "tool",
+  "pre": {
+   "signup_form": {
+    "cases": [
+     {
+      "name": "h_username_ok",
+      "component": "username_pattern",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_username_rejected",
+      "component": "username_pattern",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_passwords_match",
+      "component": "passwords_match",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_passwords_length",
+      "component": "passwords_match",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_phone_normalised",
+      "component": "phone_normalised",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_phone_rejected",
+      "component": "phone_normalised",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "PydanticUserError: `regex` is removed. use `pattern` instead\n\nFor further information visit https://errors.pydantic.dev/2.0.3/u/removed-kwargs",
+    "fatal": null
+   },
+   "profile_models": {
+    "cases": [
+     {
+      "name": "h_required",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_display_name",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bio_omitted",
+      "component": "optional_bio",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValidationError: 1 validation error for Profile\nbio\n  Field required [type=missing, input_value={'user_id': 7, 'display_n...e', 'zip_code': '02139'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.0.3/v/missing [main.py:480]",
+      "missing": null
+     },
+     {
+      "name": "h_bio_given",
+      "component": "optional_bio",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValidationError: 1 validation error for Profile\nbio\n  Field required [type=missing, input_value={'user_id': 1, 'display_n...e': 'https://b.example'}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.0.3/v/missing [main.py:480]",
+      "missing": null
+     },
+     {
+      "name": "h_zip_int",
+      "component": "zip_as_string",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValidationError: 1 validation error for Profile\nzip_code\n  Input should be a valid string [type=string_type, input_value=94105, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.0.3/v/string_type [main.py:480]",
+      "missing": null
+     },
+     {
+      "name": "h_zip_str",
+      "component": "zip_as_string",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValidationError: 1 validation error for Profile\nzip_code\n  Input should be a valid string [type=string_type, input_value=10001, input_type=int]\n    For further information visit https://errors.pydantic.dev/2.0.3/v/string_type [main.py:480]",
+      "missing": null
+     },
+     {
+      "name": "h_public",
+      "component": "public_view",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_public_with_values",
+      "component": "public_view",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_changes",
+      "component": "apply_changes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_changes_empty",
+      "component": "apply_changes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "orm_schemas": {
+    "cases": [
+     {
+      "name": "h_user_orm",
+      "component": "from_orm_object",
+      "kind": "valid",
+      "passed": false,
+      "error": "PydanticUserError: You must set the config attribute `from_attributes=True` to use from_orm [main.py:1040]",
+      "missing": null
+     },
+     {
+      "name": "h_user_orm_invalid",
+      "component": "from_orm_object",
+      "kind": "valid",
+      "passed": false,
+      "error": "PydanticUserError: You must set the config attribute `from_attributes=True` to use from_orm [main.py:1040]",
+      "missing": null
+     },
+     {
+      "name": "h_orders_orm",
+      "component": "from_orm_list",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValidationError: 2 validation errors for list[OrderSchema]\n0\n  Input should be a valid dictionary or instance of OrderSchema [type=model_type, input_value=<_util.Obj object at 0x729b562344d0>, input_type=Obj]\n    For further information visit https://errors.pydantic.dev/2.0.3/v/model_type\n1\n  Input should be a valid [type_adapter.py:206]",
+      "missing": null
+     },
+     {
+      "name": "h_orders_orm_generator_and_invalid",
+      "component": "from_orm_list",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValidationError: 3 validation errors for list[OrderSchema]\n0\n  Input should be a valid dictionary or instance of OrderSchema [type=model_type, input_value=<_util.Obj object at 0x729b55903c10>, input_type=Obj]\n    For further information visit https://errors.pydantic.dev/2.0.3/v/model_type\n1\n  Input should be a valid [type_adapter.py:206]",
+      "missing": null
+     },
+     {
+      "name": "h_user_dict",
+      "component": "from_dict",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_field_names",
+      "component": "field_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_field_names_other_model",
+      "component": "field_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'FieldInfo' object has no attribute 'required' [orm_schemas.py:55]",
+      "missing": null
+     },
+     {
+      "name": "h_required_other_model",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'FieldInfo' object has no attribute 'required' [orm_schemas.py:55]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "app_settings": {
+    "cases": [
+     {
+      "name": "h_env",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_env_list_and_bool",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_env_invalid",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_defaults",
+      "component": "defaults_and_overrides",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_overrides",
+      "component": "defaults_and_overrides",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_required",
+      "component": "required_database_url",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_required_via_override",
+      "component": "required_database_url",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_settings is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "PydanticImportError: `BaseSettings` has been moved to the `pydantic-settings` package. See https://docs.pydantic.dev/2.0.3/migration/#basesettings-has-moved-to-pydantic-settings for more details.\n\nFor further information visit https://errors.pydantic.dev/2.0.3/u/import-error",
+    "fatal": null
+   },
+   "json_export": {
+    "cases": [
+     {
+      "name": "h_content",
+      "component": "json_content",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_content_notes",
+      "component": "json_content",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timestamp",
+      "component": "timestamp_format",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: 2023-05-01T12:00:00.123456 [test_json_export.py:35]",
+      "missing": null
+     },
+     {
+      "name": "h_timestamp_aware",
+      "component": "timestamp_format",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pretty",
+      "component": "pretty_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: `dumps_kwargs` keyword arguments are no longer supported. [main.py:929]",
+      "missing": null
+     },
+     {
+      "name": "h_pretty_notes",
+      "component": "pretty_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: `dumps_kwargs` keyword arguments are no longer supported. [main.py:929]",
+      "missing": null
+     },
+     {
+      "name": "h_from_json",
+      "component": "from_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_json_invalid",
+      "component": "from_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_total",
+      "component": "invoice_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "catalog_items": {
+    "cases": [
+     {
+      "name": "h_name",
+      "component": "name_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_price",
+      "component": "price_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stock",
+      "component": "stock_and_tags",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tags",
+      "component": "stock_and_tags",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_immutable",
+      "component": "immutable",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: items must be immutable (price changed) [test_catalog_items.py:60]",
+      "missing": null
+     },
+     {
+      "name": "h_immutable_other_instances",
+      "component": "immutable",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_catalog_items.py:71]",
+      "missing": null
+     },
+     {
+      "name": "h_try_valid",
+      "component": "invalid_returns_none",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_try_invalid",
+      "component": "invalid_returns_none",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: 'NoneType' object is not iterable [catalog_items.py:21]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "signup_form": {
+    "cases": [
+     {
+      "name": "h_username_ok",
+      "component": "username_pattern",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_username_rejected",
+      "component": "username_pattern",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_passwords_match",
+      "component": "passwords_match",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_passwords_length",
+      "component": "passwords_match",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_phone_normalised",
+      "component": "phone_normalised",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_phone_rejected",
+      "component": "phone_normalised",
+      "kind": "valid",
+      "passed": false,
+      "error": "function parse_signup is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_models": {
+    "cases": [
+     {
+      "name": "h_required",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_display_name",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bio_omitted",
+      "component": "optional_bio",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bio_given",
+      "component": "optional_bio",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_zip_int",
+      "component": "zip_as_string",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_zip_str",
+      "component": "zip_as_string",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_public",
+      "component": "public_view",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_public_with_values",
+      "component": "public_view",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_changes",
+      "component": "apply_changes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_changes_empty",
+      "component": "apply_changes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "orm_schemas": {
+    "cases": [
+     {
+      "name": "h_user_orm",
+      "component": "from_orm_object",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_user_orm_invalid",
+      "component": "from_orm_object",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_orm",
+      "component": "from_orm_list",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_orders_orm_generator_and_invalid",
+      "component": "from_orm_list",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_user_dict",
+      "component": "from_dict",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_field_names",
+      "component": "field_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_field_names_other_model",
+      "component": "field_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_orm_schemas.py:81]",
+      "missing": null
+     },
+     {
+      "name": "h_required_other_model",
+      "component": "required_fields",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_orm_schemas.py:95]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "app_settings": {
+    "cases": [
+     {
+      "name": "h_env",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_env_list_and_bool",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_env_invalid",
+      "component": "env_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_defaults",
+      "component": "defaults_and_overrides",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_overrides",
+      "component": "defaults_and_overrides",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "required_database_url",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required_via_override",
+      "component": "required_database_url",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_export": {
+    "cases": [
+     {
+      "name": "h_content",
+      "component": "json_content",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_to_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_content_notes",
+      "component": "json_content",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_to_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_timestamp",
+      "component": "timestamp_format",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_to_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_timestamp_aware",
+      "component": "timestamp_format",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'NoneType' object has no attribute 'Invoice' [test_json_export.py:13]",
+      "missing": null
+     },
+     {
+      "name": "h_pretty",
+      "component": "pretty_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_to_pretty_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pretty_notes",
+      "component": "pretty_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_to_pretty_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_from_json",
+      "component": "from_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_from_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_from_json_invalid",
+      "component": "from_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_from_json is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_total",
+      "component": "invoice_total",
+      "kind": "valid",
+      "passed": false,
+      "error": "function invoice_total is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "catalog_items": {
+    "cases": [
+     {
+      "name": "h_name",
+      "component": "name_rules",
+      "kind": "valid",
+      "passed": false,
+      "error": "function make_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_price",
+      "component": "price_rules",
+      "kind": "valid",
+      "passed": false,
+      "error": "function make_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stock",
+      "component": "stock_and_tags",
+      "kind": "valid",
+      "passed": false,
+      "error": "function make_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_tags",
+      "component": "stock_and_tags",
+      "kind": "valid",
+      "passed": false,
+      "error": "function make_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_immutable",
+      "component": "immutable",
+      "kind": "valid",
+      "passed": false,
+      "error": "function make_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_immutable_other_instances",
+      "component": "immutable",
+      "kind": "valid",
+      "passed": false,
+      "error": "function make_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_try_valid",
+      "component": "invalid_returns_none",
+      "kind": "valid",
+      "passed": false,
+      "error": "function try_parse_item is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_try_invalid",
+      "component": "invalid_returns_none",
+      "kind": "valid",
+      "passed": false,
+      "error": "function try_parse_item is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pd_export_invoice",
+    "code": "from datetime import datetime, timezone\nfrom decimal import Decimal, InvalidOperation\nfrom typing import List, Union\n\nfrom pydantic import BaseModel, Field, field_validator, ValidationError\n\n\nclass InvoiceLine(BaseModel):\n    sku: str\n    quantity: int = Field(..., ge=1)\n    unit_price: Decimal = Field(..., ge=0)\n\n    @field_validator(\"unit_price\", mode=\"before\")\n    @classmethod\n    def coerce_unit_price(cls, v) -> Decimal:\n        # Accept str/int/float, convert to Decimal\n        try:\n            d = Decimal(str(v))\n        except (InvalidOperation, ValueError):\n            raise ValueError(\"unit_price must be a decimal number >= 0\")\n        if d < 0:\n            raise ValueError(\"unit_price must be >= 0\")\n        return d\n\n    def unit_price_str(self) -> str:\n        # Format unit_price as string with exactly two decimals\n        return f\"{self.unit_price:.2f}\"\n\n\nclass Invoice(BaseModel):\n    number: str\n    issued_at: Union[datetime, str]\n    lines: List[InvoiceLine]\n\n    @field_validator(\"issued_at\", mode=\"before\")\n    @classmethod\n    def parse_issued_at(cls, v) -> datetime:\n        if isinstance(v, datetime):\n            dt = v\n        elif isinstance(v, str):\n            try:\n                dt = datetime.fromisoformat(v)\n            except ValueError:\n                raise ValueError(\"issued_at must be a valid ISO 8601 datetime string or datetime\")\n        else:\n            raise ValueError(\"issued_at must be a datetime or ISO 8601 string\")\n\n        # If naive, treat as UTC\n        if dt.tzinfo is None:\n            dt = dt.replace(tzinfo=timezone.utc)\n        else:\n            dt = dt.astimezone(timezone.utc)\n        return dt\n\n    def issued_at_str(self) -> str:\n        # Format as \"YYYY-MM-DDTHH:MM:SSZ\" in UTC\n        dt_utc = self.issued_at\n        return dt_utc.strftime(\"%Y-%m-%dT%H:%M:%SZ\")\n\n    def total(self) -> Decimal:\n        total = Decimal(\"0\")\n        for line in self.lines:\n            total += line.unit_price * line.quantity\n        return total\n\n\ndef export_invoice(data: dict) -> str:\n    try:\n        invoice = Invoice.model_validate(data)\n    except ValidationError as e:\n        # Raise ValueError as requested\n        raise ValueError(e.errors())\n\n    # Compose output dict\n    out = {\n        \"number\": invoice.number,\n        \"issued_at\": invoice.issued_at_str(),\n        \"lines\": [\n            {\n                \"sku\": line.sku,\n                \"quantity\": line.quantity,\n                \"unit_price\": line.unit_price_str(),\n            }\n            for line in invoice.lines\n        ],\n        \"total\": f\"{invoice.total():.2f}\",\n    }\n\n    import json\n\n    return json.dumps(out, separators=(\",\", \":\"))\n",
+    "prompt_sha": "10d590e201e764dc",
+    "cases": [
+     {
+      "name": "t_export",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_naive_datetime",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_import_profiles",
+    "code": "from profile_models import load_profile, public_view\nfrom pydantic import ValidationError\n\n\ndef import_profiles(rows: list) -> list:\n    \"\"\"Validate profile rows and return valid ones as dicts with user_id, display_name, bio, zip_code.\n\n    Invalid rows are skipped silently.\n    \"\"\"\n    valid_profiles = []\n    for row in rows:\n        try:\n            profile = load_profile(row)\n        except ValidationError:\n            continue\n        # public_view excludes user_id and fields with None, but we want user_id included and bio even if None\n        # So we build dict manually with required fields:\n        # user_id as int, display_name as cleaned str, bio as str or None, zip_code as str\n        profile_dict = {\n            \"user_id\": profile.user_id,\n            \"display_name\": profile.display_name,\n            \"bio\": profile.bio,\n            \"zip_code\": profile.zip_code,\n        }\n        valid_profiles.append(profile_dict)\n    return valid_profiles\n",
+    "prompt_sha": "ca793976c3fc5db9",
+    "cases": [
+     {
+      "name": "t_import",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_orders_payload",
+    "code": "from orm_schemas import orders_from_orm\n\n\ndef orders_payload(orders: list) -> list:\n    \"\"\"\n    Convert a list of ORM order objects into JSON-ready dicts using pydantic models.\n    Each order object must have attributes: id (int), customer (with id, name, email),\n    and items (list of objects with sku and quantity).\n    Raises ValueError if required attributes are missing or invalid.\n    \"\"\"\n    # Validate and convert ORM orders to OrderSchema list\n    validated_orders = orders_from_orm(orders)\n    # Convert each OrderSchema to dict with only declared fields\n    return [order.model_dump() for order in validated_orders]\n",
+    "prompt_sha": "5b91ea9da757fd93",
+    "cases": [
+     {
+      "name": "t_payload",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: expected ValueError [test_pd_orders_payload.py:31]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_validate_signup",
+    "code": "import re\nfrom pydantic import BaseModel, field_validator, ValidationError\n\n\nclass SignupModel(BaseModel):\n    username: str\n    email: str\n    phone: str\n    password: str\n    password_confirm: str\n\n    @field_validator(\"username\")\n    @classmethod\n    def validate_username(cls, v: str) -> str:\n        if not re.fullmatch(r\"^[a-z0-9_]{3,20}$\", v):\n            raise ValueError(\"username must match ^[a-z0-9_]{3,20}$\")\n        return v\n\n    @field_validator(\"email\")\n    @classmethod\n    def validate_email(cls, v: str) -> str:\n        v = v.strip().lower()\n        if \"@\" not in v:\n            raise ValueError(\"email must contain '@'\")\n        return v\n\n    @field_validator(\"phone\")\n    @classmethod\n    def validate_phone(cls, v: str) -> str:\n        # Remove spaces, dots, dashes, parentheses\n        compact = re.sub(r\"[ \\.\\-\\(\\)]\", \"\", v)\n        if not re.fullmatch(r\"\\+[0-9]{8,15}\", compact):\n            raise ValueError(\"phone must be '+' followed by 8-15 digits\")\n        return compact\n\n    @field_validator(\"password\")\n    @classmethod\n    def validate_password(cls, v: str) -> str:\n        if len(v) < 8:\n            raise ValueError(\"password must be at least 8 characters\")\n        return v\n\n    @field_validator(\"password_confirm\")\n    @classmethod\n    def validate_password_confirm(cls, v: str, info) -> str:\n        # We cannot validate equality here because password_confirm is validated before password\n        # So validate equality in root_validator instead\n        return v\n\n    @classmethod\n    def model_validate(cls, data):\n        # Use BaseModel's model_validate to get ValidationError on field validators\n        obj = super().model_validate(data)\n        # Check password == password_confirm\n        if obj.password != obj.password_confirm:\n            raise ValidationError(\n                [\n                    {\n                        \"loc\": (\"password_confirm\",),\n                        \"msg\": \"password_confirm must equal password\",\n                        \"type\": \"value_error\",\n                    }\n                ],\n                cls,\n            )\n        return obj\n\n\ndef validate_signup(data: dict) -> dict:\n    validated = SignupModel.model_validate(data)\n    return {\n        \"username\": validated.username,\n        \"email\": validated.email,\n        \"phone\": validated.phone,\n    }\n",
+    "prompt_sha": "01c228d41460ccee",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: No constructor defined [solution.py:56]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 116.96,
+  "adapt_calls": 17,
+  "adapt_input_tokens": 95085,
+  "adapt_output_tokens": 14713,
+  "adapt_cost": 0.0422212,
+  "status": {
+   "signup_form": "quarantined",
+   "profile_models": "active",
+   "orm_schemas": "active",
+   "app_settings": "active",
+   "json_export": "quarantined",
+   "catalog_items": "quarantined"
+  },
+  "tombstones": 3
+ }
+]

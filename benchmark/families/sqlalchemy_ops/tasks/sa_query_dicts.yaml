@@ -1,0 +1,9 @@
+id: sa_query_dicts
+function: query_dicts
+relevant_skills: [row_access, sql_reports]
+prompt: |
+  Write a Python function `query_dicts(db_url: str, sql: str, params: dict = None) -> list` that uses
+  SQLAlchemy to run the SQL string `sql` (which may contain named placeholders such as `:region`, filled
+  from `params`) against the database at `db_url` and returns the result rows as a list of plain dicts
+  mapping column names to values, in result order.
+tests: tasks/test_sa_query_dicts.py

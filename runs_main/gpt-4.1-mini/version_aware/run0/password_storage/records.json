@@ -1,0 +1,2690 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "version_aware",
+  "run": 0,
+  "family": "password_storage",
+  "state": "s0",
+  "date": "2021-03-17",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_wf",
+      "component": "work_factor",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_limit",
+      "component": "input_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "\"\"\"FIPS-mode password hashing using PBKDF2-HMAC with selectable digest.\"\"\"\nimport pbkdf2_hasher as _pbkdf2\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the given digest.\n    Supported digests: \"sha256\", \"sha512\", \"sha1\".\n    Returns the encoded hash string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    if digest not in (\"sha256\", \"sha512\", \"sha1\"):\n        raise ValueError(f\"Unsupported digest for FIPS PBKDF2: {digest}\")\n    return _pbkdf2.hash_pbkdf2(password, digest=digest)\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash.\n    The stored hash must be in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    if not stored.startswith(\"$pbkdf2-\"):\n        return False\n    return _pbkdf2.verify_pbkdf2(password, stored)\n",
+    "prompt_sha": "789a7fa467c5f8dd",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "\"\"\"Password hashing for partner sync: bcrypt only as per partner directory import format.\"\"\"\nimport bcrypt_hasher as _bcrypt\n\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Create a bcrypt password hash for a new account to send to the partner directory.\n\n    This uses bcrypt with the current recommended parameters (work factor 12, max 64 chars),\n    as the partner directory imports only bcrypt password hashes.\n    \"\"\"\n    return _bcrypt.hash_bcrypt(password)\n",
+    "prompt_sha": "dd3a5c0131c387dd",
+    "cases": [
+     {
+      "name": "t_bcrypt",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "\"\"\"Password registration and login verification following org-owasp policy.\"\"\"\n\nimport password_store as _store\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password according to the current org-owasp policy.\n\n    Uses the recommended algorithm and parameters for new hashes.\n    \"\"\"\n    # The org-owasp policy requires bcrypt with work factor 12 or more for new hashes.\n    # The password_store.hash_new_password enforces this.\n    return _store.hash_new_password(password)\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored hash.\n\n    Supports all legacy and current stored formats.\n    \"\"\"\n    return _store.verify_password(password, stored)\n",
+    "prompt_sha": "0a14c99f0a8be0fa",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "version_aware",
+  "run": 0,
+  "family": "password_storage",
+  "state": "s1",
+  "date": "2022-06-10",
+  "split": "dev",
+  "event": "owasp-2022-06-10",
+  "event_kind": "policy",
+  "pre": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_wf",
+      "component": "work_factor",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_limit",
+      "component": "input_limit",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: password longer than 64 characters [bcrypt_hasher.py:11]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$otgzz [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$2b$10$fUYEPfxX15l8.qi', False)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_wf",
+      "component": "work_factor",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_limit",
+      "component": "input_limit",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: password longer than 64 characters [bcrypt_hasher.py:11]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$SYm3e [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$2b$10$bCyjy37oBnn5JpC', False)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "\"\"\"FIPS-mode password hashing using PBKDF2-HMAC with specified digest.\"\"\"\nimport pbkdf2_hasher as _pbkdf2\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest.\n    Supported digests: \"sha256\", \"sha512\", \"sha1\".\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    if digest not in (\"sha256\", \"sha512\", \"sha1\"):\n        raise ValueError(\"Unsupported digest for FIPS PBKDF2: %s\" % digest)\n    return _pbkdf2.hash_pbkdf2(password, digest=digest)\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    Accepts any digest and iteration count encoded in the stored hash.\n    \"\"\"\n    return _pbkdf2.verify_pbkdf2(password, stored)\n",
+    "prompt_sha": "7907a66229465fef",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "\"\"\"Password hashing for partner sync with bcrypt hashes only.\"\"\"\nimport bcrypt_hasher as _bcrypt\n\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Create a bcrypt password hash for a new account to send to the partner directory.\n\n    This function uses bcrypt with the current recommended parameters,\n    as the partner directory only accepts bcrypt hashes.\n\n    Raises:\n        ValueError: If the password is longer than the bcrypt maximum allowed length.\n    \"\"\"\n    # Use the bcrypt_hasher skill which enforces current org-owasp policy for bcrypt.\n    return _bcrypt.hash_bcrypt(password)\n",
+    "prompt_sha": "9be01b09d0060993",
+    "cases": [
+     {
+      "name": "t_bcrypt",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "\"\"\"Password registration and login verification following current OWASP Password Storage Cheat Sheet policy.\"\"\"\nimport password_store as _store\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new password for storage according to the current organisation policy.\n    Uses Argon2id with recommended parameters as primary algorithm.\n    \"\"\"\n    # According to the current policy, Argon2id is the first choice for new hashes.\n    # The password_store.hash_new_password currently uses bcrypt for new hashes,\n    # but the policy requires Argon2id first, so we override here to use argon2_hasher directly.\n    import argon2_hasher as _argon2\n\n    # Hash with Argon2id with recommended parameters (time_cost=2, memory_cost=15360 KiB, parallelism=1)\n    # The argon2_hasher module already uses these parameters.\n    return _argon2.hash_argon2(password)\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored hash.\n    Supports all legacy and current hash formats.\n    \"\"\"\n    return _store.verify_password(password, stored)\n",
+    "prompt_sha": "7c9989754e0b39f3",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 3.25,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "version_aware",
+  "run": 0,
+  "family": "password_storage",
+  "state": "s2",
+  "date": "2023-01-24",
+  "split": "dev",
+  "event": "owasp-2023-01-24",
+  "event_kind": "policy",
+  "pre": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 210000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 720000 < 1300000 [test_pbkdf2_hasher.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_wf",
+      "component": "work_factor",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_limit",
+      "component": "input_limit",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: password longer than 64 characters [bcrypt_hasher.py:11]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$wajdE [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$10$7cqu1YAdv/XxFx2', False)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 210000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 720000 < 1300000 [test_pbkdf2_hasher.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_wf",
+      "component": "work_factor",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_limit",
+      "component": "input_limit",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: password longer than 64 characters [bcrypt_hasher.py:11]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$lmXL3 [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$10$Ch.G49OhhV5.BdF', False)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "\"\"\"FIPS-mode PBKDF2-HMAC password hashing and verification following OWASP Password Storage Cheat Sheet.\"\"\"\nimport pbkdf2_hasher as _pbkdf2\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest algorithm.\n    Supported digests: 'sha256', 'sha512', 'sha1'.\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    if digest not in (\"sha256\", \"sha512\", \"sha1\"):\n        raise ValueError(f\"Unsupported digest for FIPS PBKDF2: {digest}\")\n    return _pbkdf2.hash_pbkdf2(password, digest=digest)\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored string must be in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    return _pbkdf2.verify_pbkdf2(password, stored)\n",
+    "prompt_sha": "df6ba1e63ab8e2ff",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: SHA256 iterations below policy [test_pw_fips_hash.py:24]"
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: SHA1 iterations below policy [test_pw_fips_hash.py:30]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "\"\"\"Password hashing for partner sync using bcrypt with current OWASP parameters.\"\"\"\nimport bcrypt_hasher as _bcrypt\n\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Create a bcrypt password hash for a new account to send to the partner directory.\n\n    This uses bcrypt with a work factor of at least 12 and a password length limit of 64 characters,\n    as required by the current OWASP Password Storage Cheat Sheet policy for legacy bcrypt usage.\n\n    Raises:\n        ValueError: If the password length exceeds the allowed maximum for bcrypt.\n    \"\"\"\n    return _bcrypt.hash_bcrypt(password)\n",
+    "prompt_sha": "3d0f933cc605bee8",
+    "cases": [
+     {
+      "name": "t_bcrypt",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "\"\"\"Password registration and verification following the current OWASP Password Storage Cheat Sheet policy.\"\"\"\n\nimport password_store as _store\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password according to the current organisation policy.\n\n    Returns the encoded hash string to be stored.\n    \"\"\"\n    # The organisation's current policy requires Argon2id with at least 19 MiB memory,\n    # t=2, p=1 as first choice.\n    # The password_store.hash_new_password() uses bcrypt by default in the skill library,\n    # but the policy requires Argon2id first. We must override.\n\n    # We will use argon2_hasher directly with the parameters set in the skill library.\n    # The argon2_hasher module uses time_cost=2, memory_cost=15360 KiB (15 MiB).\n    # The policy requires minimum 19 MiB, so we must raise PermissionError if the\n    # current argon2_hasher parameters are insufficient.\n\n    # However, the argon2_hasher skill uses 15360 KiB (15 MiB), which is less than 19 MiB.\n    # So we must raise PermissionError because the current argon2_hasher does not meet policy.\n\n    # But the organisation rules say \"The deployment has Argon2id (argon2-cffi) and scrypt (hashlib) available\".\n    # The argon2_hasher skill is fixed version, so we cannot change its parameters.\n    # The policy requires Argon2id with minimum 19 MiB memory.\n    # Since argon2_hasher uses 15 MiB, it does not meet the policy minimum.\n    # So we cannot create new hashes with argon2_hasher as is.\n\n    # The policy also says \"If Argon2id is not available, use scrypt with minimum CPU/memory cost 2^17\".\n    # But argon2-cffi is available, so Argon2id is available.\n    # The policy also says \"bcrypt is legacy and permitted for new hashes only while cheat sheet permits\".\n    # The current cheat sheet says Argon2id first, bcrypt legacy second.\n\n    # Because the argon2_hasher skill parameters do not meet the policy minimum,\n    # we must raise PermissionError to prevent creating non-compliant hashes.\n\n    raise PermissionError(\n        \"Cannot create new Argon2id hashes with current parameters below policy minimum of 19 MiB memory.\"\n    )\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored hash string.\n\n    Supports all legacy and current formats.\n    \"\"\"\n    return _store.verify_password(password, stored)\n",
+    "prompt_sha": "c9aaada468591fbd",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Cannot create new Argon2id hashes with current parameters below policy minimum of 19 MiB memory. [solution.py:39]"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Cannot create new Argon2id hashes with current parameters below policy minimum of 19 MiB memory. [solution.py:39]"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Cannot create new Argon2id hashes with current parameters below policy minimum of 19 MiB memory. [solution.py:39]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 4.14,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "version_aware",
+  "run": 0,
+  "family": "password_storage",
+  "state": "s3",
+  "date": "2024-12-09",
+  "split": "test",
+  "event": "owasp-2024-12-09",
+  "event_kind": "policy",
+  "pre": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 210000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 720000 < 1300000 [test_pbkdf2_hasher.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "o_no_new_bcrypt",
+      "component": "new_hashes_permitted",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_bcrypt_hasher.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$YAcXe [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$12$HTh6/jK3v/z0znf', True)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 210000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 720000 < 1300000 [test_pbkdf2_hasher.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "o_no_new_bcrypt",
+      "component": "new_hashes_permitted",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_bcrypt_hasher.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$yj/yz [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$12$JAbtPciFaD4Yeb6', True)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "\"\"\"FIPS-mode password hashing using PBKDF2-HMAC per OWASP Password Storage Cheat Sheet (2024-12-09).\"\"\"\nimport pbkdf2_hasher\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest.\n    Supported digests: \"sha256\", \"sha512\", \"sha1\".\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>.\n    \"\"\"\n    if digest not in (\"sha256\", \"sha512\", \"sha1\"):\n        raise ValueError(f\"Unsupported digest: {digest}\")\n    return pbkdf2_hasher.hash_pbkdf2(password, digest=digest)\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored string must be in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>.\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    if not stored.startswith(\"$pbkdf2-\"):\n        return False\n    return pbkdf2_hasher.verify_pbkdf2(password, stored)\n",
+    "prompt_sha": "1530215b6d80a144",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: SHA256 iterations below policy [test_pw_fips_hash.py:24]"
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: SHA1 iterations below policy [test_pw_fips_hash.py:30]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "\"\"\"Password hashing for partner sync using bcrypt only (legacy system).\"\"\"\nimport bcrypt_hasher as _bcrypt\n\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a new password for the partner sync directory.\n\n    The partner directory imports only bcrypt password hashes.\n    According to the current OWASP Password Storage Cheat Sheet policy,\n    bcrypt is only permitted for legacy systems.\n\n    This function creates a bcrypt hash with compliant parameters.\n\n    Raises:\n        PermissionError: if bcrypt is not permitted for new hashes by policy.\n        ValueError: if password length exceeds bcrypt limits.\n    \"\"\"\n    # The current policy revision (2024-12-09) permits bcrypt only for legacy systems,\n    # and new password hashes must use Argon2id or scrypt.\n    # Therefore, creating new bcrypt hashes is disallowed by policy.\n    # Raise PermissionError to comply with org-owasp rule.\n    raise PermissionError(\n        \"New bcrypt hashes are not permitted by current OWASP Password Storage Cheat Sheet policy\"\n    )\n",
+    "prompt_sha": "7d264be0e9b1f9ba",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "bcrypt_legacy_only",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "\"\"\"Password registration and login verification following current OWASP Password Storage Cheat Sheet policy.\"\"\"\n\nimport password_store as _store\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new password for storage according to the current organisation policy.\n\n    Uses Argon2id with minimum parameters as per current OWASP Password Storage Cheat Sheet.\n    \"\"\"\n    # The current primary algorithm is Argon2id with at least 19 MiB memory, t=2, p=1.\n    # We rely on password_store.hash_new_password() which uses bcrypt by default,\n    # but org-owasp requires Argon2id first, so override here accordingly.\n\n    # Since password_store.hash_new_password() uses bcrypt, but org-owasp requires Argon2id,\n    # we must implement Argon2id hashing here directly with compliant parameters.\n\n    import argon2\n\n    # Argon2id recommended minimum parameters from policy:\n    # m=19456 (19 MiB), t=2, p=1\n    # argon2-cffi expects memory_cost in kibibytes\n    _hasher = argon2.PasswordHasher(time_cost=2, memory_cost=19456, parallelism=1)\n\n    if len(password) > 1024 * 1024:\n        # Defensive limit to avoid DoS, not specified but reasonable\n        raise ValueError(\"password too long\")\n\n    return _hasher.hash(password)\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored hash.\n\n    Supports all legacy and current formats.\n    \"\"\"\n    import argon2\n    import bcrypt\n    import pbkdf2_hasher as _pbkdf2\n    import scrypt_hasher as _scrypt\n\n    # Detect hash format and verify accordingly\n    if stored.startswith(\"$pbkdf2-\"):\n        return _pbkdf2.verify_pbkdf2(password, stored)\n    if stored.startswith(\"$argon2id$\") or stored.startswith(\"$argon2$\"):\n        try:\n            # Use argon2.PasswordHasher().verify for any argon2 variant\n            return argon2.PasswordHasher().verify(stored, password)\n        except (argon2.exceptions.VerificationError, argon2.exceptions.InvalidHash, ValueError):\n            return False\n    if stored.startswith(\"$scrypt$\"):\n        return _scrypt.verify_scrypt(password, stored)\n    if stored.startswith((\"$2a$\", \"$2b$\", \"$2y$\")):\n        try:\n            return bcrypt.checkpw(password.encode(\"utf-8\"), stored.encode(\"ascii\"))\n        except ValueError:\n            return False\n    return False\n",
+    "prompt_sha": "6e7aff0475e70ab4",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 3.67,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "version_aware",
+  "run": 0,
+  "family": "password_storage",
+  "state": "s4",
+  "date": "2026-03-26",
+  "split": "test",
+  "event": "owasp-2026-03-26",
+  "event_kind": "policy",
+  "pre": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 220000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 720000 < 1400000 [test_pbkdf2_hasher.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "o_no_new_bcrypt",
+      "component": "new_hashes_permitted",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_bcrypt_hasher.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$/nZiY [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$pbkdf2-sha512$210000$', True), ('$pbkdf2-sha1$1300000$M', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$12$IB4nIAF4IHGC3kd', True)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 220000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "h_sha1",
+      "component": "sha1_new_hashes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 720000 < 1400000 [test_pbkdf2_hasher.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "o_no_new_bcrypt",
+      "component": "new_hashes_permitted",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_bcrypt_hasher.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$IUJSs [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$pbkdf2-sha512$210000$', True), ('$pbkdf2-sha1$1300000$M', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$12$dJORKS4qllqLHLX', True)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "\"\"\"FIPS-mode PBKDF2-HMAC password hashing and verification.\n\nThis module provides functions to hash passwords and verify them using PBKDF2-HMAC\nwith the current OWASP Password Storage Cheat Sheet recommended iteration counts\nfor SHA1, SHA256, and SHA512 digests.\n\nFormat:\n$pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n\"\"\"\n\nimport base64\nimport hashlib\nimport hmac\nimport os\n\n# Iteration counts updated per OWASP Password Storage Cheat Sheet revision 2026-03-26\nITERATIONS = {\n    \"sha1\": 1_400_000,\n    \"sha256\": 600_000,\n    \"sha512\": 220_000,\n}\nSALT_BYTES = 16\n\n\ndef _b64(b: bytes) -> str:\n    \"\"\"Base64 encode bytes without trailing '=' padding.\"\"\"\n    return base64.b64encode(b).decode(\"ascii\").rstrip(\"=\")\n\n\ndef _unb64(s: str) -> bytes:\n    \"\"\"Decode base64 string with optional missing padding.\"\"\"\n    return base64.b64decode(s + \"=\" * (-len(s) % 4))\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest.\n\n    Args:\n        password: The plaintext password to hash.\n        digest: One of \"sha1\", \"sha256\", or \"sha512\".\n\n    Returns:\n        A string in the format:\n        $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n\n    Raises:\n        ValueError: If the digest is unsupported.\n    \"\"\"\n    if digest not in ITERATIONS:\n        raise ValueError(f\"unsupported digest: {digest}\")\n    iterations = ITERATIONS[digest]\n    salt = os.urandom(SALT_BYTES)\n    dk = hashlib.pbkdf2_hmac(digest, password.encode(\"utf-8\"), salt, iterations)\n    return f\"$pbkdf2-{digest}${iterations}${_b64(salt)}${_b64(dk)}\"\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash.\n\n    Args:\n        password: The plaintext password to verify.\n        stored: The stored hash string in the format:\n                $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n\n    Returns:\n        True if the password matches the stored hash, False otherwise.\n    \"\"\"\n    try:\n        parts = stored.split(\"$\")\n        if len(parts) != 5 or not parts[1].startswith(\"pbkdf2-\"):\n            return False\n        scheme = parts[1]\n        digest = scheme.split(\"-\", 1)[1]\n        iterations = int(parts[2])\n        salt_b64 = parts[3]\n        hash_b64 = parts[4]\n        salt = _unb64(salt_b64)\n        expected = _unb64(hash_b64)\n        dk = hashlib.pbkdf2_hmac(digest, password.encode(\"utf-8\"), salt, iterations, dklen=len(expected))\n    except (ValueError, IndexError):\n        return False\n    return hmac.compare_digest(dk, expected)\n",
+    "prompt_sha": "634fa6e504060e7e",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "\"\"\"Password hashing for partner directory sync using bcrypt only.\"\"\"\nimport bcrypt_hasher as _bcrypt\n\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Create a bcrypt password hash for a new account to send to the partner directory.\n\n    This uses bcrypt with the current recommended parameters, as the partner directory only accepts bcrypt hashes.\n    \"\"\"\n    return _bcrypt.hash_bcrypt(password)\n",
+    "prompt_sha": "615096ffa2310214",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "bcrypt_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_pw_legacy_bcrypt.py:26]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "\"\"\"Password registration and login verification following the current OWASP Password Storage Cheat Sheet policy.\"\"\"\nimport password_store as _store\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new password for storage following the current OWASP Password Storage Cheat Sheet policy.\n\n    Returns:\n        A string representing the hashed password to store.\n    \"\"\"\n    # According to the current policy, Argon2id with m=19456 (19 MiB), t=2, p=1 is the recommended algorithm.\n    # The existing password_store.hash_new_password uses bcrypt, but the policy revision mandates Argon2id first.\n    # However, the organisation's password_store.hash_new_password uses bcrypt as primary_algorithm.\n    # The policy states bcrypt only for legacy systems without Argon2/scrypt.\n    # The deployment has Argon2id and scrypt available.\n    # Therefore, we must override the default and use Argon2id with parameters compliant with the current policy.\n    # The argon2_hasher module uses time_cost=2, memory_cost=15360 (15 MiB), parallelism=1.\n    # The policy requires minimum 19 MiB (19456 KiB).\n    # We must implement a compliant Argon2id hasher here or raise PermissionError if not possible.\n    #\n    # The argon2_hasher module uses fixed parameters and does not expose parameter customization.\n    # The organisation's standing rule requires new hashes to meet current OWASP policy.\n    # Since argon2_hasher uses 15 MiB < 19 MiB, it is not compliant.\n    #\n    # scrypt_hasher uses LOG2_N=16 (N=65536), policy requires minimum N=2^17=131072.\n    # So scrypt_hasher is also not compliant.\n    #\n    # bcrypt_hasher is only permitted for legacy systems without Argon2/scrypt.\n    #\n    # PBKDF2 is for FIPS mode, not default.\n    #\n    # Therefore, since no compliant Argon2id or scrypt implementation is available,\n    # and bcrypt is not permitted for new hashes under current policy,\n    # we must raise PermissionError to comply with the organisation's standing rule.\n\n    raise PermissionError(\n        \"Cannot create new password hash: no compliant Argon2id or scrypt implementation available per current OWASP policy.\"\n    )\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored password hash.\n\n    Args:\n        password: The password attempt.\n        stored: The stored password hash string.\n\n    Returns:\n        True if the password matches the stored hash, False otherwise.\n    \"\"\"\n    # The organisation's standing rule permits verification of any stored format (legacy verification always permitted).\n    return _store.verify_password(password, stored)\n",
+    "prompt_sha": "2b0df41ce4725c91",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Cannot create new password hash: no compliant Argon2id or scrypt implementation available per current OWASP policy. [solution.py:37]"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Cannot create new password hash: no compliant Argon2id or scrypt implementation available per current OWASP policy. [solution.py:37]"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Cannot create new password hash: no compliant Argon2id or scrypt implementation available per current OWASP policy. [solution.py:37]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 4.1,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "version_aware",
+  "run": 0,
+  "family": "password_storage",
+  "state": "s5",
+  "date": "2026-05-12",
+  "split": "test",
+  "event": "owasp-2026-05-12",
+  "event_kind": "policy",
+  "pre": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 220000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "o_sha1_refused",
+      "component": "sha1_new_hashes",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new PBKDF2-HMAC-SHA1 hash created [test_pbkdf2_hasher.py:36]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "o_no_new_bcrypt",
+      "component": "new_hashes_permitted",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_bcrypt_hasher.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$ueBQX [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$pbkdf2-sha512$210000$', True), ('$pbkdf2-sha1$1300000$M', True), ('$pbkdf2-sha1$1400000$M', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$12$ixEyJs1Hb8bb6tQ', True)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "pbkdf2_hasher": {
+    "cases": [
+     {
+      "name": "h_sha256",
+      "component": "sha256_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 310000 < 600000 [test_pbkdf2_hasher.py:19]",
+      "missing": null
+     },
+     {
+      "name": "h_sha512",
+      "component": "sha512_iterations",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: iterations 120000 < 220000 [test_pbkdf2_hasher.py:25]",
+      "missing": null
+     },
+     {
+      "name": "o_sha1_refused",
+      "component": "sha1_new_hashes",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new PBKDF2-HMAC-SHA1 hash created [test_pbkdf2_hasher.py:36]",
+      "missing": null
+     },
+     {
+      "name": "h_salt",
+      "component": "salt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_roundtrip",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "argon2_hasher": {
+    "cases": [
+     {
+      "name": "h_memory",
+      "component": "memory_cost",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: memory 15360 KiB < 19456 KiB [test_argon2_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_tp",
+      "component": "time_parallelism",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "scrypt_hasher": {
+    "cases": [
+     {
+      "name": "h_cost",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'ln': 16, 'r': 8, 'p': 1} [test_scrypt_hasher.py:20]",
+      "missing": null
+     },
+     {
+      "name": "h_runs",
+      "component": "cost_parameter",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify_legacy",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "bcrypt_hasher": {
+    "cases": [
+     {
+      "name": "o_no_new_bcrypt",
+      "component": "new_hashes_permitted",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_bcrypt_hasher.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_store": {
+    "cases": [
+     {
+      "name": "h_primary",
+      "component": "primary_algorithm",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: primary must be Argon2id, got $2b$12$Iv2w8 [test_password_store.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_verify_all",
+      "component": "verify_all_formats",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_rehash",
+      "component": "rehash_thresholds",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: needs_rehash wrong for [('$pbkdf2-sha256$310000$', True), ('$pbkdf2-sha512$210000$', True), ('$pbkdf2-sha1$1300000$M', True), ('$pbkdf2-sha1$1400000$M', True), ('$scrypt$ln=16,r=8,p=1$', True), ('$argon2id$v=19$m=15360', True), ('$2b$12$oBz3nC2bLeHAy36', True)] [test_password_store.py:79]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "\"\"\"FIPS-mode password hashing API using PBKDF2-HMAC per OWASP Password Storage Cheat Sheet 2026-05-12 revision.\"\"\"\nimport pbkdf2_hasher as _pbkdf2\n\n# Allowed digests for FIPS subsystem per policy\n_ALLOWED_DIGESTS = {\"sha256\", \"sha512\", \"sha1\"}\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest.\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    digest must be one of \"sha256\", \"sha512\", or \"sha1\".\n    \"\"\"\n    if digest not in _ALLOWED_DIGESTS:\n        raise ValueError(f\"Unsupported digest for FIPS PBKDF2: {digest}\")\n    # Use the pbkdf2_hasher module's hash_pbkdf2 which uses recommended iterations and salt length\n    return _pbkdf2.hash_pbkdf2(password, digest=digest)\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored string must be in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    # Only verify if the stored hash is a PBKDF2 hash with allowed digest\n    if not stored.startswith(\"$pbkdf2-\"):\n        return False\n    try:\n        _, scheme, iterations, salt_b64, hash_b64 = stored.split(\"$\")\n        digest = scheme.split(\"-\", 1)[1]\n    except (ValueError, IndexError):\n        return False\n    if digest not in _ALLOWED_DIGESTS:\n        # Reject verification for unsupported digest in FIPS mode\n        return False\n    return _pbkdf2.verify_pbkdf2(password, stored)\n",
+    "prompt_sha": "8e6a348ca635d735",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: SHA256 iterations below policy [test_pw_fips_hash.py:24]"
+     },
+     {
+      "name": "t_sha1_refused",
+      "component": "sha1_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new PBKDF2-HMAC-SHA1 hash created although SHA1 is legacy only [test_pw_fips_hash.py:40]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "\"\"\"Password hashing for partner sync using bcrypt only (legacy system).\"\"\"\nimport bcrypt_hasher as _bcrypt\n\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Create a bcrypt password hash for a new account to send to the partner directory.\n\n    The partner directory imports only bcrypt password hashes.\n    This function uses the current recommended bcrypt parameters per the OWASP Password Storage Cheat Sheet.\n    \"\"\"\n    # Use the bcrypt_hasher.hash_bcrypt which enforces the current org-owasp policy:\n    # - work factor at least 12\n    # - max password length 64 characters (raises ValueError if exceeded)\n    return _bcrypt.hash_bcrypt(password)\n",
+    "prompt_sha": "b9c4f6c149647bd9",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "bcrypt_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_pw_legacy_bcrypt.py:26]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "\"\"\"Password registration and verification according to the current OWASP Password Storage Cheat Sheet policy.\"\"\"\nimport password_store as _store\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new password for storage according to the current OWASP Password Storage Cheat Sheet policy.\n\n    Uses Argon2id with parameters:\n    - memory_cost: at least 19 MiB (19456 KiB)\n    - time_cost: at least 2 iterations\n    - parallelism: 1\n\n    Raises:\n        PermissionError: if Argon2id is not available or not permitted by policy.\n    \"\"\"\n    # The organisation's current policy requires Argon2id with minimum parameters for new hashes.\n    # The underlying argon2_hasher module already uses compliant parameters.\n    # So we delegate to password_store.hash_new_password which currently uses bcrypt,\n    # but the policy now requires Argon2id as first choice.\n    # We must override to use Argon2id with compliant parameters.\n\n    # However, the password_store.hash_new_password currently uses bcrypt_hasher.hash_bcrypt,\n    # which is only allowed for legacy or fallback.\n    # So we must implement Argon2id hashing here directly using argon2_hasher.\n\n    import argon2_hasher as _argon2\n\n    # The argon2_hasher module uses time_cost=2, memory_cost=15360 KiB (15 MiB),\n    # but the policy requires at least 19 MiB (19456 KiB).\n    # So we must create a hasher with the updated parameters.\n\n    import argon2\n\n    # Create a PasswordHasher with the required parameters:\n    # memory_cost=19456 KiB, time_cost=2, parallelism=1\n    # version=19 (default)\n    hasher = argon2.PasswordHasher(time_cost=2, memory_cost=19456, parallelism=1)\n\n    if len(password) > 1024 * 1024:\n        # Arbitrary large limit to avoid DoS, not specified by policy but reasonable.\n        raise ValueError(\"password too long\")\n\n    return hasher.hash(password)\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored password hash.\n\n    Supports all legacy and current formats:\n    - Argon2id PHC strings\n    - scrypt hashes\n    - PBKDF2 hashes (any digest and iteration count)\n    - bcrypt hashes ($2a$, $2b$, $2y$)\n\n    Returns True if password matches, False otherwise.\n    \"\"\"\n    return _store.verify_password(password, stored)\n",
+    "prompt_sha": "a8cf1313bf62e569",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 3.34,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ }
+]

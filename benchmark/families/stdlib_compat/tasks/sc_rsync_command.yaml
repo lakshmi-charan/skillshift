@@ -1,0 +1,9 @@
+id: sc_rsync_command
+function: rsync_command
+relevant_skills: [shell_cmd]
+prompt: |
+  Write a Python function `rsync_command(sources: list[str], host: str, dest: str) -> str` that returns a
+  single POSIX shell command line running `rsync -az <sources...> <host>:<dest>`. File names may contain
+  spaces, quotes, `$` and other shell metacharacters; the shell must pass every source and the
+  `host:dest` target to rsync unchanged as separate arguments.
+tests: tasks/test_sc_rsync_command.py

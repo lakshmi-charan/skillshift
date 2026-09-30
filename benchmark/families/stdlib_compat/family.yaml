@@ -1,0 +1,114 @@
+id: stdlib_compat
+title: Standard-library utilities across CPython upgrades
+domain: tool
+summary: >
+  A team's internal toolbox of small standard-library helpers (version comparison, plugin loading,
+  shell-command building, HTTP upload helpers, AST analysis, sync/async bridging, JSON/CSV files).
+  The code runs on the CPython interpreter the deployment provides, with no third-party packages
+  except `packaging` (21.3, installed in every environment and allowed as a dependency).
+  The interpreter is upgraded to each new CPython feature release; the helpers must keep working.
+states:
+  - id: s0
+    date: "2022-10-24"
+    label: "CPython 3.11"
+    env: {python: "3.11", packages: {packaging: "21.3"}}
+  - id: s1
+    date: "2023-10-02"
+    label: "CPython 3.12"
+    env: {python: "3.12", packages: {packaging: "21.3"}}
+    event:
+      id: python-3.12
+      kind: tool
+      title: "Python 3.12: distutils, imp, asynchat/asyncore/smtpd and long-deprecated APIs removed"
+      source: "https://raw.githubusercontent.com/python/cpython/v3.12.0/Doc/whatsnew/3.12.rst"
+      doc: docs/python-3.12.md
+  - id: s2
+    date: "2024-10-07"
+    label: "CPython 3.13"
+    env: {python: "3.13", packages: {packaging: "21.3"}}
+    event:
+      id: python-3.13
+      kind: tool
+      title: "Python 3.13: PEP 594 dead-battery modules (cgi, pipes, imghdr, ...) and lib2to3 removed"
+      source: "https://raw.githubusercontent.com/python/cpython/v3.13.0/Doc/whatsnew/3.13.rst"
+      doc: docs/python-3.13.md
+  - id: s3
+    date: "2025-10-07"
+    label: "CPython 3.14"
+    env: {python: "3.14", packages: {packaging: "21.3"}}
+    event:
+      id: python-3.14
+      kind: tool
+      title: "Python 3.14: ast.Num/Str aliases, pkgutil.find_loader/get_loader and implicit event-loop creation removed"
+      source: "https://raw.githubusercontent.com/python/cpython/v3.14.0/Doc/whatsnew/3.14.rst"
+      doc: docs/python-3.14.md
+skills:
+  - id: version_compare
+    file: skills/version_compare.py
+    visible_tests: visible/test_version_compare.py
+    hidden_tests: hidden/test_version_compare.py
+    purpose: "Compare, sort and pick dotted release version strings."
+    components:
+      - {id: compare, requirement: "compare_versions(a, b) returns -1/0/1 comparing dotted numeric versions component-wise as integers."}
+      - {id: sort, requirement: "sort_versions(versions, reverse=False) returns a new list in version order."}
+      - {id: latest, requirement: "latest_version(iterable) returns the highest version string, or None when empty."}
+      - {id: minimum, requirement: "meets_minimum(installed, minimum) is True iff installed >= minimum in version order."}
+  - id: plugin_loader
+    file: skills/plugin_loader.py
+    visible_tests: visible/test_plugin_loader.py
+    hidden_tests: hidden/test_plugin_loader.py
+    purpose: "Load plugin modules from files, locate modules and list plugin directories."
+    components:
+      - {id: load_from_path, requirement: "load_module_from_path(name, path) executes the file as module `name`, registers it in sys.modules and returns it; errors raised by the file propagate."}
+      - {id: is_importable, requirement: "is_importable(name) tells whether a (possibly dotted) module can be imported, without importing it; missing parents give False."}
+      - {id: module_file, requirement: "module_file(name) returns the path of the module's source file, or None for missing or built-in modules."}
+      - {id: list_plugins, requirement: "list_plugins(directory) returns the sorted names of modules and packages directly inside the directory."}
+  - id: shell_cmd
+    file: skills/shell_cmd.py
+    visible_tests: visible/test_shell_cmd.py
+    hidden_tests: hidden/test_shell_cmd.py
+    purpose: "Quote, join and split POSIX shell command lines."
+    components:
+      - {id: quote_arg, requirement: "quote_arg(s) returns a shell word that a POSIX shell reads back as exactly s; safe strings are returned unchanged and '' becomes \"''\"."}
+      - {id: join_command, requirement: "join_command(args) returns a command line whose shell words are str() of each argument."}
+      - {id: remote_command, requirement: "remote_command(host, args, user=None) returns 'ssh [user@]host <one quoted word>' where that word splits back into args."}
+      - {id: split_command, requirement: "split_command(line) splits a command line into words using shell rules."}
+  - id: web_utils
+    file: skills/web_utils.py
+    visible_tests: visible/test_web_utils.py
+    hidden_tests: hidden/test_web_utils.py
+    purpose: "Parse MIME headers and detect uploaded file types."
+    components:
+      - {id: content_type, requirement: "parse_content_type(header) returns (lower-cased main value, dict of parameters with lower-cased names and unquoted values), honouring quoted ';'."}
+      - {id: charset, requirement: "content_charset(header, default='utf-8') returns the lower-cased charset parameter or the default."}
+      - {id: image_type, requirement: "image_type(data) returns 'png', 'jpeg', 'gif', 'bmp' or 'webp' from the leading signature bytes, else None."}
+      - {id: guess_mime, requirement: "guess_mime(filename, default) returns the MIME type for the file extension, or the default when unknown."}
+  - id: ast_tools
+    file: skills/ast_tools.py
+    visible_tests: visible/test_ast_tools.py
+    hidden_tests: hidden/test_ast_tools.py
+    purpose: "Constant folding and literal/name extraction on Python source."
+    components:
+      - {id: fold_constants, requirement: "fold_constants(src) folds +, -, * between numeric literals (recursively) and returns ast.unparse output; other expressions are unchanged."}
+      - {id: number_literals, requirement: "number_literals(src) lists int/float/complex literals (not bools) in source order."}
+      - {id: string_literals, requirement: "string_literals(src) lists str literals (not bytes) in source order, including docstrings."}
+      - {id: names_used, requirement: "names_used(src) returns the sorted names that are read (Load context)."}
+  - id: async_bridge
+    file: skills/async_bridge.py
+    visible_tests: visible/test_async_bridge.py
+    hidden_tests: hidden/test_async_bridge.py
+    purpose: "Run asyncio coroutines from synchronous code; timeout and retry helpers."
+    components:
+      - {id: run_sync, requirement: "run_sync(coro) runs a coroutine from synchronous code (no running loop) and returns its result; exceptions propagate; repeated calls work."}
+      - {id: run_all, requirement: "run_all(coros, limit=None) runs coroutines concurrently, at most `limit` at once, returning results in input order."}
+      - {id: with_timeout, requirement: "Awaiting with_timeout(coro, seconds, default=None) returns the result, or default if it takes longer than seconds."}
+      - {id: retry_async, requirement: "Awaiting retry_async(func, attempts, delay, exceptions) retries func() on the listed exceptions and re-raises the last one; other exceptions propagate immediately."}
+  - id: data_files
+    file: skills/data_files.py
+    visible_tests: visible/test_data_files.py
+    hidden_tests: hidden/test_data_files.py
+    purpose: "Read/write JSON and CSV files."
+    components:
+      - {id: json_files, requirement: "write_json_atomic writes indent-2, key-sorted, non-ASCII-preserving JSON plus a newline; read_json reads it back or returns default for a missing file."}
+      - {id: atomic_write, requirement: "write_json_atomic replaces the file atomically, leaves no temporary files and keeps the old content if serialisation fails."}
+      - {id: csv_files, requirement: "write_csv_records/read_csv_records round-trip a list of dicts through a CSV file with a header row (values read back as strings)."}

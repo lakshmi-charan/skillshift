@@ -1,0 +1,4664 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "skill_ledger_robust",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s0",
+  "date": "2024-02-05",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "\"\"\"\nArray cache key utilities.\n\nProvides `array_cache_key(arr) -> str`:\nReturn \"<dtype>|<shape>|<digest>\" where:\n  - <dtype> is `arr.dtype.str`\n  - <shape> is dimensions joined by \"x\" (e.g. \"3x4\"; empty string for 0-d arrays)\n  - <digest> is SHA-256 hex digest of the array's raw data bytes in C order.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: Any) -> str:\n    \"\"\"\n    Build a stable cache key for a NumPy array.\n\n    Format: \"<dtype>|<shape>|<digest>\"\n\n    Notes:\n      - Works for non-contiguous arrays by hashing a contiguous C-order view.\n      - For 0-D arrays, <shape> is the empty string.\n    \"\"\"\n    a = np.asarray(arr)\n    dtype_str = a.dtype.str\n    shape_str = \"\" if a.ndim == 0 else \"x\".join(str(d) for d in a.shape)\n\n    # Ensure C-order (row-major) contiguous bytes for hashing.\n    a_c = np.ascontiguousarray(a)\n    data_bytes = a_c.tobytes(order=\"C\")\n\n    digest = hashlib.sha256(data_bytes).hexdigest()\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "82c510e20c0b4ff5",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "import numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule and return energy in kWh.\n\n    Parameters\n    ----------\n    timestamps_s : increasing sequence of float\n        Sample times in seconds (not necessarily evenly spaced).\n    power_w : sequence of float\n        Power readings in watts at each timestamp.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours. Returns 0.0 when fewer than two samples are provided.\n        1 kWh = 3.6e6 J, and since 1 W = 1 J/s, energy_J = integral(power_W dt_s).\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    if t.size < 2:\n        return 0.0\n    if t.size != p.size:\n        raise ValueError(\"timestamps_s and power_w must have the same length\")\n\n    # Energy in Joules: integral of W over seconds.\n    energy_joules = np.trapz(p, x=t)\n    return float(energy_joules / 3.6e6)\n",
+    "prompt_sha": "0aae089db20a834d",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "\"\"\"\nNumeric procedures built on NumPy.\n\nThis module provides membership-based event filtering with NumPy.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport numpy as np\n\n\ndef filter_events(ids, allowed, blocked) -> list:\n    \"\"\"\n    Filter event IDs.\n\n    ids: sequence (list or 1-D array) of integer event IDs; may contain duplicates.\n    allowed: IDs to keep (duplicates kept).\n    blocked: IDs to exclude.\n\n    Returns:\n      A Python list of the IDs that (1) occur in allowed and (2) do not occur in blocked,\n      preserving the original order of ids and keeping duplicates.\n    \"\"\"\n    a = np.asarray(ids)\n    mask_allowed = np.in1d(a, allowed, assume_unique=False)\n    mask_not_blocked = np.in1d(a, blocked, assume_unique=False, invert=True)\n    return a[np.logical_and(mask_allowed, mask_not_blocked)].tolist()\n",
+    "prompt_sha": "10ca8531ba9d7f2e",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "\"\"\"Latency summary utilities built on NumPy (CPython 3.12, NumPy 1.x).\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Any\n\n\nimport numpy as np\n\n\ndef latency_summary(samples_ms) -> dict:\n    \"\"\"\n    Summarize request latencies.\n\n    Parameters\n    ----------\n    samples_ms : list\n        Request latencies in milliseconds. Failed requests appear as None and are ignored.\n\n    Returns\n    -------\n    dict\n        A dict with keys:\n          - \"count\": int, number of valid (non-None) samples\n          - \"mean\": float, arithmetic mean over valid samples\n          - \"p50\", \"p90\", \"p99\": floats, percentiles taken with NumPy's \"nearest\" method\n            (each returned value is an actually observed sample / nearest order statistic).\n\n    Raises\n    ------\n    ValueError\n        If there is no valid sample (all entries are None or the list is empty).\n    \"\"\"\n    if samples_ms is None:\n        raise ValueError(\"no valid samples\")\n\n    filtered = [v for v in samples_ms if v is not None]\n    if len(filtered) == 0:\n        raise ValueError(\"no valid samples\")\n\n    a = np.asarray(filtered, dtype=float)\n\n    # \"nearest\" ensures each percentile corresponds to a nearest observed order statistic.\n    percentiles = np.percentile(a, [50, 90, 99], method=\"nearest\")\n\n    return {\n        \"count\": int(a.size),\n        \"mean\": float(a.mean()),\n        \"p50\": float(percentiles[0]),\n        \"p90\": float(percentiles[1]),\n        \"p99\": float(percentiles[2]),\n    }\n",
+    "prompt_sha": "3130d5ab632c40ff",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "skill_ledger_robust",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s1",
+  "date": "2024-06-16",
+  "split": "dev",
+  "event": "numpy-2.0",
+  "event_kind": "tool",
+  "pre": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'cumproduct' [__init__.py:410]",
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'cumproduct' [__init__.py:410]",
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.NaN` was removed in the NumPy 2.0 release. Use `np.nan` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.NaN` was removed in the NumPy 2.0 release. Use `np.nan` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.sometrue` was removed in the NumPy 2.0 release. Use `np.any` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.NaN` was removed in the NumPy 2.0 release. Use `np.nan` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: `np.float_` was removed in the NumPy 2.0 release. Use `np.float64` instead. [__init__.py:397]",
+      "missing": null
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "function add_bias_column is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "function standardize_columns is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": false,
+      "error": "function row_norms is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "\"\"\"Cache key helpers for NumPy-based analytics (NumPy 2.x).\"\"\"\n\nfrom __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: np.ndarray) -> str:\n    \"\"\"\n    Return \"<dtype>|<shape>|<digest>\".\n\n    - <dtype> is arr.dtype.str (e.g. \"<f8\")\n    - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\"; empty string for 0-d arrays)\n    - <digest> is the SHA-256 hex digest of the array's raw data bytes in C (row-major) order,\n      computed on a contiguous C-order view/copy of the input.\n    \"\"\"\n    a = np.asarray(arr)\n    dtype_str = a.dtype.str\n    shape_str = \"\" if a.ndim == 0 else \"x\".join(str(d) for d in a.shape)\n\n    # Ensure C-order (row-major) raw byte layout regardless of input contiguity.\n    a_c = np.ascontiguousarray(a)\n    digest = hashlib.sha256(a_c.tobytes(order=\"C\")).hexdigest()\n\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "6fce843ae8ca637e",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "\"\"\"\nNumeric procedures built on NumPy.\n\nThis module provides energy integration utilities.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule and return energy in kWh.\n\n    Parameters\n    ----------\n    timestamps_s : increasing sequence of float\n        Sample times in seconds (not necessarily evenly spaced). Must be increasing.\n    power_w : sequence of float\n        Power readings in watts at the given timestamps.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours. If fewer than two samples are given, returns 0.0.\n\n    Notes\n    -----\n    Uses: E (J) = integral(power_w dt) over time, then converts to kWh:\n        1 kWh = 3.6e6 J\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    if t.size < 2 or p.size < 2:\n        return 0.0\n\n    # Use the trapezoidal integral directly with provided non-uniform x.\n    joules = float(np.trapz(p, x=t))\n    return joules / 3.6e6\n",
+    "prompt_sha": "f7070544cc82ecba",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "\"\"\"Numeric procedures built on NumPy: membership filtering.\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Sequence, List, Any\n\nimport numpy as np\n\n\ndef filter_events(ids: Sequence[int], allowed: Sequence[int], blocked: Sequence[int]) -> List[int]:\n    \"\"\"\n    Return IDs that occur in allowed AND do not occur in blocked.\n\n    - Keeps original order.\n    - Keeps duplicates.\n    - Returns a Python list of integers.\n\n    Parameters\n    ----------\n    ids:\n        Sequence (list or 1-D array-like) of integer event IDs; may contain duplicates.\n    allowed:\n        IDs that are permitted.\n    blocked:\n        IDs that must be excluded.\n    \"\"\"\n    a = np.asarray(ids)\n    if a.ndim != 1:\n        a = a.ravel()\n\n    allowed_mask = np.in1d(a, allowed, assume_unique=False)\n    blocked_mask = np.in1d(a, blocked, assume_unique=False)\n    return a[allowed_mask & ~blocked_mask].tolist()\n",
+    "prompt_sha": "ea0a0376360d16db",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\n\ndef latency_summary(samples_ms) -> dict:\n    \"\"\"\n    Summarise request latencies.\n\n    Parameters\n    ----------\n    samples_ms : list\n        List of request latencies in milliseconds. Failed requests are None\n        and are ignored.\n\n    Returns\n    -------\n    dict\n        {\"count\": int, \"mean\": float, \"p50\": float, \"p90\": float, \"p99\": float}\n\n    Raises\n    ------\n    ValueError\n        If there is no valid (non-None) latency sample.\n    \"\"\"\n    import numpy as np\n\n    # Convert to float array while ignoring None values.\n    a = np.asarray([v for v in samples_ms if v is not None], dtype=np.float64)\n\n    if a.size == 0:\n        raise ValueError(\"no valid latency samples\")\n\n    # \"nearest\" percentile method: the order statistic nearest to the\n    # linear-interpolation position.\n    p50, p90, p99 = np.percentile(a, [50, 90, 99], method=\"nearest\").tolist()\n\n    return {\n        \"count\": int(a.size),\n        \"mean\": float(a.mean()),\n        \"p50\": float(p50),\n        \"p90\": float(p90),\n        \"p99\": float(p99),\n    }\n",
+    "prompt_sha": "44a7c91e4700a788",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 3.32,
+  "adapt_calls": 6,
+  "adapt_input_tokens": 31162,
+  "adapt_output_tokens": 6929,
+  "adapt_cost": 0.01249749,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "quarantined",
+   "percentiles": "active"
+  },
+  "tombstones": 1
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "skill_ledger_robust",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s2",
+  "date": "2025-06-07",
+  "split": "test",
+  "event": "numpy-2.3",
+  "event_kind": "tool",
+  "pre": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'numpy.ndarray' object has no attribute 'tostring' [serialization.py:10]",
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'numpy.ndarray' object has no attribute 'tostring' [serialization.py:10]",
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'numpy.ndarray' object has no attribute 'tostring' [serialization.py:10]",
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: The binary mode of fromstring is removed, use frombuffer instead [serialization.py:15]",
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: The binary mode of fromstring is removed, use frombuffer instead [serialization.py:15]",
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'numpy.ndarray' object has no attribute 'tostring' [serialization.py:21]",
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'numpy.ndarray' object has no attribute 'tostring' [serialization.py:21]",
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "function add_bias_column is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "function standardize_columns is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": false,
+      "error": "function row_norms is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "function add_bias_column is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "function standardize_columns is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": false,
+      "error": "function row_norms is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "\"\"\"\nNumeric utilities for the in-house NumPy-based analytics stack.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: np.ndarray) -> str:\n    \"\"\"\n    Return a cache key for a NumPy array.\n\n    Format: \"<dtype>|<shape>|<digest>\" where:\n      - <dtype> is arr.dtype.str (e.g. \"<f8\")\n      - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\"; empty string for a 0-d array)\n      - <digest> is the SHA-256 hex digest of the array's raw data bytes in C (row-major) order\n        (works for non-contiguous arrays as well).\n    \"\"\"\n    a = np.asarray(arr)\n\n    dtype_part = a.dtype.str\n    if a.ndim == 0:\n        shape_part = \"\"\n    else:\n        shape_part = \"x\".join(str(int(d)) for d in a.shape)\n\n    # Ensure C-order raw bytes regardless of contiguity.\n    c_order = np.ascontiguousarray(a)\n    digest_part = hashlib.sha256(c_order.tobytes(order=\"C\")).hexdigest()\n\n    return f\"{dtype_part}|{shape_part}|{digest_part}\"\n",
+    "prompt_sha": "f16e28ae7bd23feb",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "\"\"\"Numeric procedures built on NumPy.\n\nProvides energy_kwh to integrate power over time samples using the trapezoidal rule.\n\"\"\"\nfrom __future__ import annotations\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"Integrate power over time to compute energy in kWh.\n\n    Uses the trapezoidal rule over the provided (increasing) sample timestamps.\n    Returns 0.0 when fewer than two samples are given.\n\n    Parameters\n    ----------\n    timestamps_s : array-like\n        Increasing sample times in seconds (not necessarily evenly spaced).\n    power_w : array-like\n        Power readings in watts at those times.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours as a Python float (1 kWh = 3.6e6 J).\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    if t.size < 2 or p.size < 2:\n        return 0.0\n\n    # Use trapezoidal integration: integral of power (W) over time (s) -> Joules.\n    # Then convert J -> kWh by dividing by 3.6e6.\n    # np.trapezoid is available in NumPy 2.x; keep compatibility with older by fallback.\n    integral_j = np.trapezoid(p, x=t) if hasattr(np, \"trapezoid\") else float(np.trapz(p, x=t))\n    return float(integral_j / 3.6e6)\n",
+    "prompt_sha": "8a5e9c9b36332952",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "\"\"\"Numeric event filtering utilities built on NumPy.\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Iterable, List, Sequence, Any\n\nimport numpy as np\n\n\ndef filter_events(ids: Sequence[int] | np.ndarray, allowed: Iterable[int], blocked: Iterable[int]) -> List[int]:\n    \"\"\"\n    Return IDs that occur in `allowed` and do not occur in `blocked`, preserving original order\n    and keeping duplicates.\n\n    Args:\n        ids: Sequence (list or 1-D array) of integer event IDs; may contain duplicates.\n        allowed: Iterable of allowed IDs.\n        blocked: Iterable of blocked IDs.\n\n    Returns:\n        List of filtered IDs as Python ints, in original order with duplicates kept.\n    \"\"\"\n    a = np.asarray(ids)\n\n    # Ensure 1-D behavior (callers should provide 1-D, but be defensive).\n    if a.ndim != 1:\n        a = a.ravel()\n\n    # NumPy 2.x: keep behavior via in1d; returns boolean mask aligned with `a`.\n    allowed_mask = np.in1d(a, np.asarray(list(allowed)))\n    blocked_mask = np.in1d(a, np.asarray(list(blocked)))\n\n    result = a[allowed_mask & ~blocked_mask]\n    return [int(v) for v in result.tolist()]\n",
+    "prompt_sha": "f8b293c205133b85",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "import numpy as np\n\n\ndef latency_summary(samples_ms) -> dict:\n    \"\"\"\n    Summarize request latency samples in milliseconds.\n\n    Parameters\n    ----------\n    samples_ms : list\n        Request latencies in milliseconds. Failed requests are represented as None\n        and are ignored.\n\n    Returns\n    -------\n    dict\n        {\n          \"count\": int (number of valid samples),\n          \"mean\": float,\n          \"p50\": float,\n          \"p90\": float,\n          \"p99\": float\n        }\n\n    Notes\n    -----\n    - Percentiles are computed using NumPy's \"nearest\" method, so each reported\n      percentile value corresponds to an actually observed sample (nearest order\n      statistic).\n    - Raises ValueError if there is no valid sample.\n    \"\"\"\n    if samples_ms is None:\n        raise ValueError(\"no valid sample\")\n\n    a = np.asarray([np.nan if v is None else v for v in samples_ms], dtype=np.float64)\n    valid = ~np.isnan(a)\n    if not np.any(valid):\n        raise ValueError(\"no valid sample\")\n\n    v = a[valid]\n    count = int(v.size)\n    mean = float(v.mean())\n\n    # \"nearest\" ensures percentile corresponds to an observed sample (nearest order statistic).\n    percentiles = np.percentile(v, [50, 90, 99], method=\"nearest\")\n    p50, p90, p99 = (float(x) for x in percentiles)\n\n    return {\"count\": count, \"mean\": mean, \"p50\": p50, \"p90\": p90, \"p99\": p99}\n",
+    "prompt_sha": "584d667a56e7b0a8",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 5.26,
+  "adapt_calls": 7,
+  "adapt_input_tokens": 25947,
+  "adapt_output_tokens": 7378,
+  "adapt_cost": 0.01312166,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "quarantined",
+   "percentiles": "active"
+  },
+  "tombstones": 2
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "skill_ledger_robust",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s3",
+  "date": "2025-12-20",
+  "split": "test",
+  "event": "numpy-2.4",
+  "event_kind": "tool",
+  "pre": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'in1d' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'in1d' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'in1d' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'in1d' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'in1d' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'in1d' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'trapz' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'trapz' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'trapz' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'numpy' has no attribute 'trapz' [__init__.py:792]",
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "function add_bias_column is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "function standardize_columns is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": false,
+      "error": "function row_norms is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: percentile() got an unexpected keyword argument 'interpolation' [percentiles.py:8]",
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: percentile() got an unexpected keyword argument 'interpolation' [percentiles.py:8]",
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: quantile() got an unexpected keyword argument 'interpolation' [percentiles.py:14]",
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: quantile() got an unexpected keyword argument 'interpolation' [percentiles.py:14]",
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "function add_bias_column is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "function standardize_columns is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": false,
+      "error": "function row_norms is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: np.ndarray) -> str:\n    \"\"\"\n    Return \"<dtype>|<shape>|<digest>\" where:\n      - <dtype> is arr.dtype.str (e.g. \"<f8\")\n      - <shape> is dimensions joined by \"x\" (e.g. \"3x4\"; empty string for 0-d arrays)\n      - <digest> is SHA-256 hex digest of the array's raw data bytes in C (row-major) order\n\n    Works for non-contiguous arrays by hashing their C-contiguous representation.\n    \"\"\"\n    a = np.asarray(arr)\n    dtype_str = a.dtype.str\n    shape_str = \"\" if a.ndim == 0 else \"x\".join(str(int(d)) for d in a.shape)\n\n    # Ensure C-order bytes regardless of original memory layout.\n    c_contig = np.ascontiguousarray(a)\n    data_bytes = c_contig.tobytes(order=\"C\")\n\n    digest = hashlib.sha256(data_bytes).hexdigest()\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "c99f5939ebf4ee84",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "\"\"\"Numeric procedures built on NumPy: energy integration utilities.\"\"\"\n\nfrom __future__ import annotations\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule and return energy in kWh.\n\n    - timestamps_s: increasing sample times in seconds (not necessarily evenly spaced)\n    - power_w: power readings in watts at those times\n    - 1 kWh = 3.6e6 J\n\n    Returns 0.0 when fewer than two samples are given.\n    \"\"\"\n    n = min(len(timestamps_s), len(power_w))\n    if n < 2:\n        return 0.0\n\n    t = np.asarray(timestamps_s, dtype=np.float64)[:n]\n    p = np.asarray(power_w, dtype=np.float64)[:n]\n\n    # Energy (J) = ∫ Power(W) dt(s); then convert J -> kWh\n    energy_joules = float(np.trapezoid(p, x=t))\n    return energy_joules / 3.6e6\n",
+    "prompt_sha": "34e6c95640f211e1",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "from __future__ import annotations\n\nfrom typing import Sequence, Any, List\n\nimport numpy as np\n\n\ndef filter_events(ids: Sequence[int] | np.ndarray, allowed: Sequence[int] | np.ndarray, blocked: Sequence[int] | np.ndarray) -> List[int]:\n    \"\"\"\n    Return the IDs (with duplicates kept) from `ids` that:\n      - occur in `allowed`, and\n      - do NOT occur in `blocked`.\n\n    The output is a Python list in the original order of `ids`.\n    \"\"\"\n    a = np.asarray(ids)\n    allowed_a = np.asarray(allowed)\n    blocked_a = np.asarray(blocked)\n\n    keep_allowed = np.isin(a, allowed_a)\n    drop_blocked = np.isin(a, blocked_a)\n\n    kept = a[keep_allowed & ~drop_blocked]\n    return kept.tolist()\n",
+    "prompt_sha": "f8e35259217c4546",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "\"\"\"Numeric procedures built on NumPy.\n\nThis module provides latency_summary for request latency analytics.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Any, Iterable\n\nimport numpy as np\n\n\ndef latency_summary(samples_ms: Iterable[Any]) -> dict:\n    \"\"\"\n    Summarise request latency samples (milliseconds).\n\n    Parameters\n    ----------\n    samples_ms:\n        Iterable of request latencies in milliseconds, where failed requests are\n        represented by None. Missing values are ignored.\n\n    Returns\n    -------\n    dict\n        Dictionary with keys:\n          - \"count\": int number of valid samples\n          - \"mean\": float mean latency (over valid samples)\n          - \"p50\": float 50th percentile using NumPy's \"nearest\" percentile method\n          - \"p90\": float 90th percentile using NumPy's \"nearest\" percentile method\n          - \"p99\": float 99th percentile using NumPy's \"nearest\" percentile method\n\n    Raises\n    ------\n    ValueError\n        If there is no valid (non-None) sample.\n    \"\"\"\n    # Convert to float array, ignoring None by mapping to NaN\n    arr = np.asarray([np.nan if v is None else v for v in samples_ms], dtype=np.float64)\n    valid = arr[~np.isnan(arr)]\n\n    if valid.size == 0:\n        raise ValueError(\"no valid latency samples\")\n\n    # Mean over valid samples\n    mean = float(valid.mean())\n\n    # \"Nearest\" ensures each percentile is an actually observed sample\n    p50, p90, p99 = np.percentile(valid, [50, 90, 99], method=\"nearest\")\n    return {\n        \"count\": int(valid.size),\n        \"mean\": mean,\n        \"p50\": float(p50),\n        \"p90\": float(p90),\n        \"p99\": float(p99),\n    }\n",
+    "prompt_sha": "f1e9202aaca217b3",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 6.57,
+  "adapt_calls": 11,
+  "adapt_input_tokens": 35052,
+  "adapt_output_tokens": 11410,
+  "adapt_cost": 0.0196601,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "quarantined",
+   "percentiles": "active"
+  },
+  "tombstones": 3
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "skill_ledger_robust",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s4",
+  "date": "2026-06-21",
+  "split": "test",
+  "event": "numpy-2.5",
+  "event_kind": "tool",
+  "pre": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Both input arrays must be (arrays of) 3-dimensional vectors, but they are 2 and 2 dimensional instead. [numeric.py:1680]",
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Both input arrays must be (arrays of) 3-dimensional vectors, but they are 2 and 2 dimensional instead. [numeric.py:1680]",
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": false,
+      "error": "function stack_rows is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": false,
+      "error": "function pad_ragged is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": false,
+      "error": "function add_bias_column is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "function standardize_columns is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": false,
+      "error": "function row_norms is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "stats_summary": {
+    "cases": [
+     {
+      "name": "h_describe",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_describe_empty",
+      "component": "describe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_gmean_invalid",
+      "component": "geometric_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_growth_empty_zero",
+      "component": "cumulative_growth",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nanmean_all_missing",
+      "component": "nan_mean",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_z_const",
+      "component": "zscores",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "membership": {
+    "cases": [
+     {
+      "name": "h_keep",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_strings",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_keep_large",
+      "component": "keep_allowed",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_all",
+      "component": "drop_blocked",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_any",
+      "component": "any_flagged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_common",
+      "component": "common_ids",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_counts",
+      "component": "unique_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "integration": {
+    "cases": [
+     {
+      "name": "h_auc_x",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_dx",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_auc_uneven",
+      "component": "area_under_curve",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_mean_level",
+      "component": "mean_level",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cum",
+      "component": "cumulative_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_square",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_poly_triangle_concave",
+      "component": "polygon_area",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resample",
+      "component": "resample_signal",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "serialization": {
+    "cases": [
+     {
+      "name": "h_to_bytes",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_c_order",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_bytes_list",
+      "component": "to_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_from_bytes_shape_dtype",
+      "component": "from_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_digest_distinguishes",
+      "component": "digest",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_npy_scalar_bool",
+      "component": "npy_bytes",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "stacking": {
+    "cases": [
+     {
+      "name": "h_stack",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stack_arrays",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_stack_single",
+      "component": "stack_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pad",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pad_fill",
+      "component": "pad_ragged",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_bias",
+      "component": "add_bias_column",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_std",
+      "component": "standardize_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_norms",
+      "component": "row_norms",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "percentiles": {
+    "cases": [
+     {
+      "name": "h_report_default",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "function percentile_report is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_report_custom",
+      "component": "percentile_report",
+      "kind": "valid",
+      "passed": false,
+      "error": "function percentile_report is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_lower_median_even",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": false,
+      "error": "function lower_median is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_lower_median_odd",
+      "component": "lower_median",
+      "kind": "valid",
+      "passed": false,
+      "error": "function lower_median is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_iqr",
+      "component": "iqr",
+      "kind": "valid",
+      "passed": false,
+      "error": "function iqr is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_clip",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": false,
+      "error": "function clip_to_percentiles is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_clip_default",
+      "component": "clip_to_percentiles",
+      "kind": "valid",
+      "passed": false,
+      "error": "function clip_to_percentiles is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "\"\"\"Cache key utilities for NumPy arrays.\"\"\"\n\nfrom __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: Any) -> str:\n    \"\"\"\n    Return \"<dtype>|<shape>|<digest>\" for a NumPy array.\n\n    - <dtype> is arr.dtype.str (e.g. \"<f8\")\n    - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\"; empty string for a 0-d array)\n    - <digest> is the SHA-256 hex digest of the array's raw C-order data bytes\n      (row-major), even for non-contiguous inputs.\n    \"\"\"\n    a = np.asarray(arr)\n    dtype_str = a.dtype.str\n\n    if a.ndim == 0:\n        shape_str = \"\"\n    else:\n        shape_str = \"x\".join(str(d) for d in a.shape)\n\n    # Ensure C-order bytes (row-major) regardless of original memory layout.\n    c = np.ascontiguousarray(a)\n    data_bytes = c.tobytes(order=\"C\")\n\n    digest = hashlib.sha256(data_bytes).hexdigest()\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "95ba6f6d4087230a",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "\"\"\"\nNumeric procedures built on NumPy.\n\nProvides:\n- energy_kwh: integrate power over time (trapezoidal rule) and return kWh.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule.\n\n    Args:\n        timestamps_s: Increasing sample times in seconds (not necessarily evenly spaced).\n        power_w: Power readings in watts at those timestamps.\n\n    Returns:\n        Energy in kilowatt-hours as a Python float (1 kWh = 3.6e6 J).\n\n    Notes:\n        - Returns 0.0 when fewer than two samples are given.\n    \"\"\"\n    ts = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    if ts.size < 2 or p.size < 2:\n        return 0.0\n\n    if ts.shape[0] != p.shape[0]:\n        raise ValueError(\"timestamps_s and power_w must have the same length\")\n\n    # Trapezoidal integral: integral of power (W) over time (s) => energy in Joules.\n    # np.trapezoid is the NumPy 2.x replacement for np.trapz.\n    if not hasattr(np, \"trapezoid\"):\n        # Defensive fallback for unusual NumPy builds.\n        integral_j = float(np.trapz(p, x=ts))  # type: ignore[attr-defined]\n    else:\n        integral_j = float(np.trapezoid(p, x=ts))\n\n    return integral_j / 3.6e6\n",
+    "prompt_sha": "ee5ecce26262f7f2",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "import numpy as np\n\n\ndef filter_events(ids, allowed, blocked) -> list:\n    \"\"\"\n    Return IDs that occur in allowed and do not occur in blocked,\n    preserving original order and duplicates, as a Python list.\n    \"\"\"\n    a = np.asarray(ids)\n    mask_allowed = np.isin(a, allowed)\n    mask_blocked = np.isin(a, blocked)\n    return a[mask_allowed & ~mask_blocked].tolist()\n",
+    "prompt_sha": "efcf919c9787f4a4",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\n\ndef latency_summary(samples_ms: list[Any]) -> dict:\n    \"\"\"\n    Summarize request latencies.\n\n    Parameters\n    ----------\n    samples_ms:\n        List of request latencies in milliseconds. Failed requests appear as None.\n        Missing values (None and NaN) are ignored.\n\n    Returns\n    -------\n    dict with keys:\n        - \"count\": int, number of valid samples\n        - \"mean\": float, arithmetic mean of valid samples\n        - \"p50\", \"p90\", \"p99\": floats, each computed as an actually observed\n          sample using the \"nearest\" order-statistic method.\n\n    Raises\n    ------\n    ValueError\n        If there is no valid sample.\n    \"\"\"\n    import numpy as np\n\n    a = np.array(\n        [np.nan if v is None else v for v in samples_ms],\n        dtype=np.float64,\n    )\n    a = a[~np.isnan(a)]\n\n    if a.size == 0:\n        raise ValueError(\"no valid latency samples\")\n\n    count = int(a.size)\n    mean = float(a.mean())\n\n    # NumPy's \"nearest\" percentile method returns an actually observed sample\n    # nearest to the interpolation position.\n    percentiles = np.quantile(a, [0.50, 0.90, 0.99], method=\"nearest\")\n    return {\n        \"count\": count,\n        \"mean\": mean,\n        \"p50\": float(percentiles[0]),\n        \"p90\": float(percentiles[1]),\n        \"p99\": float(percentiles[2]),\n    }\n",
+    "prompt_sha": "f132e7fa33272a7b",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 4.93,
+  "adapt_calls": 8,
+  "adapt_input_tokens": 23360,
+  "adapt_output_tokens": 7689,
+  "adapt_cost": 0.01363813,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "active",
+   "percentiles": "quarantined"
+  },
+  "tombstones": 4
+ }
+]

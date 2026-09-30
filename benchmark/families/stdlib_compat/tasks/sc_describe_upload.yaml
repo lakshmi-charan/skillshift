@@ -1,0 +1,10 @@
+id: sc_describe_upload
+function: describe_upload
+relevant_skills: [web_utils]
+prompt: |
+  Write a Python function `describe_upload(content_type: str, data: bytes) -> dict` for an upload
+  endpoint. Given the request's Content-Type header value and the first bytes of the body, return
+  {"mime": <lower-cased media type without parameters>, "charset": <lower-cased charset parameter or None>,
+  "image": <"png", "jpeg", "gif" or None, detected from the data's signature bytes>}.
+  Parameter values may be quoted.
+tests: tasks/test_sc_describe_upload.py

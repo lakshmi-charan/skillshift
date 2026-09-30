@@ -1,0 +1,683 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "static",
+  "run": 0,
+  "family": "yaml_config",
+  "state": "s0",
+  "date": "2021-01-20",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "config_loader": {
+    "cases": [
+     {
+      "name": "h_nested",
+      "component": "parse_mapping",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_types",
+      "component": "parse_mapping",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_empty",
+      "component": "empty_document",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "reject_non_mapping",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_file",
+      "component": "file_loading",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "multi_document": {
+    "cases": [
+     {
+      "name": "h_three",
+      "component": "split_documents",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_single",
+      "component": "split_documents",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_empty_docs",
+      "component": "skip_empty",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "env_tags": {
+    "cases": [
+     {
+      "name": "h_sub",
+      "component": "env_substitution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_isolated_calls",
+      "component": "env_substitution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default",
+      "component": "env_default",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_plain",
+      "component": "plain_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "config_writer": {
+    "cases": [
+     {
+      "name": "h_block",
+      "component": "block_style",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_round",
+      "component": "round_trip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_order",
+      "component": "key_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "yaml_env_dsn",
+    "code": "import os\nfrom typing import Dict\n\nimport yaml\n\n\ndef build_dsn(config_text: str, env: dict) -> str:\n    \"\"\"\n    Build a PostgreSQL DSN from YAML configuration text.\n\n    The YAML document must contain a top-level mapping with a 'database' mapping\n    holding: host, port, name, user, password.\n\n    Any of these values may be written as:\n      - !env NAME\n      - !env NAME:default\n\n    which resolve from env[NAME] or use the default after the first colon when\n    NAME is not present in env.\n    \"\"\"\n    class _EnvSafeLoader(yaml.SafeLoader):\n        pass\n\n    def _env_constructor(loader: yaml.Loader, node: yaml.Node) -> str:\n        raw = loader.construct_scalar(node)\n        name, sep, default = raw.partition(\":\")\n        if name in env:\n            return env[name]\n        if sep:\n            return default\n        raise KeyError(name)\n\n    _EnvSafeLoader.add_constructor(\"!env\", _env_constructor)\n\n    data = yaml.load(config_text, Loader=_EnvSafeLoader)\n    if data is None:\n        raise ValueError(\"empty YAML document\")\n\n    if not isinstance(data, dict):\n        raise ValueError(\"configuration must be a mapping at the top level\")\n\n    database = data.get(\"database\")\n    if not isinstance(database, dict):\n        raise ValueError(\"configuration['database'] must be a mapping\")\n\n    required_keys = (\"host\", \"port\", \"name\", \"user\", \"password\")\n    missing = [k for k in required_keys if k not in database]\n    if missing:\n        raise ValueError(f\"configuration['database'] missing keys: {', '.join(missing)}\")\n\n    host = database[\"host\"]\n    port = database[\"port\"]\n    name = database[\"name\"]\n    user = database[\"user\"]\n    password = database[\"password\"]\n\n    return f\"postgresql://{user}:{password}@{host}:{port}/{name}\"\n",
+    "prompt_sha": "2c73f955d2ab3a19",
+    "cases": [
+     {
+      "name": "t_env",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "yaml_service_port",
+    "code": "import yaml\n\n\ndef service_port(config_text: str) -> int:\n    \"\"\"\n    Parse YAML configuration text and return config['service']['port'] as an int.\n\n    - Raises ValueError if the top level is not a mapping.\n    - Raises KeyError if 'service' or 'port' is missing.\n    \"\"\"\n    data = yaml.safe_load(config_text)\n\n    if data is None:\n        # Treat empty document as empty mapping; then missing keys raise KeyError.\n        data = {}\n\n    if not isinstance(data, dict):\n        raise ValueError(\"configuration must be a mapping at the top level\")\n\n    service = data[\"service\"]  # KeyError if missing\n    return service[\"port\"]  # KeyError if missing\n",
+    "prompt_sha": "1784c201ba48a693",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_not_mapping",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "static",
+  "run": 0,
+  "family": "yaml_config",
+  "state": "s1",
+  "date": "2021-10-13",
+  "split": "dev",
+  "event": "pyyaml-6.0",
+  "event_kind": "tool",
+  "pre": {
+   "config_loader": {
+    "cases": [
+     {
+      "name": "h_nested",
+      "component": "parse_mapping",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_types",
+      "component": "parse_mapping",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_empty",
+      "component": "empty_document",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "reject_non_mapping",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_file",
+      "component": "file_loading",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "multi_document": {
+    "cases": [
+     {
+      "name": "h_three",
+      "component": "split_documents",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load_all() missing 1 required positional argument: 'Loader' [multi_document.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_single",
+      "component": "split_documents",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load_all() missing 1 required positional argument: 'Loader' [multi_document.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_empty_docs",
+      "component": "skip_empty",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load_all() missing 1 required positional argument: 'Loader' [multi_document.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "env_tags": {
+    "cases": [
+     {
+      "name": "h_sub",
+      "component": "env_substitution",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_isolated_calls",
+      "component": "env_substitution",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_default",
+      "component": "env_default",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_plain",
+      "component": "plain_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "config_writer": {
+    "cases": [
+     {
+      "name": "h_block",
+      "component": "block_style",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_round",
+      "component": "round_trip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_order",
+      "component": "key_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "config_loader": {
+    "cases": [
+     {
+      "name": "h_nested",
+      "component": "parse_mapping",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_types",
+      "component": "parse_mapping",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_empty",
+      "component": "empty_document",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_scalar",
+      "component": "reject_non_mapping",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_file",
+      "component": "file_loading",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [config_loader.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "multi_document": {
+    "cases": [
+     {
+      "name": "h_three",
+      "component": "split_documents",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load_all() missing 1 required positional argument: 'Loader' [multi_document.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_single",
+      "component": "split_documents",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load_all() missing 1 required positional argument: 'Loader' [multi_document.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_empty_docs",
+      "component": "skip_empty",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load_all() missing 1 required positional argument: 'Loader' [multi_document.py:7]",
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "env_tags": {
+    "cases": [
+     {
+      "name": "h_sub",
+      "component": "env_substitution",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_isolated_calls",
+      "component": "env_substitution",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_default",
+      "component": "env_default",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_plain",
+      "component": "plain_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: load() missing 1 required positional argument: 'Loader' [env_tags.py:24]",
+      "missing": null
+     },
+     {
+      "name": "h_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "config_writer": {
+    "cases": [
+     {
+      "name": "h_block",
+      "component": "block_style",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_round",
+      "component": "round_trip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_order",
+      "component": "key_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "yaml_env_dsn",
+    "code": "from __future__ import annotations\n\nimport yaml\nfrom urllib.parse import quote\n\n\nclass _EnvSafeLoader(yaml.SafeLoader):\n    pass\n\n\ndef _env_constructor(loader: yaml.Loader, node: yaml.Node):\n    raw = loader.construct_scalar(node)\n    name, sep, default = raw.partition(\":\")\n    env = loader.__dict__.get(\"_env\", None)\n    if env is None:\n        env = {}\n    if name in env:\n        return env[name]\n    if sep:\n        return default\n    raise KeyError(name)\n\n\n_EnvSafeLoader.add_constructor(\"!env\", _env_constructor)\n\n\ndef build_dsn(config_text: str, env: dict) -> str:\n    \"\"\"\n    Build a PostgreSQL DSN from a YAML config.\n\n    The YAML document must be a mapping containing:\n      database: {host, port, name, user, password}\n    Values may be tagged with:\n      !env NAME\n      !env NAME:default\n\n    Returns:\n      postgresql://<user>:<password>@<host>:<port>/<name>\n    \"\"\"\n    data = yaml.load(config_text, Loader=_EnvSafeLoader)\n    if data is None:\n        raise ValueError(\"configuration document is empty\")\n\n    if not isinstance(data, dict):\n        raise ValueError(\"configuration must be a mapping at the top level\")\n\n    database = data.get(\"database\")\n    if not isinstance(database, dict):\n        raise ValueError(\"configuration must contain 'database' as a mapping\")\n\n    required_keys = (\"host\", \"port\", \"name\", \"user\", \"password\")\n    missing = [k for k in required_keys if k not in database]\n    if missing:\n        raise ValueError(f\"database section missing keys: {', '.join(missing)}\")\n\n    # Re-load with env available to the loader by attaching it to loader instance.\n    # PyYAML's constructor closure reads loader.__dict__[\"_env\"], so we set it via a custom Loader.\n    # Since yaml.load already ran, we instead ensure env-tag resolution by re-parsing using a loader\n    # instance configured with env.\n    class _ConfiguredLoader(_EnvSafeLoader):\n        pass\n\n    def _make_env_constructor():\n        # Reuse the same constructor function; the loader instance will carry _env.\n        return _env_constructor\n\n    _ConfiguredLoader.add_constructor(\"!env\", _make_env_constructor())\n\n    loader = _ConfiguredLoader(config_text)\n    loader._env = env\n    data = yaml.load(config_text, Loader=_ConfiguredLoader)  # will use our constructor\n\n    database = data[\"database\"]\n    host = str(database[\"host\"])\n    port = str(database[\"port\"])\n    name = str(database[\"name\"])\n    user = str(database[\"user\"])\n    password = str(database[\"password\"])\n\n    # Percent-encode credentials to keep DSN valid if they contain reserved characters.\n    user_enc = quote(user, safe=\"\")\n    password_enc = quote(password, safe=\"\")\n\n    return f\"postgresql://{user_enc}:{password_enc}@{host}:{port}/{name}\"\n",
+    "prompt_sha": "5c00042c0698ab54",
+    "cases": [
+     {
+      "name": "t_env",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "KeyError: 'DB_USER' [solution.py:21]"
+     },
+     {
+      "name": "t_default",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "KeyError: 'DB_USER' [solution.py:21]"
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "yaml_service_port",
+    "code": "import yaml\nfrom typing import Any, Mapping\n\n\ndef service_port(config_text: str) -> int:\n    \"\"\"\n    Parse YAML configuration text and return the integer at service.port.\n\n    - Raise KeyError if 'service' or 'port' keys are missing.\n    - Raise ValueError if the document's top level is not a mapping.\n    - Use safe YAML loading (no arbitrary object construction).\n    \"\"\"\n    data: Any = yaml.safe_load(config_text)\n    if data is None:\n        # Treat an empty document as a non-mapping per \"top level is not a mapping\"\n        raise ValueError(\"configuration top level must be a mapping\")\n    if not isinstance(data, Mapping):\n        raise ValueError(\"configuration top level must be a mapping\")\n\n    service = data[\"service\"]  # may raise KeyError\n    if not isinstance(service, Mapping):\n        raise ValueError(\"configuration 'service' must be a mapping\")\n\n    port = service[\"port\"]  # may raise KeyError\n    if not isinstance(port, int):\n        # If it's a YAML numeric type not loaded as int (e.g., float), treat as invalid.\n        raise ValueError(\"configuration 'service.port' must be an integer\")\n\n    return port\n",
+    "prompt_sha": "7f5f61185974427d",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_not_mapping",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "config_loader": "active",
+   "multi_document": "active",
+   "env_tags": "active",
+   "config_writer": "active"
+  },
+  "tombstones": 0
+ }
+]

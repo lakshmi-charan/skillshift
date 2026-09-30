@@ -1,0 +1,111 @@
+id: tls_config
+title: TLS configuration under Mozilla's Server Side TLS guidelines on CPython's ssl module
+domain: interaction
+summary: >
+  The organisation's rule is that every TLS server context must match a configuration profile published
+  in the current version of Mozilla's Server Side TLS guidelines (the machine-readable guidelines JSON of
+  the SSL Configuration Generator; profiles "modern", "intermediate" and "old"): the context's TLS
+  versions must be the profile's tls_versions, every TLS 1.2-and-below cipher suite it enables must be in
+  the profile's OpenSSL cipher list, and cipher-order preference and HSTS max-age follow the profile.
+  Client contexts must verify server certificates and host names. Services run on CPython's ssl module
+  (the Python version is part of the deployment and changes over time); the skills below are the shared
+  helpers that services use to build their TLS contexts.
+standing_policy:
+  - id: org-mozilla-server-side-tls
+    text: "Every TLS server context must match a configuration profile published in the current version of Mozilla's Server Side TLS guidelines (TLS versions, TLS 1.2-and-below cipher suites, cipher-order preference, HSTS max-age)."
+    source: "https://github.com/mozilla/ssl-config-generator/tree/99178dc/docs/guidelines"
+  - id: org-client-verification
+    text: "TLS client connections must verify the server's certificate chain and host name."
+    source: "organisation rule"
+states:
+  - id: s0
+    date: "2020-07-24"
+    label: "Mozilla guidelines 5.6, Python 3.11"
+    env: {python: "3.11", packages: {}}
+    policy_doc: docs/mozilla-guidelines-5.6.md
+  - id: s1
+    date: "2023-05-15"
+    label: "Mozilla guidelines 5.7, Python 3.11"
+    env: {python: "3.11", packages: {}}
+    policy_doc: docs/mozilla-guidelines-5.7.md
+    event: {id: mozilla-tls-5.7, kind: policy,
+            title: "Mozilla Server Side TLS guidelines 5.7 (DHE-RSA-CHACHA20-POLY1305 appended to intermediate)",
+            source: "https://github.com/mozilla/ssl-config-generator/blob/99178dc/docs/guidelines/CHANGELOG.md",
+            doc: docs/mozilla-tls-5.7.md}
+  - id: s2
+    date: "2023-10-02"
+    label: "Mozilla guidelines 5.7, Python 3.12"
+    env: {python: "3.12", packages: {}}
+    policy_doc: docs/mozilla-guidelines-5.7.md
+    event: {id: python-3.12, kind: tool,
+            title: "Python 3.12: ssl.wrap_socket() and ssl.match_hostname() removed",
+            source: "https://docs.python.org/3.12/whatsnew/3.12.html#removed",
+            doc: docs/python-3.12.md}
+  - id: s3
+    date: "2026-04-06"
+    label: "Mozilla guidelines 6.0, Python 3.12"
+    env: {python: "3.12", packages: {}}
+    policy_doc: docs/mozilla-guidelines-6.0.md
+    event: {id: mozilla-tls-6.0, kind: policy,
+            title: "Mozilla Server Side TLS guidelines 6.0 (DHE removed from intermediate; Old profile removed)",
+            source: "https://github.com/mozilla/ssl-config-generator/blob/99178dc/docs/guidelines/CHANGELOG.md",
+            doc: docs/mozilla-tls-6.0.md}
+skills:
+  - id: intermediate_server
+    file: skills/intermediate_server.py
+    visible_tests: visible/test_intermediate_server.py
+    hidden_tests: hidden/test_intermediate_server.py
+    purpose: "make_intermediate_server_context(certfile, keyfile): server SSLContext for the Mozilla intermediate profile (general-purpose servers)."
+    components:
+      - {id: protocol_versions, requirement: "Clients of exactly the intermediate profile's TLS versions can connect; older protocol versions are refused."}
+      - {id: cipher_allowlist, requirement: "Every TLS 1.2-and-below cipher suite enabled on the context is in the current intermediate profile's OpenSSL cipher list."}
+      - {id: ecdhe_suites, requirement: "All ECDHE suites of the current intermediate profile are enabled and negotiable by TLS 1.2 clients, and the profile's TLS 1.3 suites are available."}
+      - {id: client_cipher_order, requirement: "Cipher-order preference follows the profile's server_preferred_order (the client's order when it is false)."}
+  - id: old_server
+    file: skills/old_server.py
+    visible_tests: visible/test_old_server.py
+    hidden_tests: hidden/test_old_server.py
+    purpose: "make_old_server_context(certfile, keyfile): server SSLContext for the Mozilla old profile, for services with legacy TLS 1.0/1.1 clients."
+    components:
+      - {id: legacy_clients, requirement: "While the old profile is published, clients of each of its TLS versions (down to TLS 1.0, including plain-RSA CBC suites) can connect."}
+      - {id: cipher_allowlist, requirement: "While the old profile is published, every TLS 1.2-and-below cipher suite enabled is in its OpenSSL cipher list."}
+      - {id: server_cipher_order, requirement: "While the old profile is published, cipher-order preference follows its server_preferred_order (the server's order)."}
+      - {id: profile_withdrawn, requirement: "When the current guidelines no longer publish an old profile, no server context accepting protocol versions below TLS 1.2 may be created."}
+  - id: modern_server
+    file: skills/modern_server.py
+    visible_tests: visible/test_modern_server.py
+    hidden_tests: hidden/test_modern_server.py
+    purpose: "make_modern_server_context(certfile, keyfile): server SSLContext for the Mozilla modern profile."
+    components:
+      - {id: protocol_versions, requirement: "Exactly the modern profile's TLS versions are accepted and its TLS 1.3 suites are available."}
+      - {id: client_cipher_order, requirement: "Cipher-order preference follows the profile's server_preferred_order."}
+  - id: tls_client
+    file: skills/tls_client.py
+    visible_tests: visible/test_tls_client.py
+    hidden_tests: hidden/test_tls_client.py
+    purpose: "make_client_context(cafile) and wrap_client_socket(sock, server_hostname, cafile): TLS client side with certificate and host-name verification."
+    components:
+      - {id: context_settings, requirement: "make_client_context returns a context with verify_mode CERT_REQUIRED and check_hostname enabled, with or without cafile."}
+      - {id: context_handshake, requirement: "A context from make_client_context connects to a server whose certificate is trusted via cafile and matches the host name, and fails otherwise."}
+      - {id: wrap_handshake, requirement: "wrap_client_socket returns a connected TLS socket (TLS 1.2 or newer) for a trusted server whose certificate matches server_hostname (DNS name or IP address)."}
+      - {id: wrap_hostname_check, requirement: "wrap_client_socket raises ssl.SSLError / ssl.CertificateError when the certificate does not match server_hostname."}
+      - {id: wrap_chain_check, requirement: "wrap_client_socket raises ssl.SSLError / ssl.CertificateError when the certificate is not trusted by cafile."}
+  - id: profile_audit
+    file: skills/profile_audit.py
+    visible_tests: visible/test_profile_audit.py
+    hidden_tests: hidden/test_profile_audit.py
+    purpose: "matching_profile(ctx): name of the current Mozilla profile a server SSLContext matches (minimum_version = profile's lowest version, TLS 1.3 not disabled, TLS<=1.2 suites within the profile's list), or None."
+    components:
+      - {id: modern, requirement: "A context whose minimum version is TLS 1.3 matches 'modern' while the modern profile is TLS 1.3 only."}
+      - {id: intermediate_ecdhe, requirement: "A TLS 1.2+ context with (a subset of) the intermediate ECDHE AEAD suites matches 'intermediate'."}
+      - {id: intermediate_dhe, requirement: "A TLS 1.2+ context enabling DHE suites matches 'intermediate' exactly when all its suites are in the current intermediate list."}
+      - {id: old_profile, requirement: "A TLS 1.0+ context matches 'old' exactly when the current guidelines publish an old profile containing all its suites."}
+      - {id: reject_other, requirement: "Contexts with suites outside every profile, a TLS 1.1 minimum, or TLS 1.3 disabled match no profile (None)."}
+  - id: hsts
+    file: skills/hsts.py
+    visible_tests: visible/test_hsts.py
+    hidden_tests: hidden/test_hsts.py
+    purpose: "hsts_header(include_subdomains=True, preload=False): Strict-Transport-Security header value."
+    components:
+      - {id: max_age, requirement: "max-age is at least the current guidelines' hsts_min_age."}
+      - {id: directives, requirement: "includeSubDomains and preload appear exactly when requested."}

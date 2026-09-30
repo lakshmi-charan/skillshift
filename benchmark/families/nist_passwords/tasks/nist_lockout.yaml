@@ -1,0 +1,7 @@
+id: nist_lockout
+function: LoginGuard
+relevant_skills: [login_throttle]
+prompt: |
+  Write a Python class `LoginGuard` with methods `failed(account: str)`, `succeeded(account: str)` and
+  `locked(account: str) -> bool` that implements our limit on consecutive failed password attempts per account.
+tests: tasks/test_nist_lockout.py

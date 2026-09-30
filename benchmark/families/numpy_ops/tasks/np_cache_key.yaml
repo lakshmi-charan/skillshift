@@ -1,0 +1,9 @@
+id: np_cache_key
+function: array_cache_key
+relevant_skills: [serialization]
+prompt: |
+  Write a Python function `array_cache_key(arr) -> str` for a NumPy array (possibly non-contiguous).
+  Return "<dtype>|<shape>|<digest>" where <dtype> is `arr.dtype.str` (e.g. "<f8"), <shape> is the
+  dimensions joined by "x" (e.g. "3x4"; an empty string for a 0-d array) and <digest> is the SHA-256 hex
+  digest of the array's raw data bytes in C (row-major) order.
+tests: tasks/test_np_cache_key.py

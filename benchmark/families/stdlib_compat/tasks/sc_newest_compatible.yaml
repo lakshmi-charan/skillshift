@@ -1,0 +1,9 @@
+id: sc_newest_compatible
+function: newest_compatible
+relevant_skills: [version_compare]
+prompt: |
+  Write a Python function `newest_compatible(versions: list[str], minimum: str) -> str | None` that
+  returns the highest of the given dotted release versions (such as "1.10.2") that is at least
+  `minimum`, comparing versions numerically component by component ("1.10" is newer than "1.9").
+  Return None if no version qualifies. Return the version string exactly as given.
+tests: tasks/test_sc_newest_compatible.py

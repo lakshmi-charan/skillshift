@@ -1,0 +1,8 @@
+id: yaml_service_port
+function: service_port
+relevant_skills: [config_loader]
+prompt: |
+  Write a Python function `service_port(config_text: str) -> int` that parses a YAML configuration
+  document and returns the integer at `service.port`. Raise KeyError if the key is missing and
+  ValueError if the document's top level is not a mapping.
+tests: tasks/test_yaml_service_port.py

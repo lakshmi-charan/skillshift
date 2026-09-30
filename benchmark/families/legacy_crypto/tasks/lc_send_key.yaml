@@ -1,0 +1,8 @@
+id: lc_send_key
+function: send_session_key
+relevant_skills: [key_transport]
+prompt: |
+  The partner's key-exchange endpoint accepts a symmetric session key encrypted under its RSA public key with
+  PKCS#1 v1.5 padding. Write `send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes` returning the
+  encrypted session key to send.
+tests: tasks/test_lc_send_key.py

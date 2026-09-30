@@ -1,0 +1,529 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "stdlib_compat",
+  "state": "s0",
+  "date": "2022-10-24",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "from typing import Optional\nfrom packaging.utils import canonicalize_name\n\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    \"\"\"\n    Given a Content-Type header value and the first bytes of the body,\n    return a dictionary with keys:\n      - \"mime\": lower-cased media type without parameters\n      - \"charset\": lower-cased charset parameter or None\n      - \"image\": one of \"png\", \"jpeg\", \"gif\" or None, detected from data signature bytes\n    Parameter values may be quoted.\n    \"\"\"\n    # Parse content_type into media type and parameters\n    # Example: 'Text/HTML; charset=\"utf-8\"' -> media_type='text/html', charset='utf-8'\n    parts = content_type.split(\";\")\n    media_type = parts[0].strip().lower()\n\n    charset: Optional[str] = None\n    for param in parts[1:]:\n        if '=' not in param:\n            continue\n        key, value = param.split(\"=\", 1)\n        key = key.strip().lower()\n        value = value.strip()\n        if value.startswith('\"') and value.endswith('\"') and len(value) >= 2:\n            value = value[1:-1]\n        if key == \"charset\":\n            charset = value.lower()\n            break\n\n    # Detect image type from data signature bytes\n    image: Optional[str] = None\n    if data.startswith(b\"\\x89PNG\\r\\n\\x1a\\n\"):\n        image = \"png\"\n    elif data.startswith(b\"\\xff\\xd8\\xff\"):\n        image = \"jpeg\"\n    elif data.startswith(b\"GIF87a\") or data.startswith(b\"GIF89a\"):\n        image = \"gif\"\n\n    return {\"mime\": media_type, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "dc92de20a924302f",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from packaging.version import Version\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    min_ver = Version(minimum)\n    best_version = None\n    best_version_obj = None\n    for v in versions:\n        try:\n            ver_obj = Version(v)\n        except Exception:\n            # Ignore invalid versions\n            continue\n        if ver_obj >= min_ver:\n            if best_version is None or ver_obj > best_version_obj:\n                best_version = v\n                best_version_obj = ver_obj\n    return best_version\n",
+    "prompt_sha": "b44a0f2cabbfeefc",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "import shlex\nfrom typing import List\n\ndef rsync_command(sources: List[str], host: str, dest: str) -> str:\n    \"\"\"\n    Return a POSIX shell command line running:\n        rsync -az <sources...> <host>:<dest>\n    with all arguments properly shell-escaped so that the shell passes them unchanged to rsync.\n\n    Args:\n        sources: List of source file paths.\n        host: Remote host name.\n        dest: Destination path on the remote host.\n\n    Returns:\n        A single shell command string.\n    \"\"\"\n    if not sources:\n        raise ValueError(\"sources list must not be empty\")\n    # Compose remote target argument\n    remote_target = f\"{host}:{dest}\"\n    # Escape all arguments\n    args = [\"rsync\", \"-az\"] + sources + [remote_target]\n    escaped_args = [shlex.quote(arg) for arg in args]\n    return \" \".join(escaped_args)\n",
+    "prompt_sha": "e77275a93ab86919",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "import asyncio\nfrom typing import List, Any\nfrom packaging.version import Version\n\ndef run_with_deadline(coros: List[asyncio.coroutines.coroutine], seconds: float) -> List[Any]:\n    \"\"\"\n    Run the given coroutines concurrently, returning their results in input order.\n    Any coroutine not finished within `seconds` is cancelled and its result is None.\n    Can be called repeatedly in the same process.\n    \"\"\"\n    async def runner():\n        tasks = [asyncio.create_task(coro) for coro in coros]\n        done, pending = await asyncio.wait(tasks, timeout=seconds)\n        # Cancel any pending tasks\n        for task in pending:\n            task.cancel()\n        # Gather results: for done tasks get result, for cancelled return None\n        results = []\n        for task in tasks:\n            if task.done():\n                try:\n                    results.append(task.result())\n                except asyncio.CancelledError:\n                    results.append(None)\n                except Exception:\n                    # If a coroutine raised an exception, propagate it\n                    raise\n            else:\n                results.append(None)\n        return results\n\n    return asyncio.run(runner())\n",
+    "prompt_sha": "c9e6f30dc227989e",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function run_with_deadline is absent from the library"
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function run_with_deadline is absent from the library"
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function run_with_deadline is absent from the library"
+     }
+    ],
+    "import_error": "AttributeError: module 'asyncio.coroutines' has no attribute 'coroutine'",
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "stdlib_compat",
+  "state": "s1",
+  "date": "2023-10-02",
+  "split": "dev",
+  "event": "python-3.12",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "import re\nfrom typing import Optional\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    \"\"\"\n    Given a Content-Type header value and the first bytes of the body,\n    return a dict with keys:\n      - \"mime\": lower-cased media type without parameters\n      - \"charset\": lower-cased charset parameter or None\n      - \"image\": \"png\", \"jpeg\", \"gif\" or None detected from data signature bytes\n    \"\"\"\n    # Parse Content-Type header: media type and parameters\n    # Content-Type format: type/subtype; param1=value1; param2=\"value2\"\n    # We want media type (lowercased, no parameters), and charset param (lowercased or None)\n    \n    # Split by semicolon to separate media type and parameters\n    parts = content_type.split(\";\")\n    media_type = parts[0].strip().lower()\n    \n    charset: Optional[str] = None\n    # Parse parameters\n    param_re = re.compile(r'''(?P<name>[^=]+)=(?P<value>(\"[^\"]*\"|'[^']*'|[^;]*))''')\n    for param in parts[1:]:\n        param = param.strip()\n        m = param_re.match(param)\n        if m:\n            name = m.group(\"name\").strip().lower()\n            value = m.group(\"value\").strip()\n            # Remove quotes if present\n            if (value.startswith('\"') and value.endswith('\"')) or (value.startswith(\"'\") and value.endswith(\"'\")):\n                value = value[1:-1]\n            if name == \"charset\":\n                charset = value.lower()\n                break  # Only one charset param expected\n    \n    # Detect image type from data signature bytes\n    image: Optional[str] = None\n    if data.startswith(b\"\\x89PNG\\r\\n\\x1a\\n\"):\n        image = \"png\"\n    elif data.startswith(b\"\\xff\\xd8\\xff\"):\n        image = \"jpeg\"\n    elif data.startswith(b\"GIF87a\") or data.startswith(b\"GIF89a\"):\n        image = \"gif\"\n    \n    return {\"mime\": media_type, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "ca689c0130f93781",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from packaging.version import Version\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    min_ver = Version(minimum)\n    best_version = None\n    best_version_obj = None\n    for v in versions:\n        try:\n            ver_obj = Version(v)\n        except Exception:\n            # Ignore invalid version strings\n            continue\n        if ver_obj >= min_ver:\n            if best_version_obj is None or ver_obj > best_version_obj:\n                best_version_obj = ver_obj\n                best_version = v\n    return best_version\n",
+    "prompt_sha": "a9c1dde67df75aa2",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "import shlex\n\ndef rsync_command(sources: list[str], host: str, dest: str) -> str:\n    \"\"\"\n    Returns a POSIX shell command line string that runs:\n        rsync -az <sources...> <host>:<dest>\n    Each source and the target are shell-escaped to be passed unchanged as separate arguments.\n\n    Args:\n        sources: List of source file/directory paths.\n        host: Remote host name.\n        dest: Destination path on the remote host.\n\n    Returns:\n        A string containing the shell command line.\n    \"\"\"\n    if not sources:\n        raise ValueError(\"sources list must not be empty\")\n    # Compose the remote target string\n    remote_target = f\"{host}:{dest}\"\n    # Escape all sources and the remote target\n    escaped_sources = [shlex.quote(src) for src in sources]\n    escaped_target = shlex.quote(remote_target)\n    # Build the full command line\n    cmd = \"rsync -az \" + \" \".join(escaped_sources) + \" \" + escaped_target\n    return cmd\n",
+    "prompt_sha": "c5abd12923c123f2",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "import asyncio\nfrom typing import Any, Coroutine, List, Optional\n\n\ndef run_with_deadline(coros: List[Coroutine[Any, Any, Any]], seconds: float) -> List[Optional[Any]]:\n    \"\"\"\n    Run the given coroutines concurrently with a deadline in seconds.\n    Return a list of results in input order.\n    For any coroutine not finished within the deadline, cancel it and return None in its place.\n\n    This function can be called repeatedly in the same process.\n    \"\"\"\n    async def _run_all_with_deadline(coros: List[Coroutine[Any, Any, Any]], deadline: float) -> List[Optional[Any]]:\n        tasks = [asyncio.create_task(coro) for coro in coros]\n        done, pending = await asyncio.wait(tasks, timeout=deadline)\n        # Cancel all pending tasks\n        for task in pending:\n            task.cancel()\n        # Await cancellation completion\n        if pending:\n            await asyncio.gather(*pending, return_exceptions=True)\n        # Collect results in input order\n        results = []\n        for task in tasks:\n            if task.done():\n                try:\n                    results.append(task.result())\n                except Exception:\n                    # If task raised, propagate exception\n                    raise\n            else:\n                results.append(None)\n        return results\n\n    return asyncio.run(_run_all_with_deadline(coros, seconds))\n",
+    "prompt_sha": "f74039824ebb952d",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "CancelledError:  [tasks.py:665]"
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "version_compare": "active",
+   "plugin_loader": "active",
+   "shell_cmd": "active",
+   "web_utils": "active",
+   "ast_tools": "active",
+   "async_bridge": "active",
+   "data_files": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "stdlib_compat",
+  "state": "s2",
+  "date": "2024-10-07",
+  "split": "test",
+  "event": "python-3.13",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "from typing import Optional\nfrom email.message import EmailMessage\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    # Parse content-type header using email.message.EmailMessage for RFC-compliant parsing\n    msg = EmailMessage()\n    # Set a dummy header to parse content-type\n    msg['content-type'] = content_type\n    # Extract main media type (lowercased) without parameters\n    mime = msg.get_content_type().lower()\n    # Extract charset parameter if present, lowercased, else None\n    charset = msg.get_param('charset')\n    if charset is not None:\n        charset = charset.lower()\n\n    # Detect image type from signature bytes\n    image: Optional[str] = None\n    if data.startswith(b'\\x89PNG\\r\\n\\x1a\\n'):\n        image = \"png\"\n    elif data.startswith(b'\\xff\\xd8\\xff'):\n        image = \"jpeg\"\n    elif data.startswith(b'GIF87a') or data.startswith(b'GIF89a'):\n        image = \"gif\"\n    else:\n        image = None\n\n    return {\"mime\": mime, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "d13a6ee4a6cea03d",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from packaging.version import Version\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    min_ver = Version(minimum)\n    compatible_versions = [v for v in versions if Version(v) >= min_ver]\n    if not compatible_versions:\n        return None\n    # Return the version string with the highest Version object\n    return max(compatible_versions, key=Version)\n",
+    "prompt_sha": "ec2e3beea777e0d2",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "import shlex\n\ndef rsync_command(sources: list[str], host: str, dest: str) -> str:\n    \"\"\"\n    Return a POSIX shell command line running:\n        rsync -az <sources...> <host>:<dest>\n    Each source and the target are properly shell-escaped so that the shell passes them unchanged\n    as separate arguments to rsync.\n    \"\"\"\n    if not sources:\n        raise ValueError(\"sources list must not be empty\")\n    # Compose target as host:dest\n    target = f\"{host}:{dest}\"\n    # Escape all arguments\n    args = [\"rsync\", \"-az\"] + sources + [target]\n    # Use shlex.quote to escape each argument safely for POSIX shell\n    escaped_args = [shlex.quote(arg) for arg in args]\n    # Join with spaces to form the command line\n    return \" \".join(escaped_args)\n",
+    "prompt_sha": "43659fe1149627b2",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "import asyncio\nfrom typing import Any, Coroutine, List, Optional\n\n\ndef run_with_deadline(coros: List[Coroutine[Any, Any, Any]], seconds: float) -> List[Optional[Any]]:\n    \"\"\"\n    Run the given coroutines concurrently, returning their results in input order.\n    Any coroutine not finished within `seconds` is cancelled and its result is None.\n\n    This function can be called repeatedly in the same process from synchronous code.\n    \"\"\"\n    async def _run_all_with_deadline(coros: List[Coroutine[Any, Any, Any]], timeout: float) -> List[Optional[Any]]:\n        tasks = [asyncio.create_task(coro) for coro in coros]\n        done, pending = await asyncio.wait(tasks, timeout=timeout)\n        # Cancel all pending tasks\n        for task in pending:\n            task.cancel()\n        # Wait for cancellation to complete\n        if pending:\n            await asyncio.gather(*pending, return_exceptions=True)\n        # Collect results in input order\n        results = []\n        for task in tasks:\n            if task.done() and not task.cancelled():\n                exc = task.exception()\n                if exc is None:\n                    results.append(task.result())\n                else:\n                    # If coroutine raised, propagate exception\n                    raise exc\n            else:\n                results.append(None)\n        return results\n\n    return asyncio.run(_run_all_with_deadline(coros, seconds))\n",
+    "prompt_sha": "03171a722e25be6b",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "version_compare": "active",
+   "plugin_loader": "active",
+   "shell_cmd": "active",
+   "web_utils": "active",
+   "ast_tools": "active",
+   "async_bridge": "active",
+   "data_files": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "stdlib_compat",
+  "state": "s3",
+  "date": "2025-10-07",
+  "split": "test",
+  "event": "python-3.14",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sc_describe_upload",
+    "code": "import re\nfrom typing import Optional\n\ndef describe_upload(content_type: str, data: bytes) -> dict:\n    \"\"\"\n    Given a Content-Type header value and the first bytes of the body,\n    return a dictionary with keys:\n      - \"mime\": lower-cased media type without parameters\n      - \"charset\": lower-cased charset parameter or None\n      - \"image\": one of \"png\", \"jpeg\", \"gif\" or None, detected from data's signature bytes\n\n    Parameter values may be quoted.\n    \"\"\"\n    # Parse Content-Type header: type/subtype; param1=value1; param2=\"value2\"\n    # Extract media type and parameters\n    # Regex to split media type and parameters\n    parts = content_type.split(\";\")\n    media_type = parts[0].strip().lower()\n\n    # Parse parameters\n    params = {}\n    param_re = re.compile(r'^\\s*([^=]+)\\s*=\\s*(?:\"([^\"]+)\"|([^\";\\s]+))\\s*$')\n    for param_part in parts[1:]:\n        param_part = param_part.strip()\n        if not param_part:\n            continue\n        m = param_re.match(param_part)\n        if m:\n            key = m.group(1).lower()\n            value = m.group(2) if m.group(2) is not None else m.group(3)\n            if value is not None:\n                value = value.lower()\n            params[key] = value\n\n    charset = params.get(\"charset\")\n\n    # Detect image type from data signature bytes\n    image = None\n    if data.startswith(b\"\\x89PNG\\r\\n\\x1a\\n\"):\n        image = \"png\"\n    elif data.startswith(b\"\\xff\\xd8\\xff\"):\n        image = \"jpeg\"\n    elif data.startswith(b\"GIF87a\") or data.startswith(b\"GIF89a\"):\n        image = \"gif\"\n\n    return {\"mime\": media_type, \"charset\": charset, \"image\": image}\n",
+    "prompt_sha": "4594f18e13b115f4",
+    "cases": [
+     {
+      "name": "t_image",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_text",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_newest_compatible",
+    "code": "from packaging.version import Version\n\ndef newest_compatible(versions: list[str], minimum: str) -> str | None:\n    min_ver = Version(minimum)\n    compatible_versions = [v for v in versions if Version(v) >= min_ver]\n    if not compatible_versions:\n        return None\n    return max(compatible_versions, key=Version)\n",
+    "prompt_sha": "113a48ad5b897ec9",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_none",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_equal_minimum",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_rsync_command",
+    "code": "import shlex\n\ndef rsync_command(sources: list[str], host: str, dest: str) -> str:\n    \"\"\"\n    Return a single POSIX shell command line running:\n        rsync -az <sources...> <host>:<dest>\n    Each source and the <host>:<dest> target are shell-escaped to ensure\n    they are passed unchanged as separate arguments to rsync.\n    \"\"\"\n    if not sources:\n        raise ValueError(\"sources list must not be empty\")\n    # Compose target string\n    target = f\"{host}:{dest}\"\n    # Escape each source and the target\n    escaped_sources = [shlex.quote(src) for src in sources]\n    escaped_target = shlex.quote(target)\n    # Build command string\n    cmd = \"rsync -az \" + \" \".join(escaped_sources) + \" \" + escaped_target\n    return cmd\n",
+    "prompt_sha": "90d967422f30d768",
+    "cases": [
+     {
+      "name": "t_simple",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_tricky",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sc_run_with_deadline",
+    "code": "import asyncio\nfrom typing import List, Optional, Any\n\ndef run_with_deadline(coros: List[asyncio.coroutines.coroutine], seconds: float) -> List[Optional[Any]]:\n    \"\"\"\n    Run the given coroutines concurrently from synchronous code, with a deadline.\n\n    Args:\n        coros: List of coroutine objects to run concurrently.\n        seconds: Timeout in seconds to wait for all coroutines.\n\n    Returns:\n        List of results in the same order as input coroutines.\n        If a coroutine does not finish within the deadline, its result is None.\n    \"\"\"\n    async def _run_all_with_timeout(coros: List[asyncio.coroutines.coroutine], timeout: float) -> List[Optional[Any]]:\n        tasks = [asyncio.create_task(coro) for coro in coros]\n        done, pending = await asyncio.wait(tasks, timeout=timeout)\n        # Cancel pending tasks\n        for task in pending:\n            task.cancel()\n        # Wait for cancellation to complete\n        if pending:\n            await asyncio.gather(*pending, return_exceptions=True)\n        # Prepare results list in input order\n        results = []\n        for task in tasks:\n            if task in done:\n                try:\n                    results.append(task.result())\n                except Exception:\n                    # If coroutine raised, propagate exception\n                    raise\n            else:\n                results.append(None)\n        return results\n\n    # Run the async function using asyncio.run (Python 3.7+)\n    return asyncio.run(_run_all_with_timeout(coros, seconds))\n",
+    "prompt_sha": "800782015f588980",
+    "cases": [
+     {
+      "name": "t_all_fast",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_some_slow",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_repeated",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "version_compare": "active",
+   "plugin_loader": "active",
+   "shell_cmd": "active",
+   "web_utils": "active",
+   "ast_tools": "active",
+   "async_bridge": "active",
+   "data_files": "active"
+  },
+  "tombstones": 0
+ }
+]

@@ -1,0 +1,8 @@
+id: lc_partner_payload
+function: build_partner_payload
+relevant_skills: [legacy_cipher]
+prompt: |
+  The partner system decrypts our settlement files with three-key Triple-DES in CBC mode (PKCS7 padding, 8-byte IV
+  prepended to the ciphertext). Write `build_partner_payload(key: bytes, settlement: bytes) -> bytes` that returns
+  the encrypted settlement file for the partner. `key` is the 24-byte shared key.
+tests: tasks/test_lc_partner_payload.py

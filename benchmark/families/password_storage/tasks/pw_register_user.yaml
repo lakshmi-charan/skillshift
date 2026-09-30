@@ -1,0 +1,9 @@
+id: pw_register_user
+function: register_password
+relevant_skills: [password_store, argon2_hasher, bcrypt_hasher]
+prompt: |
+  Write a Python function `register_password(password: str) -> str` that returns the string to store
+  for a newly registered user's password, following the organisation's current password-storage policy.
+  Also write `check_login(password: str, stored: str) -> bool` that verifies a login attempt against a
+  stored value produced by register_password or by any earlier format the system has used.
+tests: tasks/test_pw_register_user.py

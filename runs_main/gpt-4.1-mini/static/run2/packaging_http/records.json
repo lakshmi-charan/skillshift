@@ -1,0 +1,3333 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "static",
+  "run": 2,
+  "family": "packaging_http",
+  "state": "s0",
+  "date": "2024-08-27",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from pkg_info import installed_version\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"Return a dict mapping each given distribution name to its installed version string or None if missing.\"\"\"\n    return {name: installed_version(name) for name in names}\n",
+    "prompt_sha": "4c19cd85be4d3c63",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "import httpx\nfrom api_fetch import fetch_json\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"Return all titles of open tickets for the given project, paginating through all pages.\"\"\"\n    titles = []\n    params = {\"status\": \"open\", \"project\": project}\n    url = \"/tickets\"\n    while url is not None:\n        data = fetch_json(client, url, params=params)\n        titles.extend(item[\"title\"] for item in data[\"items\"])\n        url = data.get(\"next\")\n    return titles\n",
+    "prompt_sha": "9422270a5f0b8f94",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import http_client\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> http_client.httpx.Client:\n    \"\"\"Return an httpx client for base_url with all requests routed through proxy_url.\n\n    Uses a 5-second timeout and sets User-Agent: inventory-sync/1.0 header on every request.\n    \"\"\"\n    headers = {\"User-Agent\": \"inventory-sync/1.0\"}\n    return http_client.make_client(base_url, headers=headers, timeout=5, proxy_url=proxy_url)\n",
+    "prompt_sha": "1d7b4c89c03c1580",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "\"\"\"Validation for sign-up data using marshmallow 3.\"\"\"\nfrom marshmallow import EXCLUDE, Schema, ValidationError, fields, validates\n\n\nclass SignupSchema(Schema):\n    class Meta:\n        unknown = EXCLUDE\n\n    username = fields.String(required=True)\n    email = fields.Email(required=True)\n    plan = fields.String(missing=\"free\")\n    age = fields.Integer(validate=lambda n: 16 <= n <= 120, required=False)\n\n    @validates(\"username\")\n    def validate_username(self, value):\n        if not value.isalnum():\n            raise ValidationError(\"Username must be alphanumeric.\")\n\n    @validates(\"plan\")\n    def validate_plan(self, value):\n        if value not in (\"free\", \"pro\", \"team\"):\n            raise ValidationError(\"Plan must be one of 'free', 'pro', or 'team'.\")\n\n\nclass SignupError(ValueError):\n    def __init__(self, messages):\n        super().__init__(\"invalid signup data: %s\" % (messages,))\n        self.messages = messages\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"Validate sign-up data dict; returns cleaned dict or raises ValueError(messages).\"\"\"\n    try:\n        return SignupSchema().load(data)\n    except ValidationError as err:\n        raise SignupError(err.messages)\n",
+    "prompt_sha": "86c3d096ce8358e9",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "static",
+  "run": 2,
+  "family": "packaging_http",
+  "state": "s1",
+  "date": "2024-11-28",
+  "split": "test",
+  "event": "httpx-0.28",
+  "event_kind": "tool",
+  "pre": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'path': '/v1/search', 'params': {'limit': '5'}, 'raw_query': 'limit=5'} [test_api_fetch.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: ['a', 'b', 'a', 'b', 'a', 'b', 'a', 'b', 'a', 'b'] [test_api_fetch.py:131]",
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'path': '/v1/search', 'params': {'limit': '5'}, 'raw_query': 'limit=5'} [test_api_fetch.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: ['a', 'b', 'a', 'b', 'a', 'b', 'a', 'b', 'a', 'b'] [test_api_fetch.py:131]",
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from typing import list\n\nfrom pkg_info import installed_version\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"Return a dict mapping each given distribution name to its installed version string or None.\"\"\"\n    return {name: installed_version(name) for name in names}\n",
+    "prompt_sha": "9335c4d921f57b43",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dependency_report is absent from the library"
+     }
+    ],
+    "import_error": "ImportError: cannot import name 'list' from 'typing' (/cache/uv-python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/typing.py)",
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "import httpx\nfrom api_fetch import fetch_json\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"Return all titles of open tickets for the given project, following pagination.\"\"\"\n    titles = []\n    status = \"open\"\n    url = \"/tickets\"\n    params = {\"status\": status, \"project\": project}\n    max_pages = 100  # safety limit to avoid infinite loops\n\n    for _ in range(max_pages):\n        data = fetch_json(client, url, params=params)\n        for item in data[\"items\"]:\n            titles.append(item[\"title\"])\n        next_url = data.get(\"next\")\n        if not next_url:\n            break\n        # For next requests, send the next_url as path and keep params as required\n        url = next_url\n        # params remain the same for every request as required by the server\n    return titles\n",
+    "prompt_sha": "3bc0b231f2400c0c",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_ph_open_tickets.py:29]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"Return an httpx.Client for base_url with all requests proxied through proxy_url.\n\n    Requests use a 5-second timeout and include the User-Agent header 'inventory-sync/1.0'.\n    \"\"\"\n    headers = {\"User-Agent\": \"inventory-sync/1.0\"}\n    return httpx.Client(base_url=base_url, headers=headers, timeout=5.0, proxies=proxy_url)\n",
+    "prompt_sha": "efbf2b2fffbd0963",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [solution.py:10]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "from marshmallow import Schema, fields, ValidationError, validates, EXCLUDE\n\n\nclass SignupSchema(Schema):\n    class Meta:\n        unknown = EXCLUDE\n\n    username = fields.String(required=True)\n    email = fields.Email(required=True)\n    plan = fields.String(missing=\"free\")\n    age = fields.Integer(validate=lambda n: 16 <= n <= 120, required=False)\n\n    @validates(\"username\")\n    def validate_username(self, value):\n        if not value.isalnum():\n            raise ValidationError(\"Username must be alphanumeric.\")\n\n    @validates(\"plan\")\n    def validate_plan(self, value):\n        if value not in (\"free\", \"pro\", \"team\"):\n            raise ValidationError(\"Plan must be one of 'free', 'pro', or 'team'.\")\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"Validate sign-up data with required username and email, optional plan and age.\n    Drops unknown keys, fills default plan. Raises ValueError with messages attribute on error.\"\"\"\n    try:\n        return SignupSchema().load(data)\n    except ValidationError as err:\n        e = ValueError(\"invalid signup data\")\n        e.messages = err.messages\n        raise e\n",
+    "prompt_sha": "0e90c6422e9790b4",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "static",
+  "run": 2,
+  "family": "packaging_http",
+  "state": "s2",
+  "date": "2025-04-16",
+  "split": "test",
+  "event": "marshmallow-4.0",
+  "event_kind": "tool",
+  "pre": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'path': '/v1/search', 'params': {'limit': '5'}, 'raw_query': 'limit=5'} [test_api_fetch.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: ['a', 'b', 'a', 'b', 'a', 'b', 'a', 'b', 'a', 'b'] [test_api_fetch.py:131]",
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "TypeError: Field.__init__() got an unexpected keyword argument 'missing'",
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'path': '/v1/search', 'params': {'limit': '5'}, 'raw_query': 'limit=5'} [test_api_fetch.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: ['a', 'b', 'a', 'b', 'a', 'b', 'a', 'b', 'a', 'b'] [test_api_fetch.py:131]",
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "TypeError: Field.__init__() got an unexpected keyword argument 'missing'",
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from typing import list\nfrom pkg_info import installed_version\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"Map each distribution name to its installed version string or None if not installed.\"\"\"\n    return {name: installed_version(name) for name in names}\n",
+    "prompt_sha": "8a135afdcd8d024a",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dependency_report is absent from the library"
+     }
+    ],
+    "import_error": "ImportError: cannot import name 'list' from 'typing' (/cache/uv-python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/typing.py)",
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "import httpx\nfrom api_fetch import fetch_json\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"Return all titles of open tickets for the given project, following pagination.\"\"\"\n    titles = []\n    status = \"open\"\n    url = \"/tickets\"\n    params = {\"status\": status, \"project\": project}\n    max_pages = 100  # safety limit to avoid infinite loops\n\n    for _ in range(max_pages):\n        data = fetch_json(client, url, params=params)\n        for item in data[\"items\"]:\n            titles.append(item[\"title\"])\n        next_url = data.get(\"next\")\n        if not next_url:\n            break\n        url = next_url\n        # params must be sent on every request, so keep them unchanged\n\n    return titles\n",
+    "prompt_sha": "a939cba4c662199f",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_ph_open_tickets.py:29]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import http_client\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> http_client.httpx.Client:\n    \"\"\"Return an httpx client for base_url whose requests go through the HTTP proxy at proxy_url,\n    with a 5-second timeout and the header 'User-Agent: inventory-sync/1.0' on every request.\"\"\"\n    headers = {\"User-Agent\": \"inventory-sync/1.0\"}\n    return http_client.make_client(base_url, headers=headers, timeout=5, proxy_url=proxy_url)\n",
+    "prompt_sha": "dd485370e308bd29",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "\"\"\"Validation of sign-up data using marshmallow 4.\"\"\"\nfrom marshmallow import Schema, ValidationError, fields, EXCLUDE, validates\n\n\nclass SignupSchema(Schema):\n    class Meta:\n        unknown = EXCLUDE\n\n    username = fields.String(required=True)\n    email = fields.Email(required=True)\n    plan = fields.String(missing=\"free\")\n    age = fields.Integer(validate=lambda n: 16 <= n <= 120, required=False)\n\n    @validates(\"username\")\n    def validate_username(self, value):\n        if not value.isalnum():\n            raise ValidationError(\"Username must be alphanumeric.\")\n\n    @validates(\"plan\")\n    def validate_plan(self, value):\n        if value not in (\"free\", \"pro\", \"team\"):\n            raise ValidationError(\"Plan must be one of 'free', 'pro', or 'team'.\")\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"Validate sign-up data dict, returning cleaned dict with defaults.\n\n    Raises ValueError with a 'messages' attribute on validation errors.\n    \"\"\"\n    try:\n        return SignupSchema().load(data)\n    except ValidationError as err:\n        exc = ValueError(\"invalid sign-up data\")\n        exc.messages = err.messages\n        raise exc\n",
+    "prompt_sha": "e1c62552003cc99a",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function validate_signup is absent from the library"
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function validate_signup is absent from the library"
+     }
+    ],
+    "import_error": "TypeError: Field.__init__() got an unexpected keyword argument 'missing'",
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "static",
+  "run": 2,
+  "family": "packaging_http",
+  "state": "s3",
+  "date": "2026-02-08",
+  "split": "test",
+  "event": "setuptools-82",
+  "event_kind": "tool",
+  "pre": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'path': '/v1/search', 'params': {'limit': '5'}, 'raw_query': 'limit=5'} [test_api_fetch.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: ['a', 'b', 'a', 'b', 'a', 'b', 'a', 'b', 'a', 'b'] [test_api_fetch.py:131]",
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "TypeError: Field.__init__() got an unexpected keyword argument 'missing'",
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": false,
+      "error": "function installed_version is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": false,
+      "error": "function installed_version is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": false,
+      "error": "function installed_version is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": false,
+      "error": "function read_resource_text is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": false,
+      "error": "function list_resources is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "ModuleNotFoundError: No module named 'pkg_resources'",
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": false,
+      "error": "function plugin_names is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": false,
+      "error": "function plugin_names is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": false,
+      "error": "function discover_plugins is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": false,
+      "error": "function discover_plugins is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_plugin is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_plugin is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "ModuleNotFoundError: No module named 'pkg_resources'",
+    "fatal": null
+   }
+  },
+  "post": {
+   "http_client": {
+    "cases": [
+     {
+      "name": "h_base_url_headers",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_timeout",
+      "component": "base_config",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_proxy",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_proxy_with_base_url",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]",
+      "missing": null
+     },
+     {
+      "name": "h_no_proxy_direct",
+      "component": "proxy_routing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_get",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_post_headers",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_wsgi_base_url",
+      "component": "wsgi_client",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'app' [http_client.py:29]",
+      "missing": null
+     },
+     {
+      "name": "h_raise_errors",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_raise_by_default",
+      "component": "error_hook",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "api_fetch": {
+    "cases": [
+     {
+      "name": "h_fetch_params",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fetch_merges_existing_query",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: {'path': '/v1/search', 'params': {'limit': '5'}, 'raw_query': 'limit=5'} [test_api_fetch.py:31]",
+      "missing": null
+     },
+     {
+      "name": "h_fetch_retries",
+      "component": "fetch_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_error_after_retries",
+      "component": "api_error",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_post_error",
+      "component": "post_json",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pages",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: ['a', 'b', 'a', 'b', 'a', 'b', 'a', 'b', 'a', 'b'] [test_api_fetch.py:131]",
+      "missing": null
+     },
+     {
+      "name": "h_single_page",
+      "component": "iter_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "user_schema": {
+    "cases": [
+     {
+      "name": "h_load_defaults",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_defaults_fresh_list",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_unknown_dropped",
+      "component": "load_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_defaults",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_dump_explicit",
+      "component": "dump_defaults",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dump_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_age_range",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_username_email",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_required",
+      "component": "validation",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_user is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_list",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_envelope",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_batch_error",
+      "component": "batch_load",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_users is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "TypeError: Field.__init__() got an unexpected keyword argument 'missing'",
+    "fatal": null
+   },
+   "order_report": {
+    "cases": [
+     {
+      "name": "h_load",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_load_invalid",
+      "component": "load_validation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_items",
+      "component": "dump_items",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_default",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_totals_tax",
+      "component": "context_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary",
+      "component": "summary",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Schema.__init__() got an unexpected keyword argument 'context' [order_report.py:62]",
+      "missing": null
+     },
+     {
+      "name": "h_summary_empty",
+      "component": "summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "pkg_info": {
+    "cases": [
+     {
+      "name": "h_version",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": false,
+      "error": "function installed_version is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_version_case",
+      "component": "installed_version",
+      "kind": "valid",
+      "passed": false,
+      "error": "function installed_version is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_missing",
+      "component": "missing_distribution",
+      "kind": "valid",
+      "passed": false,
+      "error": "function installed_version is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_resource_text",
+      "component": "resource_text",
+      "kind": "valid",
+      "passed": false,
+      "error": "function read_resource_text is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_listing",
+      "component": "resource_listing",
+      "kind": "valid",
+      "passed": false,
+      "error": "function list_resources is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "ModuleNotFoundError: No module named 'pkg_resources'",
+    "fatal": null
+   },
+   "plugin_registry": {
+    "cases": [
+     {
+      "name": "h_names",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": false,
+      "error": "function plugin_names is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_names_default_path",
+      "component": "plugin_names",
+      "kind": "valid",
+      "passed": false,
+      "error": "function plugin_names is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_discover",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": false,
+      "error": "function discover_plugins is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_discover_empty",
+      "component": "discover_plugins",
+      "kind": "valid",
+      "passed": false,
+      "error": "function discover_plugins is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_one",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_plugin is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_load_missing",
+      "component": "load_plugin",
+      "kind": "valid",
+      "passed": false,
+      "error": "function load_plugin is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": "ModuleNotFoundError: No module named 'pkg_resources'",
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from typing import list\nimport pkg_info\n\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"Map each distribution name to its installed version string or None if not installed.\"\"\"\n    return {name: pkg_info.installed_version(name) for name in names}\n",
+    "prompt_sha": "b8d80dad938c8b8e",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dependency_report is absent from the library"
+     }
+    ],
+    "import_error": "ImportError: cannot import name 'list' from 'typing' (/cache/uv-python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/typing.py)",
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "import httpx\nfrom api_fetch import fetch_json\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    \"\"\"Return all titles of open tickets for the given project, across paginated /tickets.\"\"\"\n    titles = []\n    url = \"/tickets\"\n    params = {\"status\": \"open\", \"project\": project}\n    while url is not None:\n        data = fetch_json(client, url, params=params)\n        titles.extend(item[\"title\"] for item in data[\"items\"])\n        url = data.get(\"next\")\n    return titles\n",
+    "prompt_sha": "bab9d5aa103d6a00",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "_Timeout: test exceeded 20s [child_runner.py:57]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import http_client\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> http_client.httpx.Client:\n    \"\"\"Return an httpx client for base_url routing all requests through the HTTP proxy at proxy_url,\n    with 5-second timeout and User-Agent header 'inventory-sync/1.0'.\"\"\"\n    headers = {\"User-Agent\": \"inventory-sync/1.0\"}\n    return http_client.make_client(base_url, headers=headers, timeout=5, proxy_url=proxy_url)\n",
+    "prompt_sha": "3291a1bd84879506",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Client.__init__() got an unexpected keyword argument 'proxies' [http_client.py:23]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "from marshmallow import Schema, ValidationError, fields, EXCLUDE, validates\n\n\nclass SignupSchema(Schema):\n    class Meta:\n        unknown = EXCLUDE\n\n    username = fields.String(required=True)\n    email = fields.Email(required=True)\n    plan = fields.String(missing=\"free\")\n    age = fields.Integer(validate=lambda n: 16 <= n <= 120)\n\n    @validates(\"username\")\n    def validate_username(self, value):\n        if not value.isalnum():\n            raise ValidationError(\"Username must be alphanumeric.\")\n\n    @validates(\"plan\")\n    def validate_plan(self, value):\n        if value not in (\"free\", \"pro\", \"team\"):\n            raise ValidationError(\"Plan must be one of 'free', 'pro' or 'team'.\")\n\n\ndef validate_signup(data: dict) -> dict:\n    \"\"\"Validate sign-up data dict; raise ValueError with messages attribute on validation errors.\"\"\"\n    try:\n        return SignupSchema().load(data)\n    except ValidationError as err:\n        exc = ValueError(\"invalid signup data\")\n        exc.messages = err.messages\n        raise exc\n",
+    "prompt_sha": "6e7a1ae6091f8865",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function validate_signup is absent from the library"
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function validate_signup is absent from the library"
+     }
+    ],
+    "import_error": "TypeError: Field.__init__() got an unexpected keyword argument 'missing'",
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ }
+]

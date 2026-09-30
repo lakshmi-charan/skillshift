@@ -1,0 +1,10 @@
+id: sa_region_totals
+function: region_totals
+relevant_skills: [sql_reports]
+prompt: |
+  Write a Python function `region_totals(db_url: str, min_total: int) -> list` that uses SQLAlchemy to
+  connect to the database at `db_url` (an SQLAlchemy URL such as "sqlite:////tmp/app.db"). The table
+  `sales(id INTEGER PRIMARY KEY, region TEXT, amount INTEGER)` holds individual sales. Return a list of
+  `(region, total)` tuples for every region whose summed amount is at least `min_total`, ordered by total
+  descending and then by region name. Pass `min_total` as a bound parameter, not by string formatting.
+tests: tasks/test_sa_region_totals.py

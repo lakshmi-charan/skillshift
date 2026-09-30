@@ -1,0 +1,349 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "sqlalchemy_ops",
+  "state": "s0",
+  "date": "2024-09-05",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sa_order_owner",
+    "code": "from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, select\n\ndef order_owner_email(db_url: str, order_id: int) -> str | None:\n    engine = create_engine(db_url)\n    metadata = MetaData()\n    users = Table(\n        \"users\", metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"email\", String),\n    )\n    orders = Table(\n        \"orders\", metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"user_id\", Integer, ForeignKey(\"users.id\")),\n        Column(\"total\", Integer),\n    )\n    with engine.connect() as conn:\n        stmt = (\n            select(users.c.email)\n            .select_from(orders.join(users, orders.c.user_id == users.c.id))\n            .where(orders.c.id == order_id)\n        )\n        result = conn.execute(stmt).first()\n        if result is None:\n            return None\n        return result.email\n",
+    "prompt_sha": "e8949b60e46eb3cd",
+    "cases": [
+     {
+      "name": "t_owner",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_purge_inactive",
+    "code": "from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, delete\nfrom sqlalchemy.sql import text\n\ndef purge_inactive(db_url: str, cutoff: str) -> int:\n    engine = create_engine(db_url)\n    metadata = MetaData()\n    customers = Table(\n        \"customers\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"last_seen\", String),\n    )\n    with engine.connect() as conn:\n        trans = conn.begin()\n        try:\n            stmt = delete(customers).where(customers.c.last_seen < cutoff)\n            result = conn.execute(stmt)\n            trans.commit()\n            return result.rowcount or 0\n        except:\n            trans.rollback()\n            raise\n",
+    "prompt_sha": "9ccd57ab2c2cec8f",
+    "cases": [
+     {
+      "name": "t_purge_persists",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_nothing_to_purge",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_query_dicts",
+    "code": "from typing import List, Dict, Optional\nfrom sqlalchemy import create_engine, text\n\ndef query_dicts(db_url: str, sql: str, params: Optional[Dict] = None) -> List[Dict]:\n    engine = create_engine(db_url)\n    with engine.connect() as conn:\n        result = conn.execute(text(sql), params or {})\n        rows = result.mappings().all()\n    return [dict(row) for row in rows]\n",
+    "prompt_sha": "8751271872dc1f66",
+    "cases": [
+     {
+      "name": "t_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_region_totals",
+    "code": "from typing import List, Tuple\nfrom sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select, func, bindparam, desc, asc\n\ndef region_totals(db_url: str, min_total: int) -> List[Tuple[str, int]]:\n    engine = create_engine(db_url)\n    metadata = MetaData()\n    sales = Table(\n        'sales', metadata,\n        Column('id', Integer, primary_key=True),\n        Column('region', String),\n        Column('amount', Integer)\n    )\n    stmt = (\n        select(\n            sales.c.region,\n            func.sum(sales.c.amount).label('total')\n        )\n        .group_by(sales.c.region)\n        .having(func.sum(sales.c.amount) >= bindparam('min_total'))\n        .order_by(desc('total'), asc(sales.c.region))\n    )\n    with engine.connect() as conn:\n        result = conn.execute(stmt, {'min_total': min_total})\n        return [(row.region, row.total) for row in result]\n",
+    "prompt_sha": "7f80621385d818c7",
+    "cases": [
+     {
+      "name": "t_threshold",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "sqlalchemy_ops",
+  "state": "s1",
+  "date": "2023-01-26",
+  "split": "dev",
+  "event": "sqlalchemy-2.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sa_order_owner",
+    "code": "from typing import Optional\nfrom sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, select\nfrom sqlalchemy.engine import Engine\n\n\ndef order_owner_email(db_url: str, order_id: int) -> Optional[str]:\n    engine: Engine = create_engine(db_url)\n    metadata = MetaData()\n\n    users = Table(\n        \"users\", metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"email\", String),\n    )\n    orders = Table(\n        \"orders\", metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"user_id\", Integer, ForeignKey(\"users.id\")),\n        Column(\"total\", Integer),\n    )\n\n    with engine.connect() as conn:\n        stmt = (\n            select(users.c.email)\n            .join(orders, users.c.id == orders.c.user_id)\n            .where(orders.c.id == order_id)\n        )\n        result = conn.execute(stmt)\n        row = result.first()\n        if row is None:\n            return None\n        return row.email\n",
+    "prompt_sha": "8cfb1d70cbb3bffe",
+    "cases": [
+     {
+      "name": "t_owner",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_purge_inactive",
+    "code": "from sqlalchemy import create_engine, Table, Column, Integer, String, MetaData, delete\nfrom sqlalchemy.sql import text\n\ndef purge_inactive(db_url: str, cutoff: str) -> int:\n    \"\"\"\n    Delete customers from the 'customers' table whose last_seen date is earlier than cutoff.\n\n    Args:\n        db_url (str): Database URL.\n        cutoff (str): ISO date string cutoff; customers with last_seen < cutoff will be deleted.\n\n    Returns:\n        int: Number of customers deleted.\n    \"\"\"\n    engine = create_engine(db_url)\n    metadata = MetaData()\n    customers = Table(\n        \"customers\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"last_seen\", String),\n    )\n\n    with engine.begin() as conn:\n        stmt = delete(customers).where(customers.c.last_seen < cutoff)\n        result = conn.execute(stmt)\n        # result.rowcount is the number of rows matched/deleted\n        deleted_count = result.rowcount if result.rowcount is not None else 0\n\n    return deleted_count\n",
+    "prompt_sha": "6db9bf35d3a03cc2",
+    "cases": [
+     {
+      "name": "t_purge_persists",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_nothing_to_purge",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_query_dicts",
+    "code": "from typing import Optional\nfrom sqlalchemy import create_engine, text\nfrom sqlalchemy.engine import Engine\n\n\ndef query_dicts(db_url: str, sql: str, params: Optional[dict] = None) -> list[dict]:\n    engine: Engine = create_engine(db_url)\n    with engine.connect() as conn:\n        result = conn.execute(text(sql), params or {})\n        rows = result.mappings().all()\n    return [dict(row) for row in rows]\n",
+    "prompt_sha": "9eb49c07bf7e9174",
+    "cases": [
+     {
+      "name": "t_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_region_totals",
+    "code": "from typing import List, Tuple\nfrom sqlalchemy import create_engine, text\n\ndef region_totals(db_url: str, min_total: int) -> List[Tuple[str, int]]:\n    engine = create_engine(db_url)\n    query = text(\n        \"\"\"\n        SELECT region, SUM(amount) AS total\n        FROM sales\n        GROUP BY region\n        HAVING SUM(amount) >= :min_total\n        ORDER BY total DESC, region ASC\n        \"\"\"\n    )\n    with engine.connect() as conn:\n        result = conn.execute(query, {\"min_total\": min_total})\n        return [(row.region, row.total) for row in result]\n",
+    "prompt_sha": "8ccd9c7b5467ce9e",
+    "cases": [
+     {
+      "name": "t_threshold",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "sql_reports": "active",
+   "bulk_ops": "active",
+   "row_access": "active",
+   "user_repository": "active",
+   "sales_reports": "active",
+   "session_helpers": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "sqlalchemy_ops",
+  "state": "s2",
+  "date": "2026-09-24",
+  "split": "test",
+  "event": "sqlalchemy-2.1",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "sa_order_owner",
+    "code": "from typing import Optional\nfrom sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey, select\nfrom sqlalchemy.engine import Engine\n\n\ndef order_owner_email(db_url: str, order_id: int) -> Optional[str]:\n    \"\"\"\n    Return the email address of the user who placed the order with the given order_id\n    in the database at db_url. Return None if the order does not exist.\n\n    Tables:\n    - users(id INTEGER PRIMARY KEY, name TEXT, email TEXT)\n    - orders(id INTEGER PRIMARY KEY, user_id INTEGER REFERENCES users(id), total INTEGER)\n    \"\"\"\n    engine: Engine = create_engine(db_url)\n    metadata = MetaData()\n    users = Table(\n        \"users\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"name\", String),\n        Column(\"email\", String),\n    )\n    orders = Table(\n        \"orders\",\n        metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"user_id\", Integer, ForeignKey(\"users.id\")),\n        Column(\"total\", Integer),\n    )\n\n    with engine.connect() as conn:\n        stmt = (\n            select(users.c.email)\n            .join(orders, orders.c.user_id == users.c.id)\n            .where(orders.c.id == order_id)\n        )\n        result = conn.execute(stmt)\n        row = result.first()\n        if row is None:\n            return None\n        return row.email\n",
+    "prompt_sha": "94d8570741d4db63",
+    "cases": [
+     {
+      "name": "t_owner",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_purge_inactive",
+    "code": "from sqlalchemy import create_engine, text\n\ndef purge_inactive(db_url: str, cutoff: str) -> int:\n    \"\"\"\n    Delete customers from the 'customers' table whose last_seen date is earlier than cutoff.\n\n    Args:\n        db_url (str): Database URL for SQLAlchemy engine.\n        cutoff (str): ISO date string cutoff; customers with last_seen < cutoff are deleted.\n\n    Returns:\n        int: Number of customers deleted.\n    \"\"\"\n    engine = create_engine(db_url)\n    with engine.begin() as conn:\n        result = conn.execute(\n            text(\"DELETE FROM customers WHERE last_seen < :cutoff\"),\n            {\"cutoff\": cutoff}\n        )\n        return result.rowcount\n",
+    "prompt_sha": "d80df2cdd20ec7ca",
+    "cases": [
+     {
+      "name": "t_purge_persists",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_nothing_to_purge",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_query_dicts",
+    "code": "from typing import Optional, Dict, List\nfrom sqlalchemy import create_engine, text\nfrom sqlalchemy.engine import Engine\n\n\ndef query_dicts(db_url: str, sql: str, params: Optional[Dict] = None) -> List[Dict]:\n    \"\"\"\n    Execute a SQL query with optional named parameters against the database specified by db_url,\n    returning the result rows as a list of dictionaries mapping column names to values.\n\n    :param db_url: Database URL for SQLAlchemy engine creation.\n    :param sql: SQL query string, may contain named placeholders like :region.\n    :param params: Optional dictionary of parameters to bind to the query.\n    :return: List of dictionaries, each representing a row with column names as keys.\n    \"\"\"\n    engine: Engine = create_engine(db_url)\n    with engine.connect() as conn:\n        result = conn.execute(text(sql), params or {})\n        rows = [dict(row._mapping) for row in result]\n    return rows\n",
+    "prompt_sha": "df353e2b01f18af0",
+    "cases": [
+     {
+      "name": "t_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_params",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "sa_region_totals",
+    "code": "from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, select, func, desc\n\ndef region_totals(db_url: str, min_total: int) -> list:\n    engine = create_engine(db_url)\n    metadata = MetaData()\n    sales = Table(\n        \"sales\", metadata,\n        Column(\"id\", Integer, primary_key=True),\n        Column(\"region\", String),\n        Column(\"amount\", Integer),\n    )\n    with engine.connect() as conn:\n        stmt = (\n            select(\n                sales.c.region,\n                func.sum(sales.c.amount).label(\"total\")\n            )\n            .group_by(sales.c.region)\n            .having(func.sum(sales.c.amount) >= min_total)\n            .order_by(desc(\"total\"), sales.c.region)\n        )\n        result = conn.execute(stmt)\n        return [(row.region, row.total) for row in result]\n",
+    "prompt_sha": "6e3da98b76a871a7",
+    "cases": [
+     {
+      "name": "t_threshold",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "sql_reports": "active",
+   "bulk_ops": "active",
+   "row_access": "active",
+   "user_repository": "active",
+   "sales_reports": "active",
+   "session_helpers": "active"
+  },
+  "tombstones": 0
+ }
+]

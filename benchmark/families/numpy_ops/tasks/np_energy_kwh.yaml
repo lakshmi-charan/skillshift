@@ -1,0 +1,9 @@
+id: np_energy_kwh
+function: energy_kwh
+relevant_skills: [integration]
+prompt: |
+  Write a Python function `energy_kwh(timestamps_s, power_w) -> float` using NumPy. `timestamps_s` are
+  increasing sample times in seconds (not necessarily evenly spaced) and `power_w` the power readings in
+  watts at those times. Integrate power over time with the trapezoidal rule and return the energy in
+  kilowatt-hours as a Python float (1 kWh = 3.6e6 J). Return 0.0 when fewer than two samples are given.
+tests: tasks/test_np_energy_kwh.py

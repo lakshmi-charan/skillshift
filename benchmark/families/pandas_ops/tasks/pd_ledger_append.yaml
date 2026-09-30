@@ -1,0 +1,10 @@
+id: pd_ledger_append
+function: append_transactions
+relevant_skills: [ledger]
+prompt: |
+  Write a Python function `append_transactions(ledger: pandas.DataFrame, transactions: list) -> pandas.DataFrame`.
+  `ledger` has columns "date", "account", "amount" (it may be empty and may already have a "balance"
+  column); `transactions` is a list of dicts with the same keys. Return a new DataFrame with the
+  transactions appended after the existing rows (index renumbered 0..n-1) and a float "balance" column
+  holding the running total of "amount" over the whole result. Do not modify the input ledger.
+tests: tasks/test_pd_ledger_append.py

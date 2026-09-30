@@ -1,0 +1,9 @@
+id: pd_monthly_revenue
+function: monthly_revenue
+relevant_skills: [json_records, monthly_report]
+prompt: |
+  Write a Python function `monthly_revenue(json_text: str) -> dict` using pandas. `json_text` is a JSON
+  array of objects with keys "date" ("YYYY-MM-DD") and "amount" (a number). Return a dict mapping
+  "YYYY-MM" to the float total of amounts for every calendar month from the earliest to the latest
+  month present, including months with no records (total 0.0), with keys in chronological order.
+tests: tasks/test_pd_monthly_revenue.py

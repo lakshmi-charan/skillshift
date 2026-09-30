@@ -1,0 +1,9 @@
+id: sc_run_with_deadline
+function: run_with_deadline
+relevant_skills: [async_bridge]
+prompt: |
+  Write a Python function `run_with_deadline(coros: list, seconds: float) -> list` to be called from ordinary
+  synchronous code (a CLI command; no event loop is running). It runs the given coroutines concurrently and
+  returns their results in input order, using None for any coroutine that has not finished within `seconds`
+  (those are cancelled). It must work when called repeatedly in the same process.
+tests: tasks/test_sc_run_with_deadline.py

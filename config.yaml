@@ -1,0 +1,25 @@
+# SkillAdapt experiment configuration
+output_dir: runs_main       # main study; pilots were written to runs/ (SA_RUNS=/work/runs)
+dev_cutoff: "2024-06-30"        # events on or before this date are the development split; later events are test
+temperature: 0.3
+max_total_cost_usd: 35.0        # hard stop for paid API spend (raise after the pilot, with the user's approval)
+workers: 4
+
+# Models. Prices are USD per 1M tokens (list prices checked 2026-09-29, developers.openai.com/api/docs/pricing).
+models:
+  - {name: gpt-4.1-mini, provider: openai, price: {input: 0.40, cached_input: 0.10, output: 1.60}}
+  - {name: gpt-5.4-nano, provider: openai, reasoning: true, reasoning_effort: low,
+     price: {input: 0.20, cached_input: 0.02, output: 1.25}}
+  - {name: gpt-5.4-mini, provider: openai, reasoning: true, reasoning_effort: low,
+     price: {input: 0.75, cached_input: 0.075, output: 4.50}}
+  - {name: gpt-oss-120b, api_name: openai/gpt-oss-120b, provider: groq, reasoning: true, reasoning_effort: low,
+     rpm: 25, price: {input: 0, output: 0}}
+  - {name: qwen3.5-4b, api_name: "qwen3.5:4b", provider: ollama, timeout: 900, price: {input: 0, output: 0}}
+  - {name: dummy, provider: dummy}
+
+primary_model: gpt-4.1-mini
+methods: [no_skills, static, doc_retrieval, version_aware, regenerate, regression_gated, regression_refresh,
+          skill_ledger]
+ablations: [ledger_no_quarantine, ledger_no_tombstones, ledger_nonselective]
+families: [yaml_config, password_storage, nist_passwords, tls_config, legacy_crypto, pandas_ops, numpy_ops, sqlalchemy_ops,
+           pydantic_models, stdlib_compat, packaging_http]

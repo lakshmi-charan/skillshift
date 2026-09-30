@@ -1,0 +1,10 @@
+id: sa_order_owner
+function: order_owner_email
+relevant_skills: [user_repository]
+prompt: |
+  Write a Python function `order_owner_email(db_url: str, order_id: int)` that uses SQLAlchemy (ORM or Core)
+  to look up, in the database at `db_url`, the email address of the user who placed order `order_id`.
+  Tables: `users(id INTEGER PRIMARY KEY, name TEXT, email TEXT)` and
+  `orders(id INTEGER PRIMARY KEY, user_id INTEGER REFERENCES users(id), total INTEGER)`.
+  Return the email string, or None if the order does not exist.
+tests: tasks/test_sa_order_owner.py

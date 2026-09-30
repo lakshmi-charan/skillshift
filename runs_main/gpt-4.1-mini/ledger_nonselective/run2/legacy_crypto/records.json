@@ -1,0 +1,1207 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_nonselective",
+  "run": 2,
+  "family": "legacy_crypto",
+  "state": "s0",
+  "date": "2023-06-01",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "h_encrypt",
+      "component": "tdes_encrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_encrypt_random_iv",
+      "component": "tdes_encrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "h_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "h_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from legacy_cipher import encrypt_for_partner\n\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    return encrypt_for_partner(key, settlement)\n",
+    "prompt_sha": "5f6068316052c205",
+    "cases": [
+     {
+      "name": "t_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "\"\"\"Read archived payloads encrypted with three-key Triple-DES in CBC mode (PKCS7 padding, 8-byte IV prepended).\"\"\"\n\nfrom legacy_cipher import decrypt_payload\n\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypt a partner system archived payload encrypted with three-key Triple-DES in CBC mode.\n\n    Args:\n        key: 24-byte Triple-DES key.\n        blob: Encrypted data with 8-byte IV prepended.\n\n    Returns:\n        Decrypted plaintext bytes.\n    \"\"\"\n    return decrypt_payload(key, blob)\n",
+    "prompt_sha": "cacce48f318baea7",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "\"\"\"Key exchange for partner system with RSA PKCS#1 v1.5 wrapping.\"\"\"\n\nfrom key_transport import wrap_key_for_partner\n\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    \"\"\"\n    Wrap the session key under the partner's RSA public key using PKCS#1 v1.5 padding.\n\n    Args:\n        partner_public_pem (bytes): PEM-encoded RSA public key of the partner.\n        session_key (bytes): Symmetric session key to be wrapped.\n\n    Returns:\n        bytes: Encrypted session key blob to send to the partner.\n    \"\"\"\n    return wrap_key_for_partner(partner_public_pem, session_key)\n",
+    "prompt_sha": "6959464176f7a9ca",
+    "cases": [
+     {
+      "name": "t_send",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from signing import sign_manifest_dsa\n\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    return sign_manifest_dsa(private_key_pem, manifest)\n",
+    "prompt_sha": "79d30ff84c7d1ce8",
+    "cases": [
+     {
+      "name": "t_sign",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_nonselective",
+  "run": 2,
+  "family": "legacy_crypto",
+  "state": "s1",
+  "date": "2024-01-01",
+  "split": "dev",
+  "event": "sp800-131a-r2-2024",
+  "event_kind": "policy",
+  "pre": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "o_no_tdes_encryption",
+      "component": "tdes_encrypt",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: three-key TDEA encryption still performed after 2023 [test_legacy_cipher.py:33]",
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "o_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: PKCS#1 v1.5 key transport still performed after 2023 [test_key_transport.py:39]",
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "h_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "o_no_tdes_encryption",
+      "component": "tdes_encrypt",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "o_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "h_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted. [signing.py:9]",
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from legacy_cipher import encrypt_for_partner\n\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    \"\"\"\n    Encrypt the settlement file for the partner system using three-key Triple-DES in CBC mode\n    with PKCS7 padding and an 8-byte IV prepended to the ciphertext.\n\n    :param key: 24-byte shared key for three-key TDEA.\n    :param settlement: plaintext settlement file bytes.\n    :return: IV || ciphertext bytes.\n    :raises PermissionError: if encryption is disallowed by current NIST guidance.\n    \"\"\"\n    return encrypt_for_partner(key, settlement)\n",
+    "prompt_sha": "64c7eb4856cbe367",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "tdea_encryption_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "\"\"\"Read archived payload encrypted with three-key Triple-DES in CBC mode (PKCS7 padding, 8-byte IV prepended).\"\"\"\n\nfrom legacy_cipher import decrypt_payload\n\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypt archived payload encrypted with three-key Triple-DES (CBC, PKCS7 padding, IV prepended).\n    This usage is permitted only for legacy decryption as per NIST guidance.\n    \"\"\"\n    return decrypt_payload(key, blob)\n",
+    "prompt_sha": "66a6f0ea66860e73",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "\"\"\"Key transport for partner system with RSA PKCS#1 v1.5 padding.\"\"\"\n\nfrom key_transport import wrap_key_for_partner\n\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    # The partner system still accepts RSA PKCS#1 v1.5 wrapped keys for key exchange,\n    # which is legacy use permitted by NIST guidance.\n    return wrap_key_for_partner(partner_public_pem, session_key)\n",
+    "prompt_sha": "b4fd803a15f3600f",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "pkcs1v15_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from signing import sign_manifest_dsa\n\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    # DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted.\n    # Since the release manifests are signed with our DSA signing key for compatibility with the update client,\n    # we must raise PermissionError to comply with current NIST guidance.\n    raise PermissionError(\"DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted.\")\n",
+    "prompt_sha": "a285ede6254b890d",
+    "cases": [
+     {
+      "name": "t_sign",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted. [solution.py:8]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 47.19,
+  "adapt_calls": 10,
+  "adapt_input_tokens": 34110,
+  "adapt_output_tokens": 4748,
+  "adapt_cost": 0.0160568,
+  "status": {
+   "legacy_cipher": "active",
+   "record_cipher": "active",
+   "key_transport": "active",
+   "signing": "active"
+  },
+  "tombstones": 3
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_nonselective",
+  "run": 2,
+  "family": "legacy_crypto",
+  "state": "s2",
+  "date": "2024-02-03",
+  "split": "dev",
+  "event": "fips-186-4-withdrawn",
+  "event_kind": "policy",
+  "pre": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "o_no_tdes_encryption",
+      "component": "tdes_encrypt",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "o_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "o_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "o_no_tdes_encryption",
+      "component": "tdes_encrypt",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "o_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "o_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from legacy_cipher import encrypt_for_partner\n\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    # Use the legacy cipher module's encrypt_for_partner function\n    # This is allowed as per org-nist-crypto rule for legacy use (partner system)\n    return encrypt_for_partner(key, settlement)\n",
+    "prompt_sha": "dcd891e494d8574f",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "tdea_encryption_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "\"\"\"Read archived payloads encrypted with three-key Triple-DES (CBC, PKCS7, IV prepended).\"\"\"\n\nfrom legacy_cipher import decrypt_payload\n\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypt an archived payload encrypted with three-key Triple-DES in CBC mode with PKCS7 padding.\n    The blob format is IV (8 bytes) || ciphertext.\n    This operation is allowed only for legacy decryption as per NIST guidance.\n    \"\"\"\n    return decrypt_payload(key, blob)\n",
+    "prompt_sha": "50e1654c2e6849ac",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "from key_transport import wrap_key_for_partner\n\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    # Wrapping session key with RSA PKCS#1 v1.5 padding for the partner system is disallowed after 2023\n    # per org-nist-crypto standing rule. Raise PermissionError accordingly.\n    raise PermissionError(\"RSA PKCS#1 v1.5 padding for key transport is disallowed after 2023.\")\n",
+    "prompt_sha": "3eb43a4599c45e00",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "pkcs1v15_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from signing import sign_manifest_dsa\n\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    # DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted.\n    # Since the release manifests are signed with our DSA signing key for compatibility with the update client,\n    # and the client only verifies DSA signatures, we must raise PermissionError here per org-nist-crypto rules.\n    raise PermissionError(\"DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted.\")\n",
+    "prompt_sha": "76bc1378db2fc07e",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "dsa_generation_not_approved",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 21.67,
+  "adapt_calls": 4,
+  "adapt_input_tokens": 13562,
+  "adapt_output_tokens": 2108,
+  "adapt_cost": 0.008797600000000001,
+  "status": {
+   "legacy_cipher": "active",
+   "record_cipher": "active",
+   "key_transport": "active",
+   "signing": "active"
+  },
+  "tombstones": 6
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_nonselective",
+  "run": 2,
+  "family": "legacy_crypto",
+  "state": "s3",
+  "date": "2024-07-20",
+  "split": "test",
+  "event": "cryptography-43.0",
+  "event_kind": "tool",
+  "pre": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "o_no_tdes_encryption",
+      "component": "tdes_encrypt",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "o_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "o_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "legacy_cipher": {
+    "cases": [
+     {
+      "name": "o_no_tdes_encryption",
+      "component": "tdes_encrypt",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_decrypt_block_multiple",
+      "component": "tdes_decrypt",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "record_cipher": {
+    "cases": [
+     {
+      "name": "h_rt",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nonce",
+      "component": "roundtrip",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tamper",
+      "component": "tamper_detection",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "key_transport": {
+    "cases": [
+     {
+      "name": "o_pkcs1",
+      "component": "pkcs1v15_wrap",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_wrap",
+      "component": "oaep_wrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_oaep_unwrap",
+      "component": "oaep_unwrap",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "signing": {
+    "cases": [
+     {
+      "name": "o_dsa_sign",
+      "component": "dsa_sign",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dsa_verify",
+      "component": "dsa_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdsa",
+      "component": "ecdsa_sign_verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from legacy_cipher import encrypt_for_partner\n\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    # Encrypt settlement file for partner using three-key Triple-DES CBC with PKCS7 padding.\n    # This operation is disallowed after 2023 by org-nist-crypto standing rule.\n    raise PermissionError(\"Three-key TDEA encryption disallowed after 2023\")\n",
+    "prompt_sha": "5c5dcab4f5297e7e",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "tdea_encryption_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "\"\"\"Read archived payloads encrypted with three-key Triple-DES in CBC mode (PKCS7 padding, 8-byte IV prepended).\"\"\"\n\nfrom legacy_cipher import decrypt_payload\n\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypt a legacy partner payload encrypted with three-key Triple-DES in CBC mode.\n    This operation is allowed only for legacy data decryption per current NIST guidance.\n    :param key: 24-byte three-key TDEA key\n    :param blob: IV || ciphertext bytes\n    :return: plaintext bytes\n    \"\"\"\n    return decrypt_payload(key, blob)\n",
+    "prompt_sha": "4dd931be65086c2d",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "def send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    # RSA PKCS#1 v1.5 padding for key transport is disallowed after 2023 by NIST guidance.\n    raise PermissionError(\"RSA PKCS#1 v1.5 padding for key transport is disallowed after 2023.\")\n",
+    "prompt_sha": "5d25e5a6d6cbd678",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "pkcs1v15_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from signing import sign_manifest_dsa\n\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    # DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted.\n    # Since release manifests are signed with our DSA signing key for compatibility with the update client,\n    # we must raise PermissionError as signing is disallowed.\n    raise PermissionError(\"DSA signing is disallowed by FIPS 186-5; only verification of existing signatures permitted.\")\n",
+    "prompt_sha": "43cfed265028c144",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "dsa_generation_not_approved",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 30.0,
+  "adapt_calls": 6,
+  "adapt_input_tokens": 24767,
+  "adapt_output_tokens": 3166,
+  "adapt_cost": 0.0106716,
+  "status": {
+   "legacy_cipher": "active",
+   "record_cipher": "active",
+   "key_transport": "active",
+   "signing": "active"
+  },
+  "tombstones": 6
+ }
+]

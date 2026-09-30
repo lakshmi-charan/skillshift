@@ -1,0 +1,596 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "tls_config",
+  "state": "s0",
+  "date": "2020-07-24",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nimport sys\nfrom typing import Optional\n\n_mozilla_tls_guidelines = {\n    \"version\": 5.6,\n    \"href\": \"https://ssl-config.mozilla.org/guidelines/5.6.json\",\n    \"configurations\": {\n        \"modern\": {\n            \"certificate_curves\": [\"prime256v1\", \"secp384r1\"],\n            \"certificate_signatures\": [\"ecdsa-with-SHA256\", \"ecdsa-with-SHA384\", \"ecdsa-with-SHA512\"],\n            \"certificate_types\": [\"ecdsa\"],\n            \"ciphers\": {\n                \"caddy\": [],\n                \"go\": [],\n                \"iana\": [],\n                \"openssl\": []\n            },\n            \"ciphersuites\": [\n                \"TLS_AES_128_GCM_SHA256\",\n                \"TLS_AES_256_GCM_SHA384\",\n                \"TLS_CHACHA20_POLY1305_SHA256\"\n            ],\n            \"dh_param_size\": None,\n            \"ecdh_param_size\": 256,\n            \"hsts_min_age\": 63072000,\n            \"maximum_certificate_lifespan\": 90,\n            \"ocsp_staple\": True,\n            \"oldest_clients\": [\"Firefox 63\", \"Android 10.0\", \"Chrome 70\", \"Edge 75\", \"Java 11\", \"OpenSSL 1.1.1\", \"Opera 57\", \"Safari 12.1\"],\n            \"recommended_certificate_lifespan\": 90,\n            \"rsa_key_size\": None,\n            \"server_preferred_order\": False,\n            \"tls_curves\": [\"X25519\", \"prime256v1\", \"secp384r1\"],\n            \"tls_versions\": [\"TLSv1.3\"]\n        },\n        \"intermediate\": {\n            \"certificate_curves\": [\"prime256v1\", \"secp384r1\"],\n            \"certificate_signatures\": [\"sha256WithRSAEncryption\", \"ecdsa-with-SHA256\", \"ecdsa-with-SHA384\", \"ecdsa-with-SHA512\"],\n            \"certificate_types\": [\"ecdsa\", \"rsa\"],\n            \"ciphers\": {\n                \"caddy\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\"\n                ],\n                \"go\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305\"\n                ],\n                \"iana\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_DHE_RSA_WITH_AES_128_GCM_SHA256\"\n                ],\n                \"openssl\": [\n                    \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n                    \"ECDHE-RSA-AES128-GCM-SHA256\",\n                    \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n                    \"ECDHE-RSA-AES256-GCM-SHA384\",\n                    \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n                    \"ECDHE-RSA-CHACHA20-POLY1305\",\n                    \"DHE-RSA-AES128-GCM-SHA256\",\n                    \"DHE-RSA-AES256-GCM-SHA384\"\n                ]\n            },\n            \"ciphersuites\": [\n                \"TLS_AES_128_GCM_SHA256\",\n                \"TLS_AES_256_GCM_SHA384\",\n                \"TLS_CHACHA20_POLY1305_SHA256\"\n            ],\n            \"dh_param_size\": 2048,\n            \"ecdh_param_size\": 256,\n            \"hsts_min_age\": 63072000,\n            \"maximum_certificate_lifespan\": 366,\n            \"ocsp_staple\": True,\n            \"oldest_clients\": [\"Firefox 27\", \"Android 4.4.2\", \"Chrome 31\", \"Edge\", \"IE 11 on Windows 7\", \"Java 8u31\", \"OpenSSL 1.0.1\", \"Opera 20\", \"Safari 9\"],\n            \"recommended_certificate_lifespan\": 90,\n            \"rsa_key_size\": 2048,\n            \"server_preferred_order\": False,\n            \"tls_curves\": [\"X25519\", \"prime256v1\", \"secp384r1\"],\n            \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"]\n        },\n        \"old\": {\n            \"certificate_curves\": [\"prime256v1\", \"secp384r1\"],\n            \"certificate_signatures\": [\"sha256WithRSAEncryption\"],\n            \"certificate_types\": [\"rsa\"],\n            \"ciphers\": {\n                \"caddy\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_3DES_EDE_CBC_SHA\"\n                ],\n                \"go\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_3DES_EDE_CBC_SHA\"\n                ],\n                \"iana\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_DHE_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_256_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_3DES_EDE_CBC_SHA\"\n                ],\n                \"openssl\": [\n                    \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n                    \"ECDHE-RSA-AES128-GCM-SHA256\",\n                    \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n                    \"ECDHE-RSA-AES256-GCM-SHA384\",\n                    \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n                    \"ECDHE-RSA-CHACHA20-POLY1305\",\n                    \"DHE-RSA-AES128-GCM-SHA256\",\n                    \"DHE-RSA-AES256-GCM-SHA384\",\n                    \"DHE-RSA-CHACHA20-POLY1305\",\n                    \"ECDHE-ECDSA-AES128-SHA256\",\n                    \"ECDHE-RSA-AES128-SHA256\",\n                    \"ECDHE-ECDSA-AES128-SHA\",\n                    \"ECDHE-RSA-AES128-SHA\",\n                    \"ECDHE-ECDSA-AES256-SHA384\",\n                    \"ECDHE-RSA-AES256-SHA384\",\n                    \"ECDHE-ECDSA-AES256-SHA\",\n                    \"ECDHE-RSA-AES256-SHA\",\n                    \"DHE-RSA-AES128-SHA256\",\n                    \"DHE-RSA-AES256-SHA256\",\n                    \"AES128-GCM-SHA256\",\n                    \"AES256-GCM-SHA384\",\n                    \"AES128-SHA256\",\n                    \"AES256-SHA256\",\n                    \"AES128-SHA\",\n                    \"AES256-SHA\",\n                    \"DES-CBC3-SHA\"\n                ]\n            },\n            \"ciphersuites\": [\n                \"TLS_AES_128_GCM_SHA256\",\n                \"TLS_AES_256_GCM_SHA384\",\n                \"TLS_CHACHA20_POLY1305_SHA256\"\n            ],\n            \"dh_param_size\": 1024,\n            \"ecdh_param_size\": 256,\n            \"hsts_min_age\": 63072000,\n            \"maximum_certificate_lifespan\": 366,\n            \"ocsp_staple\": True,\n            \"oldest_clients\": [\"Firefox 1\", \"Android 2.3\", \"Chrome 1\", \"Edge 12\", \"IE8 on Windows XP\", \"Java 6\", \"OpenSSL 0.9.8\", \"Opera 5\", \"Safari 1\"],\n            \"recommended_certificate_lifespan\": 90,\n            \"rsa_key_size\": 2048,\n            \"server_preferred_order\": True,\n            \"tls_curves\": [\"X25519\", \"prime256v1\", \"secp384r1\"],\n            \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"]\n        }\n    }\n}\n\n# We must serve current browsers and API clients that only support TLS 1.2.\n# That means we must use the \"intermediate\" profile (modern only supports TLS 1.3).\n# The intermediate profile allows TLSv1.2 and TLSv1.3, supports RSA and ECDSA certs,\n# and has a defined OpenSSL cipher list for TLS 1.2 and below.\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for the public HTTPS API that supports current browsers and TLS 1.2 clients,\n    and satisfies the organisation's TLS configuration rule (matching Mozilla's intermediate profile).\n    \"\"\"\n    # Select the intermediate profile from Mozilla guidelines\n    profile = _mozilla_tls_guidelines[\"configurations\"][\"intermediate\"]\n\n    # Create SSLContext for server side with maximum TLS version from profile\n    # Python 3.11 supports setting minimum and maximum TLS versions explicitly\n    # Map profile TLS version strings to ssl.TLSVersion enums\n    tls_version_map = {\n        \"TLSv1\": ssl.TLSVersion.TLSv1,\n        \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n        \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n        \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n    }\n\n    # Determine minimum and maximum TLS versions from profile tls_versions list\n    # Profile tls_versions is sorted ascending by version string order, so min is first, max is last\n    profile_tls_versions = profile[\"tls_versions\"]\n    if not profile_tls_versions:\n        raise PermissionError(\"Profile TLS versions list is empty, cannot configure TLS versions\")\n\n    try:\n        min_tls_version = tls_version_map[profile_tls_versions[0]]\n        max_tls_version = tls_version_map[profile_tls_versions[-1]]\n    except KeyError as e:\n        raise PermissionError(f\"Unsupported TLS version in profile: {e.args[0]}\")\n\n    # Create SSLContext with TLS server method (TLS 1.2 and 1.3)\n    # We use PROTOCOL_TLS_SERVER which supports TLS 1.2 and 1.3 and allows version control\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions to match profile exactly\n    context.minimum_version = min_tls_version\n    context.maximum_version = max_tls_version\n\n    # Set the cipher suites for TLS 1.2 and below from the profile's OpenSSL cipher list\n    # The profile's \"openssl\" cipher list corresponds to TLS 1.2 and below ciphers\n    openssl_ciphers = profile[\"ciphers\"][\"openssl\"]\n    if not openssl_ciphers:\n        # If empty, no TLS 1.2 ciphers allowed, but profile includes TLSv1.2, so error\n        raise PermissionError(\"Profile OpenSSL cipher list is empty but TLS 1.2 is enabled\")\n\n    # Join cipher list by colon for OpenSSL cipher string\n    cipher_string = \":\".join(openssl_ciphers)\n    try:\n        context.set_ciphers(cipher_string)\n    except ssl.SSLError as e:\n        raise PermissionError(f\"Failed to set ciphers from profile: {e}\")\n\n    # Set cipher order preference according to profile.server_preferred_order\n    # Python ssl module uses context.options to set SSL_OP_CIPHER_SERVER_PREFERENCE\n    # If profile.server_preferred_order is True, enable SSL_OP_CIPHER_SERVER_PREFERENCE\n    # Otherwise, disable it\n    if profile[\"server_preferred_order\"]:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Set elliptic curves for ECDH key exchange to profile tls_curves\n    # Python ssl module uses context.set_ecdh_curve for a single curve or context.set_ecdh_curves for multiple\n    # set_ecdh_curves is available in Python 3.11+\n    # The profile tls_curves list is in order of preference\n    # We join by colon for set_ecdh_curves\n    tls_curves = profile.get(\"tls_curves\")\n    if tls_curves:\n        # Validate curves are strings\n        if not all(isinstance(c, str) for c in tls_curves):\n            raise PermissionError(\"Profile tls_curves contains non-string entries\")\n        try:\n            context.set_ecdh_curves(\":\".join(tls_curves))\n        except ssl.SSLError as e:\n            raise PermissionError(f\"Failed to set ECDH curves from profile: {e}\")\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Disable older insecure protocols explicitly for safety (should be covered by minimum_version)\n    # But minimum_version disables them already, so no need for explicit OP_NO_TLSv1 etc.\n\n    # The profile does not specify HSTS max-age in the context; that is an HTTP header setting,\n    # so not set here.\n\n    return context\n",
+    "prompt_sha": "9321d65013e7b42f",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ecdh_curves' [solution.py:290]"
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ecdh_curves' [solution.py:290]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ecdh_curves' [solution.py:290]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\nfrom typing import Optional\n\n# Mozilla Server Side TLS guidelines version 5.6, extracted relevant data for server profiles:\n# We map profile names to their TLS versions and OpenSSL cipher lists for TLS 1.2 and below.\n# TLS 1.3 ciphersuites are not in OpenSSL cipher list and are ignored here as per instructions.\n\n_mozilla_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # no TLS 1.2-and-below ciphers enabled\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n        },\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n    },\n}\n\n# Map from ssl.TLSVersion enum to string names used in Mozilla profiles\n_tlsversion_to_str = {\n    ssl.TLSVersion.TLSv1: \"TLSv1\",\n    ssl.TLSVersion.TLSv1_1: \"TLSv1.1\",\n    ssl.TLSVersion.TLSv1_2: \"TLSv1.2\",\n    ssl.TLSVersion.TLSv1_3: \"TLSv1.3\",\n}\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Returns True if the given server-side SSLContext complies with Mozilla Server Side TLS guidelines\n    as per the organisation's rule on TLS versions and TLS 1.2-and-below cipher suites.\n    \"\"\"\n    # Extract the TLS versions enabled by the context:\n    # The context's minimum_version and maximum_version define the allowed protocol versions.\n    # We convert them to strings for comparison with profile tls_versions.\n    min_ver: Optional[ssl.TLSVersion] = getattr(ctx, \"minimum_version\", None)\n    max_ver: Optional[ssl.TLSVersion] = getattr(ctx, \"maximum_version\", None)\n    if min_ver is None or max_ver is None:\n        # If these attributes are missing, cannot verify compliance\n        return False\n\n    # Build the set of TLS versions enabled by the context (inclusive range)\n    # We consider only TLSv1, TLSv1.1, TLSv1.2, TLSv1.3 as per Mozilla profiles\n    all_versions = [\n        ssl.TLSVersion.TLSv1,\n        ssl.TLSVersion.TLSv1_1,\n        ssl.TLSVersion.TLSv1_2,\n        ssl.TLSVersion.TLSv1_3,\n    ]\n    enabled_versions = [v for v in all_versions if min_ver <= v <= max_ver]\n    enabled_versions_str = [ _tlsversion_to_str[v] for v in enabled_versions ]\n\n    # Get the enabled TLS 1.2-and-below cipher suites from context\n    # ctx.get_ciphers() returns a list of dicts with keys including 'name' (OpenSSL cipher name) and 'protocol'\n    # We consider only ciphers that can be used with TLS <= 1.2 (i.e. exclude TLS 1.3 ciphers)\n    # The 'protocol' field can be \"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\" or empty string for legacy\n    # We consider ciphers with protocol != \"TLSv1.3\" as TLS 1.2-and-below\n    ciphers = ctx.get_ciphers()\n    tls12_and_below_ciphers = set()\n    for c in ciphers:\n        proto = c.get(\"protocol\", \"\")\n        # Some ciphers may have empty protocol string, treat as TLS 1.2-and-below\n        if proto != \"TLSv1.3\":\n            # Use the OpenSSL cipher suite name as is\n            name = c.get(\"name\")\n            if name:\n                tls12_and_below_ciphers.add(name)\n\n    # Now check each Mozilla profile if the context matches it:\n    # Conditions:\n    # - The enabled TLS versions exactly match the profile's tls_versions (order does not matter)\n    # - Every TLS 1.2-and-below cipher enabled in context is in the profile's openssl cipher list\n    #   (If profile has no TLS 1.2 ciphers, then no TLS 1.2 ciphers must be enabled)\n    # If any profile matches, return True; else False.\n\n    enabled_versions_set = set(enabled_versions_str)\n\n    for profile in _mozilla_profiles.values():\n        profile_tls_versions = set(profile[\"tls_versions\"])\n        if enabled_versions_set != profile_tls_versions:\n            continue\n        profile_ciphers = profile[\"openssl_ciphers\"]\n        # Check all TLS 1.2-and-below ciphers enabled are in profile's list\n        if tls12_and_below_ciphers.issubset(profile_ciphers):\n            # This profile matches\n            return True\n\n    # No profile matched\n    return False\n",
+    "prompt_sha": "f12d995c6b2b05c0",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create a TLS client context enforcing certificate and hostname verification per org-client-verification\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until newline is found\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = ssock.recv(4096 - len(data))\n                if not chunk:\n                    # Connection closed\n                    break\n                data.extend(chunk)\n                if b'\\n' in chunk:\n                    # Stop reading after first newline\n                    break\n            # Return bytes up to and including the first newline if present\n            if b'\\n' in data:\n                idx = data.index(b'\\n') + 1\n                return bytes(data[:idx])\n            else:\n                return bytes(data)\n",
+    "prompt_sha": "dd70b40c7773a9c4",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\nfrom typing import List\n\n_mozilla_tls_guidelines = {\n    \"version\": 5.6,\n    \"href\": \"https://ssl-config.mozilla.org/guidelines/5.6.json\",\n    \"configurations\": {\n        \"modern\": {\n            \"certificate_curves\": [\"prime256v1\", \"secp384r1\"],\n            \"certificate_signatures\": [\"ecdsa-with-SHA256\", \"ecdsa-with-SHA384\", \"ecdsa-with-SHA512\"],\n            \"certificate_types\": [\"ecdsa\"],\n            \"ciphers\": {\n                \"caddy\": [],\n                \"go\": [],\n                \"iana\": [],\n                \"openssl\": []\n            },\n            \"ciphersuites\": [\n                \"TLS_AES_128_GCM_SHA256\",\n                \"TLS_AES_256_GCM_SHA384\",\n                \"TLS_CHACHA20_POLY1305_SHA256\"\n            ],\n            \"dh_param_size\": None,\n            \"ecdh_param_size\": 256,\n            \"hsts_min_age\": 63072000,\n            \"maximum_certificate_lifespan\": 90,\n            \"ocsp_staple\": True,\n            \"oldest_clients\": [\"Firefox 63\", \"Android 10.0\", \"Chrome 70\", \"Edge 75\", \"Java 11\", \"OpenSSL 1.1.1\", \"Opera 57\", \"Safari 12.1\"],\n            \"recommended_certificate_lifespan\": 90,\n            \"rsa_key_size\": None,\n            \"server_preferred_order\": False,\n            \"tls_curves\": [\"X25519\", \"prime256v1\", \"secp384r1\"],\n            \"tls_versions\": [\"TLSv1.3\"]\n        },\n        \"intermediate\": {\n            \"certificate_curves\": [\"prime256v1\", \"secp384r1\"],\n            \"certificate_signatures\": [\"sha256WithRSAEncryption\", \"ecdsa-with-SHA256\", \"ecdsa-with-SHA384\", \"ecdsa-with-SHA512\"],\n            \"certificate_types\": [\"ecdsa\", \"rsa\"],\n            \"ciphers\": {\n                \"caddy\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\"\n                ],\n                \"go\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305\"\n                ],\n                \"iana\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_DHE_RSA_WITH_AES_128_GCM_SHA256\"\n                ],\n                \"openssl\": [\n                    \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n                    \"ECDHE-RSA-AES128-GCM-SHA256\",\n                    \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n                    \"ECDHE-RSA-AES256-GCM-SHA384\",\n                    \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n                    \"ECDHE-RSA-CHACHA20-POLY1305\",\n                    \"DHE-RSA-AES128-GCM-SHA256\",\n                    \"DHE-RSA-AES256-GCM-SHA384\"\n                ]\n            },\n            \"ciphersuites\": [\n                \"TLS_AES_128_GCM_SHA256\",\n                \"TLS_AES_256_GCM_SHA384\",\n                \"TLS_CHACHA20_POLY1305_SHA256\"\n            ],\n            \"dh_param_size\": 2048,\n            \"ecdh_param_size\": 256,\n            \"hsts_min_age\": 63072000,\n            \"maximum_certificate_lifespan\": 366,\n            \"ocsp_staple\": True,\n            \"oldest_clients\": [\"Firefox 27\", \"Android 4.4.2\", \"Chrome 31\", \"Edge\", \"IE 11 on Windows 7\", \"Java 8u31\", \"OpenSSL 1.0.1\", \"Opera 20\", \"Safari 9\"],\n            \"recommended_certificate_lifespan\": 90,\n            \"rsa_key_size\": 2048,\n            \"server_preferred_order\": False,\n            \"tls_curves\": [\"X25519\", \"prime256v1\", \"secp384r1\"],\n            \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"]\n        },\n        \"old\": {\n            \"certificate_curves\": [\"prime256v1\", \"secp384r1\"],\n            \"certificate_signatures\": [\"sha256WithRSAEncryption\"],\n            \"certificate_types\": [\"rsa\"],\n            \"ciphers\": {\n                \"caddy\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_3DES_EDE_CBC_SHA\"\n                ],\n                \"go\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_3DES_EDE_CBC_SHA\"\n                ],\n                \"iana\": [\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_DHE_RSA_WITH_CHACHA20_POLY1305_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA384\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384\",\n                    \"TLS_ECDHE_ECDSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_DHE_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_DHE_RSA_WITH_AES_256_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_128_GCM_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_GCM_SHA384\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA256\",\n                    \"TLS_RSA_WITH_AES_128_CBC_SHA\",\n                    \"TLS_RSA_WITH_AES_256_CBC_SHA\",\n                    \"TLS_RSA_WITH_3DES_EDE_CBC_SHA\"\n                ],\n                \"openssl\": [\n                    \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n                    \"ECDHE-RSA-AES128-GCM-SHA256\",\n                    \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n                    \"ECDHE-RSA-AES256-GCM-SHA384\",\n                    \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n                    \"ECDHE-RSA-CHACHA20-POLY1305\",\n                    \"DHE-RSA-AES128-GCM-SHA256\",\n                    \"DHE-RSA-AES256-GCM-SHA384\",\n                    \"DHE-RSA-CHACHA20-POLY1305\",\n                    \"ECDHE-ECDSA-AES128-SHA256\",\n                    \"ECDHE-RSA-AES128-SHA256\",\n                    \"ECDHE-ECDSA-AES128-SHA\",\n                    \"ECDHE-RSA-AES128-SHA\",\n                    \"ECDHE-ECDSA-AES256-SHA384\",\n                    \"ECDHE-RSA-AES256-SHA384\",\n                    \"ECDHE-ECDSA-AES256-SHA\",\n                    \"ECDHE-RSA-AES256-SHA\",\n                    \"DHE-RSA-AES128-SHA256\",\n                    \"DHE-RSA-AES256-SHA256\",\n                    \"AES128-GCM-SHA256\",\n                    \"AES256-GCM-SHA384\",\n                    \"AES128-SHA256\",\n                    \"AES256-SHA256\",\n                    \"AES128-SHA\",\n                    \"AES256-SHA\",\n                    \"DES-CBC3-SHA\"\n                ]\n            },\n            \"ciphersuites\": [\n                \"TLS_AES_128_GCM_SHA256\",\n                \"TLS_AES_256_GCM_SHA384\",\n                \"TLS_CHACHA20_POLY1305_SHA256\"\n            ],\n            \"dh_param_size\": 1024,\n            \"ecdh_param_size\": 256,\n            \"hsts_min_age\": 63072000,\n            \"maximum_certificate_lifespan\": 366,\n            \"ocsp_staple\": True,\n            \"oldest_clients\": [\"Firefox 1\", \"Android 2.3\", \"Chrome 1\", \"Edge 12\", \"IE8 on Windows XP\", \"Java 6\", \"OpenSSL 0.9.8\", \"Opera 5\", \"Safari 1\"],\n            \"recommended_certificate_lifespan\": 90,\n            \"rsa_key_size\": 2048,\n            \"server_preferred_order\": True,\n            \"tls_curves\": [\"X25519\", \"prime256v1\", \"secp384r1\"],\n            \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"]\n        }\n    }\n}\n\ndef _openssl_cipher_list_to_str(cipher_list: List[str]) -> str:\n    # Join cipher list with colon for OpenSSL cipher string\n    return \":\".join(cipher_list)\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for payment terminals that only support TLS 1.0,\n    enforcing the 'old' profile from Mozilla Server Side TLS guidelines version 5.6.\n    \"\"\"\n    import ssl\n\n    # Select the 'old' profile from Mozilla guidelines\n    profile = _mozilla_tls_guidelines[\"configurations\"][\"old\"]\n\n    # Check that TLSv1.0 is supported by the profile (it is in 'old')\n    if \"TLSv1\" not in profile[\"tls_versions\"]:\n        raise PermissionError(\"The 'old' profile does not support TLS 1.0, cannot create context for terminals.\")\n\n    # Create SSLContext for server side with TLS 1.0 minimum and maximum version\n    # Python 3.11+ supports TLSVersion enum for setting min/max versions\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS version to TLS 1.0 to restrict to TLS 1.0 only\n    # TLSv1.0 corresponds to ssl.TLSVersion.TLSv1\n    context.minimum_version = ssl.TLSVersion.TLSv1\n    context.maximum_version = ssl.TLSVersion.TLSv1\n\n    # Set cipher suites for TLS 1.2 and below from the profile's OpenSSL cipher list\n    # The 'old' profile ciphers under \"openssl\" include TLS 1.2 and below ciphers\n    # TLS 1.3 ciphersuites are set separately by SSLContext in Python 3.7+\n    openssl_ciphers = profile[\"ciphers\"][\"openssl\"]\n    cipher_string = _openssl_cipher_list_to_str(openssl_ciphers)\n    context.set_ciphers(cipher_string)\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Set server cipher preference order according to profile\n    # 'old' profile requires server_preferred_order = True\n    context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE if profile[\"server_preferred_order\"] else 0\n\n    # Set elliptic curve for ECDH key exchange if supported\n    # Use the first curve in the profile's tls_curves list that is supported by ssl module\n    # Python ssl module supports set_ecdh_curve (deprecated) or set_ecdh_curves (new)\n    # We'll use set_ecdh_curve for compatibility with 3.11\n    # Only set if ecdh_param_size is not None and curves are present\n    if profile[\"ecdh_param_size\"] and profile[\"tls_curves\"]:\n        # Map Mozilla curve names to OpenSSL curve names used by ssl module\n        # Mozilla names mostly match OpenSSL names except \"prime256v1\" is \"prime256v1\"\n        # We'll pick the first curve from the list that ssl supports\n        # ssl module in CPython 3.11 supports set_ecdh_curve with OpenSSL name string\n        for curve in profile[\"tls_curves\"]:\n            try:\n                context.set_ecdh_curve(curve)\n                break\n            except ssl.SSLError:\n                continue\n\n    # Note: HSTS max-age is a HTTP header setting, not part of SSLContext\n\n    return context\n",
+    "prompt_sha": "a25c2dc7f4cf6974",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 terminal could not connect [test_tls_legacy_terminal.py:21]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: TLSv1 client could not connect [test_tls_legacy_terminal.py:35]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "tls_config",
+  "state": "s1",
+  "date": "2023-05-15",
+  "split": "dev",
+  "event": "mozilla-tls-5.7",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nimport sys\n\n# Mozilla Server Side TLS guidelines 5.7 intermediate profile relevant data\n_MOZILLA_INTERMEDIATE = {\n    \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n    \"openssl_ciphers\": [\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n        \"DHE-RSA-CHACHA20-POLY1305\"\n    ],\n    \"server_preferred_order\": False,\n    \"hsts_min_age\": 63072000,\n}\n\n# Mapping from Mozilla TLS version strings to ssl module constants\n_TLS_VERSION_MAP = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for the public HTTPS API that supports current browsers and TLS 1.2 clients,\n    matching the Mozilla Server Side TLS guidelines intermediate profile (version 5.7).\n    \"\"\"\n    # Create SSLContext for maximum TLS version in profile (TLS 1.3)\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions according to profile\n    # TLS versions must exactly match the profile's tls_versions\n    # The profile has TLSv1.2 and TLSv1.3 enabled\n    # ssl module allows setting minimum_version and maximum_version\n    # We set minimum_version to TLSv1.2 and maximum_version to TLSv1.3\n    # Confirm that these constants exist in this Python version\n    try:\n        context.minimum_version = _TLS_VERSION_MAP[\"TLSv1.2\"]\n        context.maximum_version = _TLS_VERSION_MAP[\"TLSv1.3\"]\n    except AttributeError as e:\n        # If TLSVersion constants are not available, fallback or raise\n        raise RuntimeError(\"Python ssl module does not support setting TLS version range as required\") from e\n\n    # Set cipher suites for TLS 1.2 and below from the intermediate profile OpenSSL cipher list\n    # TLS 1.3 ciphersuites are automatically handled by the ssl module and do not use the cipher string\n    # So we set the cipher string to the colon-separated list of intermediate profile OpenSSL ciphers\n    # This ensures only allowed TLS 1.2-and-below ciphers are enabled\n    cipher_string = \":\".join(_MOZILLA_INTERMEDIATE[\"openssl_ciphers\"])\n    try:\n        context.set_ciphers(cipher_string)\n    except ssl.SSLError as e:\n        raise RuntimeError(f\"Failed to set ciphers for server context: {e}\") from e\n\n    # Set server cipher preference order according to profile\n    # intermediate profile server_preferred_order is False, so do not set\n    # ssl module default is False, so no action needed\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Set options to disable SSLv2, SSLv3, and TLS versions below TLS 1.2 for safety\n    # These are disabled by setting minimum_version, but also set options for compatibility\n    context.options |= ssl.OP_NO_SSLv2\n    context.options |= ssl.OP_NO_SSLv3\n    context.options |= ssl.OP_NO_TLSv1\n    context.options |= ssl.OP_NO_TLSv1_1\n\n    # Note: HSTS max-age is not a property of SSLContext in Python's ssl module,\n    # it must be set in HTTP headers by the application server.\n    # We do not handle HSTS here.\n\n    return context\n",
+    "prompt_sha": "bfd450c9d9377466",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\nfrom typing import Optional\n\n# Mozilla Server Side TLS guidelines 5.7 relevant data extracted for checking\n# Only the TLS versions and OpenSSL cipher lists for TLS 1.2-and-below are relevant here.\n\n_mozilla_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # no TLS 1.2 and below ciphers allowed\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n    },\n}\n\n# Map ssl.TLSVersion enum to profile string names\n_tls_version_enum_to_name = {\n    ssl.TLSVersion.TLSv1: \"TLSv1\",\n    ssl.TLSVersion.TLSv1_1: \"TLSv1.1\",\n    ssl.TLSVersion.TLSv1_2: \"TLSv1.2\",\n    ssl.TLSVersion.TLSv1_3: \"TLSv1.3\",\n}\n\ndef _ctx_tls_versions(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"Return set of TLS version names enabled by ctx's min and max version.\"\"\"\n    minv: Optional[ssl.TLSVersion] = getattr(ctx, \"minimum_version\", None)\n    maxv: Optional[ssl.TLSVersion] = getattr(ctx, \"maximum_version\", None)\n    if minv is None or maxv is None:\n        # If attributes missing, fallback to legacy behavior (not expected in 3.11)\n        # We treat as all versions enabled (unsafe)\n        return {\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"}\n    # Collect all TLS versions between minv and maxv inclusive\n    versions = []\n    for ver in ssl.TLSVersion:\n        if minv <= ver <= maxv:\n            versions.append(_tls_version_enum_to_name.get(ver))\n    return set(filter(None, versions))\n\ndef _enabled_tls12_and_below_ciphers(ctx: ssl.SSLContext) -> set[str]:\n    \"\"\"\n    Return set of OpenSSL cipher suite names enabled by ctx that are TLS 1.2 and below.\n    We filter ctx.get_ciphers() by protocol version <= TLS 1.2.\n    \"\"\"\n    ciphers = ctx.get_ciphers()\n    # Filter ciphers with protocol version <= TLS 1.2\n    tls12_and_below_ciphers = {\n        c[\"name\"] for c in ciphers\n        if c.get(\"protocol\") in (\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\")\n    }\n    return tls12_and_below_ciphers\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True if the given server-side SSLContext satisfies the organisation's TLS configuration rule:\n    - TLS versions enabled exactly match one of the Mozilla profiles' tls_versions\n    - Every enabled TLS 1.2-and-below cipher suite is in that profile's OpenSSL cipher list\n    Ignore certificates, curves, cipher order, and HSTS.\n    \"\"\"\n    ctx_versions = _ctx_tls_versions(ctx)\n\n    # Check against each profile if matches\n    for profile_name, profile_data in _mozilla_profiles.items():\n        profile_versions = set(profile_data[\"tls_versions\"])\n        if ctx_versions == profile_versions:\n            # Versions match exactly, check ciphers for TLS 1.2 and below\n            ctx_ciphers = _enabled_tls12_and_below_ciphers(ctx)\n            profile_ciphers = profile_data[\"openssl_ciphers\"]\n            # All enabled TLS 1.2-and-below ciphers must be in profile ciphers\n            if ctx_ciphers.issubset(profile_ciphers):\n                return True\n    return False\n",
+    "prompt_sha": "eda8a251cac93791",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm', 'tls12-dhe-chacha'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify the server certificate against the CA bundle cafile\n    and the host name (server_hostname, defaulting to host), and return the server's greeting:\n    the bytes it sends up to and including the first newline (or until it closes the connection,\n    at most 4096 bytes).\n    Verification failures raise ssl.SSLError or ssl.CertificateError.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create a TLS client context with verification enabled\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until newline is found\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = ssock.recv(4096 - len(data))\n                if not chunk:\n                    # Connection closed by server\n                    break\n                data.extend(chunk)\n                if b'\\n' in chunk:\n                    # Found newline, stop reading\n                    break\n            # Return bytes up to and including first newline if present\n            newline_index = data.find(b'\\n')\n            if newline_index != -1:\n                return bytes(data[:newline_index + 1])\n            else:\n                return bytes(data)\n",
+    "prompt_sha": "eefc0dc2b7c68780",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\nfrom typing import Optional\n\n# Mozilla Server Side TLS guidelines 5.7 profiles data relevant for server context validation\n_MOZILLA_TLS_PROFILES = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n        \"server_preferred_order\": True,\n        \"hsts_min_age\": 63072000,\n    },\n}\n\n# The old profile is the only one supporting TLS 1.0, which is required for the payment terminals.\n# We must ensure the server context matches the old profile exactly for TLS versions and ciphers.\n\ndef _openssl_cipher_string_from_list(ciphers: list[str]) -> str:\n    # Join cipher list with ':' for OpenSSL cipher string\n    return \":\".join(ciphers)\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for payment terminals supporting only TLS 1.0.\n    This context must match the 'old' profile from Mozilla Server Side TLS guidelines 5.7.\n    \"\"\"\n    profile = _MOZILLA_TLS_PROFILES[\"old\"]\n\n    # Create SSL context for server side\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions according to profile\n    # TLSv1.0 is ssl.TLSVersion.TLSv1 in Python 3.11\n    # TLSv1.1 is TLSv1_1, TLSv1.2 is TLSv1_2, TLSv1.3 is TLSv1_3\n    # The profile supports TLSv1, TLSv1.1, TLSv1.2, TLSv1.3, but terminals only support TLSv1.0,\n    # so we must allow TLSv1.0 minimum and maximum TLSv1.3 to cover all allowed versions.\n    # However, the terminals only support TLS 1.0, so the server must allow TLSv1.0.\n    # The profile requires all these versions enabled, so we set min TLSv1 and max TLSv1_3.\n    context.minimum_version = ssl.TLSVersion.TLSv1\n    context.maximum_version = ssl.TLSVersion.TLSv1_3\n\n    # Set ciphers to exactly the profile's OpenSSL ciphers for old profile\n    # We only set the ciphers for TLS 1.2 and below (TLS 1.3 ciphersuites are separate and not set here)\n    # The profile's OpenSSL cipher list is a set, convert to list and join with ':'\n    cipher_string = _openssl_cipher_string_from_list(sorted(profile[\"openssl_ciphers\"]))\n    context.set_ciphers(cipher_string)\n\n    # Set server cipher preference order according to profile\n    context.options |= ssl.OP_NO_TICKET  # Disable session tickets for better compatibility (optional)\n    if profile[\"server_preferred_order\"]:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Note: HSTS max-age is a HTTP header and not set in SSLContext; it must be set in HTTP server config.\n\n    # Validate that context matches profile requirements:\n    # - TLS versions: min TLSv1, max TLSv1.3 (matches profile)\n    # - Ciphers: exactly profile's OpenSSL ciphers for TLS 1.2 and below\n    #   (Note: Python ssl module does not expose direct cipher list after set_ciphers,\n    #    so we trust set_ciphers call with exact profile ciphers)\n    # - Server preferred order: set accordingly\n\n    # If any mismatch detected (not possible here as we control config), raise PermissionError\n    # (No dynamic check here as Python ssl module does not expose all internals)\n\n    return context\n",
+    "prompt_sha": "2f3e6a1568f79a00",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 terminal could not connect [test_tls_legacy_terminal.py:21]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: TLSv1 client could not connect [test_tls_legacy_terminal.py:35]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "tls_config",
+  "state": "s2",
+  "date": "2023-10-02",
+  "split": "dev",
+  "event": "python-3.12",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nfrom typing import Optional\n\n_mozilla_tls_guidelines_5_7 = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n        \"server_preferred_order\": False,\n        \"hsts_min_age\": 63072000,\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n        \"server_preferred_order\": True,\n        \"hsts_min_age\": 63072000,\n    },\n}\n\ndef _openssl_cipher_suite_to_cipher(cipher_suite: str) -> Optional[str]:\n    \"\"\"\n    Convert TLS 1.2-and-below cipher suite name from OpenSSL format to cipher name used in SSLContext.set_ciphers.\n    For TLS 1.3 cipher suites, they are set via set_ciphersuites and not in the cipher string.\n    \"\"\"\n    # This function is not strictly needed here because we only check membership of cipher names in the profile sets.\n    # The cipher names in the profile are already OpenSSL cipher names for TLS 1.2 and below.\n    return cipher_suite\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for the public HTTPS API that supports current browsers and TLS 1.2 clients,\n    and complies with the organisation's TLS configuration rule referencing Mozilla's Server Side TLS guidelines 5.7.\n    \"\"\"\n    # We must support current browsers and TLS 1.2 clients.\n    # The \"intermediate\" profile supports TLS 1.2 and TLS 1.3, and is compatible with a wide range of clients.\n    profile = _mozilla_tls_guidelines_5_7[\"intermediate\"]\n\n    # Create SSLContext with TLS server method that supports TLS 1.2 and 1.3\n    # Python 3.12 ssl module: use ssl.PROTOCOL_TLS_SERVER for server context\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions according to profile\n    # Map profile tls_versions to ssl.TLSVersion enum members\n    tls_version_map = {\n        \"TLSv1\": ssl.TLSVersion.TLSv1,\n        \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n        \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n        \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n    }\n    # Determine min and max TLS versions from profile\n    profile_versions = profile[\"tls_versions\"]\n    min_version = min(tls_version_map[v] for v in profile_versions)\n    max_version = max(tls_version_map[v] for v in profile_versions)\n    context.minimum_version = min_version\n    context.maximum_version = max_version\n\n    # Set cipher suites for TLS 1.2 and below from profile's OpenSSL cipher list\n    # Compose cipher string for SSLContext.set_ciphers()\n    # The profile's \"openssl\" ciphers are the allowed TLS 1.2 and below ciphers\n    # Join them with ':'\n    ciphers = \":\".join(sorted(profile[\"openssl_ciphers\"]))\n    if not ciphers:\n        # Defensive: if no TLS 1.2 ciphers, set empty string disables TLS 1.2 ciphers\n        ciphers = \"\"\n\n    # Set ciphers for TLS 1.2 and below\n    context.set_ciphers(ciphers)\n\n    # Set TLS 1.3 ciphersuites explicitly\n    # Profile's \"ciphersuites\" are TLS 1.3 cipher suite names\n    # Python 3.12 ssl.SSLContext supports set_ciphersuites()\n    # Compose ciphersuites string joined by ':'\n    ciphersuites = \":\".join(profile[\"ciphersuites\"])\n    context.set_ciphersuites(ciphersuites)\n\n    # Set server cipher preference order according to profile\n    context.options |= ssl.OP_NO_RENEGOTIATION  # Good practice to disable renegotiation\n    if profile[\"server_preferred_order\"]:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE  # Clear flag if False\n    else:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Set elliptic curves for ECDH key exchange according to profile tls_curves\n    # The profile \"tls_curves\" are [\"X25519\", \"prime256v1\", \"secp384r1\"]\n    # Python ssl.SSLContext.set_ecdh_curve() accepts a colon-separated string of curve names\n    # Use the profile's tls_curves in order\n    # Note: Python 3.12 ssl.SSLContext.set_ecdh_curve() accepts a single curve name or colon-separated list\n    # We'll join with colon\n    tls_curves = [\"X25519\", \"prime256v1\", \"secp384r1\"]\n    # Use profile's tls_curves if present, else fallback to above\n    if \"tls_curves\" in profile and profile[\"tls_curves\"]:\n        tls_curves = profile[\"tls_curves\"]\n    context.set_ecdh_curve(\":\".join(tls_curves))\n\n    # HSTS max-age is informational for HTTP headers, not set in SSLContext\n    # So no action needed here for hsts_min_age\n\n    # OCSP stapling, DH param size, RSA key size, certificate curves, etc. are not configurable via ssl.SSLContext in Python stdlib\n    # So no action here\n\n    return context\n",
+    "prompt_sha": "1cba0323542b0229",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "KeyError: 'ciphersuites' [solution.py:115]"
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "KeyError: 'ciphersuites' [solution.py:115]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "KeyError: 'ciphersuites' [solution.py:115]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 5.7 relevant data for server TLS versions and TLS 1.2-and-below ciphersuites\n# We only consider the TLS versions and the OpenSSL cipher lists for TLS 1.2 and below ciphers.\n# TLS 1.3 ciphersuites are not listed in ctx.get_ciphers() because Python ssl module separates them.\n# So we only check TLS 1.2 and below ciphersuites in ctx.get_ciphers() against the profile's openssl cipher list.\n\n_mozilla_profiles = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # empty, no TLS 1.2 and below ciphers allowed\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n    },\n    \"old\": {\n        \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n            \"ECDHE-ECDSA-AES128-SHA256\",\n            \"ECDHE-RSA-AES128-SHA256\",\n            \"ECDHE-ECDSA-AES128-SHA\",\n            \"ECDHE-RSA-AES128-SHA\",\n            \"ECDHE-ECDSA-AES256-SHA384\",\n            \"ECDHE-RSA-AES256-SHA384\",\n            \"ECDHE-ECDSA-AES256-SHA\",\n            \"ECDHE-RSA-AES256-SHA\",\n            \"DHE-RSA-AES128-SHA256\",\n            \"DHE-RSA-AES256-SHA256\",\n            \"AES128-GCM-SHA256\",\n            \"AES256-GCM-SHA384\",\n            \"AES128-SHA256\",\n            \"AES256-SHA256\",\n            \"AES128-SHA\",\n            \"AES256-SHA\",\n            \"DES-CBC3-SHA\",\n        },\n    },\n}\n\n# Map TLS version strings from guidelines to ssl.TLSVersion enum values for comparison\n_tls_version_map = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Returns True if and only if the given server-side SSLContext satisfies the organisation's TLS configuration rule\n    as far as its protocol version range and its enabled TLS 1.2-and-below cipher suites are concerned.\n    Ignores certificates, curves, cipher order and HSTS.\n    \"\"\"\n    # Determine enabled TLS versions from ctx.minimum_version and ctx.maximum_version\n    # They are ssl.TLSVersion enum values or None (None means default, but we treat None as non-compliant)\n    if ctx.minimum_version is None or ctx.maximum_version is None:\n        # We cannot verify compliance without explicit version range\n        return False\n\n    # Collect enabled TLS versions as a set of strings matching guideline keys\n    enabled_versions = set()\n    for ver_str, ver_enum in _tls_version_map.items():\n        if ctx.minimum_version <= ver_enum <= ctx.maximum_version:\n            enabled_versions.add(ver_str)\n\n    # Check each profile if it matches the enabled TLS versions exactly (set equality)\n    # Only one profile can match\n    matching_profile = None\n    for profile_name, profile_data in _mozilla_profiles.items():\n        profile_versions_set = set(profile_data[\"tls_versions\"])\n        if enabled_versions == profile_versions_set:\n            matching_profile = profile_data\n            break\n\n    if matching_profile is None:\n        # No profile matches the TLS version range exactly\n        return False\n\n    # Now check the enabled TLS 1.2 and below cipher suites in ctx.get_ciphers()\n    # ctx.get_ciphers() returns a list of dicts with keys including 'name' (OpenSSL cipher name)\n    # We must verify that every enabled cipher suite for TLS 1.2 and below is in the profile's openssl cipher list\n\n    # Filter ciphers to those that are TLS 1.2 and below\n    # Python ssl does not provide direct version info per cipher in get_ciphers()\n    # But TLS 1.3 ciphers are not included in get_ciphers(), so all returned ciphers are TLS 1.2 and below\n    ciphers = ctx.get_ciphers()\n    enabled_cipher_names = {c[\"name\"] for c in ciphers}\n\n    # Check all enabled ciphers are in the profile's openssl cipher list\n    if not enabled_cipher_names.issubset(matching_profile[\"openssl_ciphers\"]):\n        return False\n\n    # Passed all checks\n    return True\n",
+    "prompt_sha": "b8586cc25d496a9a",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm', 'tls12-dhe-chacha'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify the server certificate against the CA bundle cafile\n    and the host name (server_hostname, defaulting to host), and return the server's greeting:\n    the bytes it sends up to and including the first newline (or until it closes the connection,\n    at most 4096 bytes).\n    Verification failures raise ssl.SSLError or ssl.CertificateError.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create an SSL context for client usage with certificate and hostname verification enabled\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    # Open a TCP connection and wrap it in SSL\n    with socket.create_connection((host, port)) as sock:\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until newline is found\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = ssock.recv(4096 - len(data))\n                if not chunk:\n                    # Connection closed before newline\n                    break\n                data.extend(chunk)\n                if b'\\n' in chunk:\n                    # Stop reading after newline\n                    break\n            # Return bytes up to and including the first newline if present\n            newline_index = data.find(b'\\n')\n            if newline_index != -1:\n                return bytes(data[:newline_index + 1])\n            else:\n                return bytes(data)\n",
+    "prompt_sha": "1944c91eb813c696",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\nfrom typing import Optional\n\n# Mozilla Server Side TLS guidelines 5.7 \"old\" profile relevant data for TLS 1.0 support\n_OLD_PROFILE = {\n    \"tls_versions\": [\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\", \"TLSv1.3\"],\n    \"openssl_ciphers\": [\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n        \"DHE-RSA-CHACHA20-POLY1305\",\n        \"ECDHE-ECDSA-AES128-SHA256\",\n        \"ECDHE-RSA-AES128-SHA256\",\n        \"ECDHE-ECDSA-AES128-SHA\",\n        \"ECDHE-RSA-AES128-SHA\",\n        \"ECDHE-ECDSA-AES256-SHA384\",\n        \"ECDHE-RSA-AES256-SHA384\",\n        \"ECDHE-ECDSA-AES256-SHA\",\n        \"ECDHE-RSA-AES256-SHA\",\n        \"DHE-RSA-AES128-SHA256\",\n        \"DHE-RSA-AES256-SHA256\",\n        \"AES128-GCM-SHA256\",\n        \"AES256-GCM-SHA384\",\n        \"AES128-SHA256\",\n        \"AES256-SHA256\",\n        \"AES128-SHA\",\n        \"AES256-SHA\",\n        \"DES-CBC3-SHA\"\n    ],\n    \"server_preferred_order\": True,\n    \"hsts_min_age\": 63072000,\n}\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create a server-side SSLContext for payment terminals that only support TLS 1.0,\n    matching the \"old\" profile from Mozilla Server Side TLS guidelines 5.7.\n\n    The context enforces:\n    - TLS versions: TLSv1, TLSv1.1, TLSv1.2, TLSv1.3\n    - Cipher suites limited to the profile's OpenSSL cipher list for TLS 1.2 and below\n    - Server cipher preference enabled\n    - Loads the given certificate and key files\n\n    Raises:\n        PermissionError: if the context cannot be configured to match the profile.\n    \"\"\"\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions according to the profile\n    # TLSv1.3 is supported by Python 3.12 ssl module as PROTOCOL_TLS_SERVER default,\n    # but we explicitly set min and max versions to cover the profile range.\n    # TLSv1.0 = TLSVersion.TLSv1, TLSv1.1 = TLSVersion.TLSv1_1, TLSv1.2 = TLSVersion.TLSv1_2, TLSv1.3 = TLSVersion.TLSv1_3\n    # The profile allows all four versions.\n    try:\n        context.minimum_version = ssl.TLSVersion.TLSv1\n        context.maximum_version = ssl.TLSVersion.TLSv1_3\n    except AttributeError as e:\n        raise PermissionError(\"Python ssl module does not support setting TLS versions as required by profile\") from e\n\n    # Set server cipher preference according to profile\n    context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE if _OLD_PROFILE[\"server_preferred_order\"] else 0\n\n    # Set ciphers to exactly the profile's OpenSSL cipher list for TLS 1.2 and below\n    # TLS 1.3 ciphersuites are set separately by the ssl module automatically.\n    # The profile's ciphers list includes only TLS 1.2 and below ciphers.\n    # We join them with ':' as OpenSSL cipher string format.\n    openssl_ciphers = \":\".join(_OLD_PROFILE[\"openssl_ciphers\"])\n    try:\n        context.set_ciphers(openssl_ciphers)\n    except ssl.SSLError as e:\n        raise PermissionError(\"Failed to set ciphers to match the old profile\") from e\n\n    # Load server certificate and private key\n    try:\n        context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n    except Exception as e:\n        raise PermissionError(\"Failed to load certificate or key file\") from e\n\n    # HSTS max-age is a header setting, not part of SSLContext, so no action here.\n\n    return context\n",
+    "prompt_sha": "f404d2918a856ebe",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 terminal could not connect [test_tls_legacy_terminal.py:21]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: TLSv1 client could not connect [test_tls_legacy_terminal.py:35]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "tls_config",
+  "state": "s3",
+  "date": "2026-04-06",
+  "split": "test",
+  "event": "mozilla-tls-6.0",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\nimport sys\n\n# Mozilla Server Side TLS guidelines 6.0 relevant profiles (modern and intermediate)\n# We must support TLS 1.2 for some API clients, so \"intermediate\" profile applies.\n# We must enforce the organisation's rule for server contexts:\n# - TLS versions exactly match profile's tls_versions\n# - TLS 1.2-and-below cipher suites enabled must be in profile's OpenSSL cipher list\n# - cipher order preference matches profile\n# - HSTS max-age matches profile (not directly settable in ssl.SSLContext, but noted)\n#\n# The intermediate profile from guidelines 6.0:\nINTERMEDIATE_PROFILE = {\n    \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n    \"openssl_ciphers\": [\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n        \"DHE-RSA-CHACHA20-POLY1305\"\n    ],\n    \"server_preferred_order\": False,\n    \"hsts_min_age\": 63072000,\n}\n\n# Map profile TLS version strings to ssl module constants for minimum and maximum versions\n_TLS_VERSION_MAP = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create an SSLContext for the public HTTPS API server that supports current browsers and TLS 1.2 clients,\n    enforcing the organisation's TLS configuration rule based on Mozilla's Server Side TLS guidelines 6.0\n    intermediate profile.\n    \"\"\"\n    # Create SSLContext with TLS server method (supports TLS 1.2 and 1.3)\n    context = ssl.SSLContext(ssl.PROTOCOL_TLS_SERVER)\n\n    # Set minimum and maximum TLS versions exactly as per intermediate profile\n    # The profile requires TLSv1.2 and TLSv1.3 only\n    # Python 3.12 ssl.TLSVersion enum supports these\n    # We set minimum to TLSv1.2 and maximum to TLSv1.3\n    # Defensive: verify that profile versions are supported by ssl module\n    tls_versions = INTERMEDIATE_PROFILE[\"tls_versions\"]\n    # Sort versions by TLSVersion enum value to get min and max\n    try:\n        tls_versions_enum = sorted(_TLS_VERSION_MAP[v] for v in tls_versions)\n    except KeyError as e:\n        raise RuntimeError(f\"Unsupported TLS version in profile: {e.args[0]}\")\n\n    context.minimum_version = tls_versions_enum[0]\n    context.maximum_version = tls_versions_enum[-1]\n\n    # Set cipher suites for TLS 1.2 and below from profile's OpenSSL cipher list\n    # The profile's OpenSSL ciphers are for TLS 1.2 and below\n    # TLS 1.3 ciphersuites are set separately via SSLContext.set_ciphersuites()\n    # The intermediate profile ciphersuites for TLS 1.3 are:\n    tls13_ciphersuites = [\n        \"TLS_AES_128_GCM_SHA256\",\n        \"TLS_AES_256_GCM_SHA384\",\n        \"TLS_CHACHA20_POLY1305_SHA256\"\n    ]\n\n    # Compose OpenSSL cipher string for TLS 1.2 and below ciphers:\n    # Join with ':' to form cipher string for context.set_ciphers()\n    # This string must contain only ciphers in the profile's OpenSSL list\n    openssl_ciphers = INTERMEDIATE_PROFILE[\"openssl_ciphers\"]\n    if not openssl_ciphers:\n        # Defensive: if empty, no TLS 1.2 ciphers allowed, but profile requires TLS 1.2\n        raise RuntimeError(\"Intermediate profile has no TLS 1.2 ciphers defined\")\n\n    cipher_string = \":\".join(openssl_ciphers)\n    try:\n        context.set_ciphers(cipher_string)\n    except ssl.SSLError as e:\n        raise RuntimeError(f\"Failed to set TLS 1.2 ciphers: {e}\")\n\n    # Set TLS 1.3 ciphersuites explicitly\n    # Python 3.12 ssl.SSLContext.set_ciphersuites() expects OpenSSL cipher suite names\n    # The profile lists TLS 1.3 ciphersuites by IANA names, which are accepted by set_ciphersuites()\n    try:\n        context.set_ciphersuites(\":\".join(tls13_ciphersuites))\n    except ssl.SSLError as e:\n        raise RuntimeError(f\"Failed to set TLS 1.3 ciphersuites: {e}\")\n\n    # Set server cipher preference order according to profile\n    # The intermediate profile has server_preferred_order = False\n    # ssl.SSLContext.options can be used to disable SSL_OP_CIPHER_SERVER_PREFERENCE if needed\n    # By default, server_preferred_order is False, so we do not set SSL_OP_CIPHER_SERVER_PREFERENCE\n    # But to be explicit:\n    if INTERMEDIATE_PROFILE[\"server_preferred_order\"]:\n        context.options |= ssl.OP_CIPHER_SERVER_PREFERENCE\n    else:\n        context.options &= ~ssl.OP_CIPHER_SERVER_PREFERENCE\n\n    # Load server certificate and private key\n    context.load_cert_chain(certfile=certfile, keyfile=keyfile)\n\n    # Disable compression to mitigate CRIME attack (best practice)\n    context.options |= ssl.OP_NO_COMPRESSION\n\n    # Disable older protocols explicitly (TLS 1.0 and 1.1 removed in profile)\n    # Already enforced by minimum_version=TLSv1.2\n\n    # Set elliptic curves (named groups) for ECDH key exchange\n    # The intermediate profile tls_curves are:\n    # [\"X25519MLKEM768\", \"X25519\", \"prime256v1\", \"secp384r1\"]\n    # Python ssl module supports set_ecdh_curve() with OpenSSL curve names.\n    # \"X25519MLKEM768\" is a new curve, likely unsupported in current OpenSSL/Python.\n    # We'll set the supported curves from the profile that are recognized by OpenSSL.\n    # We prefer to set the curves in order of preference.\n    # We'll filter out unknown curves.\n    # The standard OpenSSL names for the known curves:\n    # \"X25519\" and \"prime256v1\" and \"secp384r1\" are supported.\n    # We'll skip \"X25519MLKEM768\" as it's not standard in OpenSSL 3.0 or earlier.\n    supported_curves = []\n    for curve in INTERMEDIATE_PROFILE.get(\"tls_curves\", []):\n        if curve in (\"X25519\", \"prime256v1\", \"secp384r1\"):\n            supported_curves.append(curve)\n    if supported_curves:\n        try:\n            context.set_ecdh_curve(\":\".join(supported_curves))\n        except ssl.SSLError:\n            # If setting curves fails, ignore as best effort\n            pass\n\n    # HSTS max-age is a HTTP header, not settable in SSLContext.\n    # The organisation's rule includes it, so services must set it in HTTP headers separately.\n    # We document this here for completeness.\n\n    return context\n",
+    "prompt_sha": "c0775afe1f9efa24",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ciphersuites' [solution.py:90]"
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ciphersuites' [solution.py:90]"
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "AttributeError: 'SSLContext' object has no attribute 'set_ciphersuites' [solution.py:90]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\n# Mozilla Server Side TLS guidelines 6.0 relevant profiles for server TLS versions and ciphers (openssl names)\n_MOZILLA_TLS_PROFILES = {\n    \"modern\": {\n        \"tls_versions\": [\"TLSv1.3\"],\n        \"openssl_ciphers\": set(),  # no TLS 1.2-and-below ciphers enabled\n    },\n    \"intermediate\": {\n        \"tls_versions\": [\"TLSv1.2\", \"TLSv1.3\"],\n        \"openssl_ciphers\": {\n            \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n            \"ECDHE-RSA-AES128-GCM-SHA256\",\n            \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n            \"ECDHE-RSA-AES256-GCM-SHA384\",\n            \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n            \"ECDHE-RSA-CHACHA20-POLY1305\",\n            \"DHE-RSA-AES128-GCM-SHA256\",\n            \"DHE-RSA-AES256-GCM-SHA384\",\n            \"DHE-RSA-CHACHA20-POLY1305\",\n        },\n    },\n}\n\n\n# Map TLS version strings from profile to ssl.TLSVersion enum\n_TLS_VERSION_MAP = {\n    \"TLSv1\": ssl.TLSVersion.TLSv1,\n    \"TLSv1.1\": ssl.TLSVersion.TLSv1_1,\n    \"TLSv1.2\": ssl.TLSVersion.TLSv1_2,\n    \"TLSv1.3\": ssl.TLSVersion.TLSv1_3,\n}\n\n\ndef _profile_versions_to_minmax(tls_versions: list[str]) -> tuple[ssl.TLSVersion, ssl.TLSVersion]:\n    \"\"\"Convert profile TLS version list to minimum_version and maximum_version enums.\"\"\"\n    # Convert to enums and sort\n    enums = sorted(_TLS_VERSION_MAP[v] for v in tls_versions)\n    return enums[0], enums[-1]\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Check if the given server-side SSLContext complies with the organisation's TLS configuration rule\n    regarding protocol version range and enabled TLS 1.2-and-below cipher suites.\n\n    Returns True if compliant, False otherwise.\n    \"\"\"\n    # Determine the TLS versions enabled by the context\n    ctx_min = ctx.minimum_version\n    ctx_max = ctx.maximum_version\n\n    # Check against each Mozilla profile if the context matches exactly the profile's TLS versions\n    # and enabled TLS 1.2-and-below ciphers are subset of profile's allowed ciphers.\n    # If any profile matches, return True.\n\n    # Extract enabled TLS 1.2-and-below ciphers from context\n    # ctx.get_ciphers() returns a list of dicts with keys including 'protocol' and 'name'\n    # 'protocol' is a string like \"TLSv1.2\", \"TLSv1\", \"SSLv3\" etc.\n    # We consider TLS 1.2 and below: TLSv1.2, TLSv1.1, TLSv1.0\n    tls12_and_below_protocols = {\"TLSv1\", \"TLSv1.1\", \"TLSv1.2\"}\n\n    enabled_ciphers = ctx.get_ciphers()\n    enabled_tls12_and_below_ciphers = set()\n    for c in enabled_ciphers:\n        proto = c.get(\"protocol\", \"\")\n        # Only consider TLS 1.2 and below ciphers\n        if proto in tls12_and_below_protocols:\n            # The 'name' field is the OpenSSL cipher suite name\n            cipher_name = c.get(\"name\")\n            if cipher_name:\n                enabled_tls12_and_below_ciphers.add(cipher_name)\n\n    for profile_name, profile in _MOZILLA_TLS_PROFILES.items():\n        # Check TLS versions match exactly\n        prof_min, prof_max = _profile_versions_to_minmax(profile[\"tls_versions\"])\n        if ctx_min == prof_min and ctx_max == prof_max:\n            # Check enabled TLS 1.2-and-below ciphers are subset of profile's allowed ciphers\n            # Profile's ciphers are OpenSSL names\n            profile_ciphers = profile[\"openssl_ciphers\"]\n            if enabled_tls12_and_below_ciphers.issubset(profile_ciphers):\n                return True\n\n    return False\n",
+    "prompt_sha": "df1fe89534b2eb08",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only', 'tls12-ecdhe', 'tls12-one-ecdhe'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import ssl\nimport socket\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify the server certificate against the CA bundle cafile\n    and the host name (server_hostname, defaulting to host), and return the server's greeting:\n    the bytes it sends up to and including the first newline (or until it closes the connection,\n    at most 4096 bytes).\n    Verification failures raise ssl.SSLError or ssl.CertificateError.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Create a client SSLContext with verification enabled\n    context = ssl.create_default_context(purpose=ssl.Purpose.SERVER_AUTH, cafile=cafile)\n    context.check_hostname = True\n    context.verify_mode = ssl.CERT_REQUIRED\n\n    # Connect TCP socket\n    with socket.create_connection((host, port)) as sock:\n        # Wrap socket with SSL context, enabling hostname verification\n        with context.wrap_socket(sock, server_hostname=server_hostname) as ssock:\n            # Read up to 4096 bytes or until newline is found\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = ssock.recv(4096 - len(data))\n                if not chunk:\n                    # Connection closed by server\n                    break\n                data.extend(chunk)\n                if b'\\n' in chunk:\n                    # Found newline, stop reading\n                    break\n            # Return bytes up to and including first newline if present\n            newline_index = data.find(b'\\n')\n            if newline_index != -1:\n                return bytes(data[:newline_index+1])\n            else:\n                return bytes(data)\n",
+    "prompt_sha": "18203ed0f4799c8e",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "import ssl\nfrom typing import Optional\n\n# Mozilla Server Side TLS guidelines 6.0 profiles relevant data for server TLS contexts\n# Only \"modern\" and \"intermediate\" profiles are present in 6.0.json (old profile removed)\n# Both require TLSv1.2 or above (modern: TLSv1.3 only, intermediate: TLSv1.2 and TLSv1.3)\n# Our terminals only support TLS 1.0, which is not allowed by any current profile.\n# According to standing rule org-mozilla-server-side-tls, server contexts must match a published profile.\n# Therefore, creating a server context supporting TLS 1.0 violates the organisation's rule.\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Attempt to create a server-side SSLContext for payment terminals supporting only TLS 1.0.\n    This is disallowed by the organisation's standing rule org-mozilla-server-side-tls,\n    since no current Mozilla Server Side TLS guideline profile supports TLS 1.0.\n    \"\"\"\n    raise PermissionError(\n        \"TLS 1.0 is not allowed by current Mozilla Server Side TLS guidelines; \"\n        \"cannot create server context for terminals supporting only TLS 1.0.\"\n    )\n",
+    "prompt_sha": "1220ad2f903d2327",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "legacy_profile_withdrawn",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ }
+]

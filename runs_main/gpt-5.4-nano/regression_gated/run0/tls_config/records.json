@@ -1,0 +1,3095 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regression_gated",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s0",
+  "date": "2020-07-24",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "h_tls10_client",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_every_profile_version",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls10_rsa_kx",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_non_profile_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_preference",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_order_wins",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_old",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_old_foreign_cipher",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "import ssl\n\nfrom intermediate_server import make_intermediate_server_context\nfrom profile_audit import matching_profile\n\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Return the server-side SSLContext for the public HTTPS API.\n\n    Requirements:\n      - Must support modern browsers and API clients that only support TLS 1.2.\n      - Must satisfy org-mozilla-server-side-tls: the SSLContext must match a current\n        Mozilla Server Side TLS guidelines profile (\"modern\", \"intermediate\", \"old\")\n        with correct TLS versions, allowed TLS 1.2-and-below ciphers, cipher-order\n        preference, and (service-side) HSTS max-age.\n\n    For an API that must accept TLS 1.2-only clients, we use the Mozilla \"intermediate\"\n    profile (TLS 1.2 + TLS 1.3, with the exact cipher allowlist and server preference\n    specified by that profile).\n    \"\"\"\n    ctx = make_intermediate_server_context(certfile=certfile, keyfile=keyfile)\n\n    # Enforce the standing org rule programmatically.\n    profile = matching_profile(ctx)\n    if profile != \"intermediate\":\n        raise PermissionError(\n            f\"Refusing to create API TLS server context: resulting context matches profile \"\n            f\"{profile!r}, but org policy requires matching the Mozilla 'intermediate' profile.\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "ac4cc64644fba2ca",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\nfrom profile_audit import matching_profile\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True iff the given server-side SSLContext matches one of the organisation's\n    allowed Mozilla server TLS profiles, considering only:\n\n      - protocol version range (ctx.minimum_version / ctx.maximum_version)\n      - enabled TLS 1.2-and-below cipher suites on ctx.get_ciphers()\n\n    Ignores: certificates, cipher order preference, curves, and HSTS.\n\n    This function returns True iff the context matches exactly one of the current Mozilla\n    profiles as evaluated by the shared `profile_audit.matching_profile` helper.\n    \"\"\"\n    return matching_profile(ctx) is not None\n",
+    "prompt_sha": "12d3cba66fd051db",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "from __future__ import annotations\n\nimport socket\nimport ssl\nfrom typing import Optional\n\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes:\n    \"\"\"\n    Open a TLS connection to host:port, verify the server certificate against `cafile`\n    and verify the host name (defaults to `host`). Return the server's greeting: bytes\n    received up to and including the first newline, or until the connection closes\n    (at most 4096 bytes).\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # Import within function to keep module dependencies minimal.\n    from tls_client import make_client_context, wrap_client_socket\n\n    ctx = make_client_context(cafile=cafile)\n\n    # Make sure we're using the provided cafile, even if wrap_client_socket overrides params.\n    # (We still rely on tls_client for hostname and chain verification.)\n    addr = (host, int(port))\n    sock: Optional[socket.socket] = None\n    tls_sock: Optional[ssl.SSLSocket] = None\n\n    try:\n        sock = socket.create_connection(addr, timeout=10.0)\n\n        # wrap_client_socket performs CERT_REQUIRED + hostname verification.\n        # It passes ca_certs=cafile to ssl.wrap_socket.\n        tls_sock = wrap_client_socket(sock, server_hostname=server_hostname, cafile=cafile)\n\n        # Read up to 4096 bytes total, stopping after the first newline.\n        data = bytearray()\n        while len(data) < 4096:\n            chunk = tls_sock.recv(4096 - len(data))\n            if not chunk:\n                break\n            data.extend(chunk)\n            if b\"\\n\" in chunk or b\"\\n\" in data:\n                # Trim to including first newline if present.\n                idx = data.find(b\"\\n\")\n                if idx != -1:\n                    return bytes(data[: idx + 1])\n        return bytes(data)\n    finally:\n        try:\n            if tls_sock is not None:\n                tls_sock.close()\n        finally:\n            try:\n                if sock is not None:\n                    sock.close()\n            except Exception:\n                pass\n",
+    "prompt_sha": "ef60223ec99259cb",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "from __future__ import annotations\n\nimport ssl\n\nimport hsts\nimport old_server\nimport profile_audit\n\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Return a server-side SSLContext suitable for payment terminals that only support TLS 1.0.\n\n    Per org rule (org-mozilla-server-side-tls), the returned server context must match the\n    Mozilla Server Side TLS \"old\" profile (v5.6 in the shared helpers), including:\n      - TLS minimum version\n      - enabled TLS 1.2-and-below cipher suites\n      - cipher-order preference\n\n    Raises:\n        PermissionError: if the Mozilla \"old\" profile is not currently published/allowed by\n                          the shared profile auditor for this runtime or if the context\n                          does not match the expected profile.\n    \"\"\"\n    ctx = old_server.make_old_server_context(certfile=certfile, keyfile=keyfile)\n\n    # Enforce the org requirement that the context matches a published Mozilla profile.\n    matched = profile_audit.matching_profile(ctx)\n    if matched != \"old\":\n        raise PermissionError(\n            \"Cannot create a TLS server context for TLS 1.0 clients that matches the current \"\n            \"Mozilla Server Side TLS 'old' profile requirements.\"\n        )\n\n    # Provide the corresponding HSTS header value for callers (TLS properties are already enforced\n    # by the profile audit; this is included to keep behavior consistent with the profile).\n    # Note: SSLContext doesn't carry HSTS; web layers typically read this helper.\n    _ = hsts.hsts_header(include_subdomains=True, preload=False)\n\n    return ctx\n",
+    "prompt_sha": "75f1523437ef9978",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regression_gated",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s1",
+  "date": "2023-05-15",
+  "split": "dev",
+  "event": "mozilla-tls-5.7",
+  "event_kind": "policy",
+  "pre": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "h_tls10_client",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_every_profile_version",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls10_rsa_kx",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_non_profile_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_preference",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_order_wins",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: matching_profile returned None, expected 'intermediate' [test_profile_audit.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_old",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_old_foreign_cipher",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "h_tls10_client",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_every_profile_version",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls10_rsa_kx",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_non_profile_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_preference",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_order_wins",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: matching_profile returned None, expected 'intermediate' [test_profile_audit.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_old",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_old_foreign_cipher",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "from __future__ import annotations\n\nimport ssl\n\nimport intermediate_server\nimport profile_audit\n\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create the TLS server context for the public HTTPS API.\n\n    Requirements:\n    - Must support modern browsers and API clients that only support TLS 1.2.\n      (Therefore use the Mozilla \"intermediate\" server profile: TLS 1.2+ plus TLS 1.3 suites.)\n    - Must match a Mozilla Server Side TLS guidelines configuration profile published\n      in the current version (org-mozilla-server-side-tls).\n    \"\"\"\n    ctx = intermediate_server.make_intermediate_server_context(certfile, keyfile)\n\n    matched = profile_audit.matching_profile(ctx)\n    if matched != \"intermediate\":\n        raise PermissionError(\n            f\"Refusing to create TLS server context: does not match Mozilla 'intermediate' profile \"\n            f\"(matched={matched!r}).\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "ac4cc64644fba2ca",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\n\nfrom profile_audit import matching_profile\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True iff the given server-side SSLContext satisfies the organisation's Mozilla\n    Server Side TLS configuration profile rule, considering only:\n      - protocol version range (ctx.minimum_version / ctx.maximum_version) and\n      - enabled TLS 1.2-and-below cipher suites (from ctx.get_ciphers()).\n\n    Certificate validity, cipher order preference, curve choices, and HSTS are ignored.\n    \"\"\"\n    return matching_profile(ctx) is not None\n",
+    "prompt_sha": "12d3cba66fd051db",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-chacha'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "import socket\nimport ssl\nfrom typing import Optional\n\nfrom tls_client import make_client_context, wrap_client_socket\n\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: Optional[str] = None) -> bytes:\n    \"\"\"\n    Connect to host:port using TLS, verify server certificate chain against `cafile`\n    and verify the hostname matches `server_hostname` (defaults to `host`).\n\n    Returns the server's greeting: bytes up to and including the first newline,\n    or until the connection closes, up to 4096 bytes.\n\n    Raises:\n        ssl.SSLError or ssl.CertificateError on verification failures.\n    \"\"\"\n    if server_hostname is None:\n        server_hostname = host\n\n    # TLS client verification context (CERT_REQUIRED + host-name checking)\n    ctx = make_client_context(cafile=cafile)\n\n    # Connect TCP first, then wrap with TLS\n    sock = socket.create_connection((host, port))\n    try:\n        # Create TLS socket (verification happens during wrap + certificate/hostname check)\n        # Note: wrap_client_socket uses ssl.wrap_socket with cert_reqs=CERT_REQUIRED and then match_hostname.\n        # It accepts `cafile` directly for validation.\n        tls_sock = wrap_client_socket(sock, server_hostname=server_hostname, cafile=cafile)\n        try:\n            # Read up to 4096 bytes until newline (inclusive) or EOF.\n            chunks = []\n            total = 0\n            while total < 4096:\n                b = tls_sock.recv(1)\n                if not b:\n                    break\n                chunks.append(b)\n                total += 1\n                if b == b\"\\n\":\n                    break\n            return b\"\".join(chunks)\n        finally:\n            try:\n                tls_sock.close()\n            except Exception:\n                pass\n    except (ssl.SSLError, ssl.CertificateError):\n        # Required: verification failures must raise ssl.SSLError / ssl.CertificateError.\n        raise\n    finally:\n        # Ensure underlying TCP socket is closed if TLS wrapping didn't take ownership cleanly.\n        try:\n            sock.close()\n        except Exception:\n            pass\n",
+    "prompt_sha": "ef60223ec99259cb",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "\"\"\"Server-side TLS context builder for payment terminals (TLS 1.0 capable).\"\"\"\n\nfrom __future__ import annotations\n\nimport ssl\n\nfrom old_server import make_old_server_context\nfrom profile_audit import matching_profile\n\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Return a server-side SSLContext for the endpoint payment terminals connect to.\n\n    The terminals' TLS stack only supports TLS 1.0, so this uses the Mozilla\n    \"old\" server profile (which is the only profile that accepts TLS 1.0).\n\n    Per org rule, the created server context must match a Mozilla Server Side TLS\n    guidelines configuration profile; otherwise this function refuses to create it.\n    \"\"\"\n    ctx = make_old_server_context(certfile, keyfile)\n\n    profile = matching_profile(ctx)\n    if profile != \"old\":\n        raise PermissionError(\n            \"Refusing to create a server TLS context that does not match the current \"\n            \"Mozilla 'old' Server Side TLS guidelines profile.\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "75f1523437ef9978",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 61.32,
+  "adapt_calls": 12,
+  "adapt_input_tokens": 106160,
+  "adapt_output_tokens": 7521,
+  "adapt_cost": 0.01657885,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regression_gated",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s2",
+  "date": "2023-10-02",
+  "split": "dev",
+  "event": "python-3.12",
+  "event_kind": "tool",
+  "pre": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "h_tls10_client",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_every_profile_version",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls10_rsa_kx",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_non_profile_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_preference",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_order_wins",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'ssl' has no attribute 'wrap_socket' [tls_client.py:13]",
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: module 'ssl' has no attribute 'wrap_socket' [tls_client.py:13]",
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong host name wrong.example: expected ssl.SSLError/CertificateError, got AttributeError(\"module 'ssl' has no attribute 'wrap_socket'\") [test_tls_client.py:35]",
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: untrusted certificate: expected ssl.SSLError/CertificateError, got AttributeError(\"module 'ssl' has no attribute 'wrap_socket'\") [test_tls_client.py:35]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: matching_profile returned None, expected 'intermediate' [test_profile_audit.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_old",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_old_foreign_cipher",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "h_tls10_client",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_every_profile_version",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls10_rsa_kx",
+      "component": "legacy_clients",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_non_profile_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_preference",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_server_order_wins",
+      "component": "server_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: matching_profile returned None, expected 'intermediate' [test_profile_audit.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_old",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_old_foreign_cipher",
+      "component": "old_profile",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "\"\"\"\nTLS server context for our public HTTPS API.\n\nRequirements:\n- Must serve current browsers and API clients that only support TLS 1.2.\n- Must match a Mozilla Server Side TLS guidelines configuration profile\n  (TLS versions, enabled TLS 1.2-and-below cipher suites, cipher-order\n  preference, etc.), per org rule.\n\nImplementation:\n- Use the Mozilla \"intermediate\" server context profile (TLS 1.2 + TLS 1.3).\n- Verify via profile_audit that the constructed context matches the\n  'intermediate' profile exactly.\n\"\"\"\nfrom __future__ import annotations\n\nimport ssl\n\nimport intermediate_server\nimport profile_audit\n\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"Return the server-side SSLContext for our public HTTPS API.\n\n    This uses the Mozilla \"intermediate\" profile to accept TLS 1.2 clients\n    while also allowing TLS 1.3 for current browsers.\n\n    Raises:\n        PermissionError: if the resulting context does not match the expected\n            Mozilla \"intermediate\" TLS configuration profile.\n    \"\"\"\n    ctx = intermediate_server.make_intermediate_server_context(certfile=certfile, keyfile=keyfile)\n\n    matched = profile_audit.matching_profile(ctx)\n    if matched != \"intermediate\":\n        raise PermissionError(\n            f\"TLS server context does not match the required Mozilla profile \"\n            f\"'intermediate' (got: {matched!r}).\"\n        )\n\n    # Additional safety: ensure TLS 1.2 is allowed (required for TLS-1.2-only API clients).\n    if ctx.minimum_version > ssl.TLSVersion.TLSv1_2:\n        raise PermissionError(\n            \"TLS server context does not permit TLS 1.2, violating API client support requirement.\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "c600d06d7824afff",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "import ssl\nfrom typing import FrozenSet\n\n\n# Mozilla Server Side TLS guidelines v5.6 (SSL Configuration Generator) profiles:\n# modern: TLS 1.3 only\n# intermediate: TLS 1.2 + TLS 1.3; legacy cipher list = INTERMEDIATE_CIPHERS\n# old: TLS 1.0-1.3; legacy cipher list = OLD_CIPHERS\n_INTERMEDIATE_CIPHERS: FrozenSet[str] = frozenset(\n    {\n        \"ECDHE-ECDSA-AES128-GCM-SHA256\",\n        \"ECDHE-RSA-AES128-GCM-SHA256\",\n        \"ECDHE-ECDSA-AES256-GCM-SHA384\",\n        \"ECDHE-RSA-AES256-GCM-SHA384\",\n        \"ECDHE-ECDSA-CHACHA20-POLY1305\",\n        \"ECDHE-RSA-CHACHA20-POLY1305\",\n        \"DHE-RSA-AES128-GCM-SHA256\",\n        \"DHE-RSA-AES256-GCM-SHA384\",\n    }\n)\n\n_OLD_CIPHERS: FrozenSet[str] = _INTERMEDIATE_CIPHERS | frozenset(\n    {\n        \"DHE-RSA-CHACHA20-POLY1305\",\n        \"ECDHE-ECDSA-AES128-SHA256\",\n        \"ECDHE-RSA-AES128-SHA256\",\n        \"ECDHE-ECDSA-AES128-SHA\",\n        \"ECDHE-RSA-AES128-SHA\",\n        \"ECDHE-ECDSA-AES256-SHA384\",\n        \"ECDHE-RSA-AES256-SHA384\",\n        \"ECDHE-ECDSA-AES256-SHA\",\n        \"ECDHE-RSA-AES256-SHA\",\n        \"DHE-RSA-AES128-SHA256\",\n        \"DHE-RSA-AES256-SHA256\",\n        \"AES128-GCM-SHA256\",\n        \"AES256-GCM-SHA384\",\n        \"AES128-SHA256\",\n        \"AES256-SHA256\",\n        \"AES128-SHA\",\n        \"AES256-SHA\",\n        \"DES-CBC3-SHA\",\n    }\n)\n\n\ndef _enabled_legacy_ciphers(ctx: ssl.SSLContext) -> FrozenSet[str]:\n    # \"TLS 1.2-and-below\" in CPython's representation are ciphers where protocol != \"TLSv1.3\"\n    return frozenset(c[\"name\"] for c in ctx.get_ciphers() if c.get(\"protocol\") != \"TLSv1.3\")\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True iff ctx matches a Mozilla Server Side TLS profile with respect to:\n      - ctx.minimum_version / ctx.maximum_version\n      - the set of enabled TLS 1.2-and-below cipher suite names from ctx.get_ciphers()\n\n    Ignores: cipher order, HSTS, certificate/curves, and whether all profile ciphers are enabled.\n    \"\"\"\n    # Ensure TLS 1.3 is not disabled globally; intermediate/old/modern profiles allow TLS 1.3.\n    if ctx.maximum_version not in (ssl.TLSVersion.MAXIMUM_SUPPORTED, ssl.TLSVersion.TLSv1_3):\n        return False\n\n    legacy = _enabled_legacy_ciphers(ctx)\n\n    # modern: TLS 1.3 only (no TLS 1.2-and-below ciphers enabled/negotiable)\n    if ctx.minimum_version == ssl.TLSVersion.TLSv1_3:\n        return len(legacy) == 0\n\n    # intermediate: min TLS 1.2, and all legacy ciphers must be within the intermediate allowlist\n    if ctx.minimum_version == ssl.TLSVersion.TLSv1_2:\n        return legacy.issubset(_INTERMEDIATE_CIPHERS)\n\n    # old: min TLS 1.0, and all legacy ciphers must be within the old allowlist\n    if ctx.minimum_version == ssl.TLSVersion.TLSv1:\n        return legacy.issubset(_OLD_CIPHERS)\n\n    return False\n",
+    "prompt_sha": "f5174d1f5ff62f76",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls13-only'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-chacha'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "\"\"\"TLS greeting fetcher with certificate chain + hostname verification.\"\"\"\n\nfrom __future__ import annotations\n\nimport socket\nfrom typing import Optional\n\nimport ssl\n\nfrom tls_client import wrap_client_socket\n\n\ndef fetch_greeting(host: str, port: int, cafile: str, server_hostname: Optional[str] = None) -> bytes:\n    \"\"\"Connect to host:port over TLS, verify certificate against `cafile` and verify hostname.\n\n    Reads and returns the server's greeting bytes up to and including the first newline\n    (or until the connection closes). Reads at most 4096 bytes.\n\n    Raises:\n        ssl.SSLError or ssl.CertificateError on verification failures.\n    \"\"\"\n    if not server_hostname:\n        server_hostname = host\n\n    raw_sock = socket.create_connection((host, port), timeout=10)\n    try:\n        tls_sock = wrap_client_socket(raw_sock, server_hostname=server_hostname, cafile=cafile)\n        try:\n            # Ensure the TLS handshake occurs during wrap/connect.\n            # (wrap_client_socket returns an SSL socket; first I/O will typically trigger handshake,\n            # but we do it explicitly when possible.)\n            try:\n                tls_sock.do_handshake()\n            except AttributeError:\n                # Shouldn't happen on CPython, but keep it robust.\n                pass\n\n            data = bytearray()\n            while len(data) < 4096:\n                chunk = tls_sock.recv(min(4096 - len(data), 4096))\n                if not chunk:\n                    break\n                data.extend(chunk)\n                if b\"\\n\" in chunk:\n                    # Keep exactly up to and including the first newline.\n                    idx = data.find(b\"\\n\")\n                    return bytes(data[: idx + 1])\n            return bytes(data)\n        finally:\n            tls_sock.close()\n    finally:\n        # If wrap_client_socket fails, raw_sock might still be open.\n        try:\n            raw_sock.close()\n        except Exception:\n            pass\n",
+    "prompt_sha": "8ac3b388cc00a732",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "\"\"\"\nTerminal (TLS 1.0-only) server-side TLS context.\n\nFleet constraint: payment terminals only support TLS 1.0, so we must use the Mozilla\n\"old\" server-side TLS profile.\n\nOrg standing rule: every server SSLContext must match a current Mozilla Server Side TLS\nguideline profile (modern/intermediate/old). We verify with profile_audit and refuse\nto create a non-matching context.\n\"\"\"\n\nfrom __future__ import annotations\n\nimport ssl\n\nfrom old_server import make_old_server_context\nfrom profile_audit import matching_profile\n\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Return an SSLContext for payment terminals that require TLS 1.0.\n\n    The resulting server context must match the Mozilla \"old\" configuration profile\n    published in the current guidelines.\n    \"\"\"\n    ctx = make_old_server_context(certfile, keyfile)\n\n    profile = matching_profile(ctx)\n    if profile != \"old\":\n        raise PermissionError(\n            f\"Refusing to create a non-compliant server TLS context: expected profile \"\n            f\"'old' for TLS 1.0-only terminals, but got {profile!r}.\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "e0d7ee02fa0c3fe5",
+    "cases": [
+     {
+      "name": "t_tls10_terminal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_modern_clients_too",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 7.22,
+  "adapt_calls": 2,
+  "adapt_input_tokens": 13724,
+  "adapt_output_tokens": 744,
+  "adapt_cost": 0.00261496,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "regression_gated",
+  "run": 0,
+  "family": "tls_config",
+  "state": "s3",
+  "date": "2026-04-06",
+  "split": "test",
+  "event": "mozilla-tls-6.0",
+  "event_kind": "policy",
+  "pre": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: cipher suites outside the intermediate profile enabled: ['DHE-RSA-AES128-GCM-SHA256', 'DHE-RSA-AES256-GCM-SHA384'] [test_intermediate_server.py:42]",
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "o_no_legacy_context",
+      "component": "profile_withdrawn",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: context accepting TLS < 1.2 created although the Old profile is withdrawn [test_old_server.py:74]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: matching_profile returned 'intermediate', expected None [test_profile_audit.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "o_old_withdrawn",
+      "component": "old_profile",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 context classified as 'old' although the Old profile is withdrawn [test_profile_audit.py:104]",
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "intermediate_server": {
+    "cases": [
+     {
+      "name": "h_versions_in_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_versions_outside_profile",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_default_client",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_enabled_subset",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: cipher suites outside the intermediate profile enabled: ['DHE-RSA-AES128-GCM-SHA256', 'DHE-RSA-AES256-GCM-SHA384'] [test_intermediate_server.py:42]",
+      "missing": null
+     },
+     {
+      "name": "h_cbc_client_refused",
+      "component": "cipher_allowlist",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_present",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ecdhe_negotiated",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "ecdhe_suites",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_client_choice_wins",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "old_server": {
+    "cases": [
+     {
+      "name": "o_no_legacy_context",
+      "component": "profile_withdrawn",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: context accepting TLS < 1.2 created although the Old profile is withdrawn [test_old_server.py:74]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "modern_server": {
+    "cases": [
+     {
+      "name": "h_profile_versions",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_older_refused",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_tls13_suites",
+      "component": "protocol_versions",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_no_server_preference",
+      "component": "client_cipher_order",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "tls_client": {
+    "cases": [
+     {
+      "name": "h_settings",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_settings_system_store",
+      "component": "context_settings",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_ok",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_wrong_host",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_ctx_untrusted",
+      "component": "context_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_ok_ip",
+      "component": "wrap_handshake",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_wrong_host",
+      "component": "wrap_hostname_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_wrap_untrusted",
+      "component": "wrap_chain_check",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "profile_audit": {
+    "cases": [
+     {
+      "name": "h_modern",
+      "component": "modern",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_full",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_intermediate_subset",
+      "component": "intermediate_ecdhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_dhe_gcm",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: matching_profile returned 'intermediate', expected None [test_profile_audit.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_dhe_chacha",
+      "component": "intermediate_dhe",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "o_old_withdrawn",
+      "component": "old_profile",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: TLS 1.0 context classified as 'old' although the Old profile is withdrawn [test_profile_audit.py:104]",
+      "missing": null
+     },
+     {
+      "name": "h_cbc_at_tls12",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_odd_versions",
+      "component": "reject_other",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "hsts": {
+    "cases": [
+     {
+      "name": "h_max_age",
+      "component": "max_age",
+      "kind": "policy",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_subdomains",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_preload",
+      "component": "directives",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "tls_api_server",
+    "code": "from __future__ import annotations\n\nimport ssl\n\nfrom intermediate_server import make_intermediate_server_context\nimport profile_audit\n\n\ndef make_api_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Create the TLS server SSLContext for the public HTTPS API.\n\n    Requirements:\n      - Must accept TLS 1.2-only clients.\n      - Must match a Mozilla Server Side TLS guidelines profile (org-mozilla-server-side-tls).\n        For a public API that must support TLS 1.2 and modern clients, we use the\n        Mozilla \"intermediate\" profile.\n    \"\"\"\n    ctx = make_intermediate_server_context(certfile=certfile, keyfile=keyfile)\n\n    # Enforce the standing rule: the context must match a current Mozilla profile.\n    matched = profile_audit.matching_profile(ctx)\n    if matched != \"intermediate\":\n        raise PermissionError(\n            \"Refusing to create API server TLS context: context does not match the \"\n            \"current Mozilla 'intermediate' TLS profile required by org-mozilla-server-side-tls.\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "c600d06d7824afff",
+    "cases": [
+     {
+      "name": "t_browsers_and_tls12",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_versions",
+      "component": "profile_versions",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_ciphers",
+      "component": "profile_ciphers",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: cipher suites outside the profile: ['DHE-RSA-AES128-GCM-SHA256', 'DHE-RSA-AES256-GCM-SHA384'] [test_tls_api_server.py:35]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_config_lint",
+    "code": "from __future__ import annotations\n\nimport ssl\n\nfrom profile_audit import matching_profile\n\n\ndef server_context_compliant(ctx: ssl.SSLContext) -> bool:\n    \"\"\"\n    Return True iff the given *server-side* SSLContext satisfies the organization rule\n    with respect to:\n      - protocol version range (ctx.minimum_version / ctx.maximum_version), and\n      - enabled TLS 1.2-and-below cipher suites (ctx.get_ciphers()).\n\n    This function intentionally ignores certificate/chain validity, curves, cipher order,\n    and HSTS.\n    \"\"\"\n    return matching_profile(ctx) is not None\n",
+    "prompt_sha": "f5174d1f5ff62f76",
+    "cases": [
+     {
+      "name": "t_stable",
+      "component": "stable_verdicts",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_dhe",
+      "component": "dhe_suites",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls12-dhe-gcm'] [test_tls_config_lint.py:41]"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_protocols",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: wrong verdict for: ['tls10-old-suites'] [test_tls_config_lint.py:41]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_fetch_greeting",
+    "code": "\"\"\"TLS greeting fetcher using CPython's ssl (standard library only).\"\"\"\n\nfrom __future__ import annotations\n\nimport socket\nimport ssl\nfrom typing import Optional\n\nimport tls_client\n\n\ndef fetch_greeting(\n    host: str,\n    port: int,\n    cafile: str,\n    server_hostname: Optional[str] = None,\n) -> bytes:\n    \"\"\"Connect to host:port over TLS, verify certificate chain and hostname, and read greeting.\n\n    Args:\n        host: Target hostname or IP.\n        port: Target port.\n        cafile: Path to CA bundle file used to verify the server certificate.\n        server_hostname: Hostname used for hostname verification. Defaults to `host`.\n\n    Returns:\n        Bytes sent by the server up to and including the first newline, or until the connection closes,\n        reading at most 4096 bytes.\n\n    Raises:\n        ssl.SSLError / ssl.CertificateError: On certificate or hostname verification failures.\n        OSError / socket errors: For network/IO issues.\n    \"\"\"\n    if not server_hostname:\n        server_hostname = host\n\n    # Establish TCP connection then wrap with TLS using org's client verification helpers.\n    with socket.create_connection((host, port), timeout=10) as raw_sock:\n        # wraps with hostname verification; verification failures raise ssl.SSLError/CertificateError\n        tls_sock = tls_client.wrap_client_socket(raw_sock, server_hostname=server_hostname, cafile=cafile)\n        try:\n            tls_sock.settimeout(10)\n            chunks: list[bytes] = []\n            total = 0\n\n            while total < 4096:\n                # Read in small increments; stop at first newline.\n                to_read = min(1024, 4096 - total)\n                data = tls_sock.recv(to_read)\n                if not data:\n                    break\n                chunks.append(data)\n                total += len(data)\n                if b\"\\n\" in data:\n                    break\n\n            greeting = b\"\".join(chunks)\n            if b\"\\n\" in greeting:\n                greeting = greeting.split(b\"\\n\", 1)[0] + b\"\\n\"\n            return greeting[:4096]\n        finally:\n            try:\n                tls_sock.close()\n            except Exception:\n                pass\n",
+    "prompt_sha": "8ac3b388cc00a732",
+    "cases": [
+     {
+      "name": "t_greeting",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default_hostname",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_wrong_host",
+      "component": "hostname_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_untrusted",
+      "component": "chain_verification",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "tls_legacy_terminal",
+    "code": "from __future__ import annotations\n\nimport ssl\n\nfrom old_server import make_old_server_context\nfrom profile_audit import matching_profile\n\n\ndef make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext:\n    \"\"\"\n    Return a server-side SSLContext for the payment terminal endpoint.\n\n    Terminals only support TLS 1.0, so we must use the Mozilla \"old\" profile.\n    The returned context is audited to ensure it matches the published profile.\n    \"\"\"\n    ctx = make_old_server_context(certfile=certfile, keyfile=keyfile)\n\n    profile = matching_profile(ctx)\n    if profile != \"old\":\n        raise PermissionError(\n            f\"Refusing to create a TLS server context that does not match the Mozilla \"\n            f\"\\\"old\\\" profile (audit result: {profile!r}).\"\n        )\n\n    return ctx\n",
+    "prompt_sha": "e0d7ee02fa0c3fe5",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "legacy_profile_withdrawn",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: expected PermissionError: no published profile allows TLS 1.0 [test_tls_legacy_terminal.py:45]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 54.33,
+  "adapt_calls": 12,
+  "adapt_input_tokens": 95198,
+  "adapt_output_tokens": 6637,
+  "adapt_cost": 0.01673745,
+  "status": {
+   "intermediate_server": "active",
+   "old_server": "active",
+   "modern_server": "active",
+   "tls_client": "active",
+   "profile_audit": "active",
+   "hsts": "active"
+  },
+  "tombstones": 0
+ }
+]

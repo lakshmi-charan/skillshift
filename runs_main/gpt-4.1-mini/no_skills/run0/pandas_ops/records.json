@@ -1,0 +1,433 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "pandas_ops",
+  "state": "s0",
+  "date": "2023-01-19",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pd_clean_export",
+    "code": "import pandas as pd\nimport re\n\ndef clean_export(csv_text: str) -> pd.DataFrame:\n    \"\"\"\n    Parse CSV text and return a tidy DataFrame:\n    - Column names lower-cased and trimmed with runs of non-alphanumeric characters replaced by a single \"_\"\n      (no leading or trailing \"_\").\n    - Surrounding whitespace removed from every string cell.\n    - Rows whose values are all missing dropped.\n    - Index renumbered from 0.\n    - Numeric columns remain numeric.\n    \"\"\"\n    # Read CSV text\n    df = pd.read_csv(pd.io.common.StringIO(csv_text))\n    \n    # Clean column names\n    def clean_colname(name: str) -> str:\n        name = name.strip().lower()\n        # Replace runs of non-alphanumeric characters with \"_\"\n        name = re.sub(r'[^0-9a-z]+', '_', name)\n        # Remove leading/trailing underscores\n        name = name.strip('_')\n        return name\n    \n    df.columns = [clean_colname(col) for col in df.columns]\n    \n    # Strip whitespace from string cells only\n    # Use applymap with a function that strips if string, else returns as is\n    def strip_if_str(x):\n        if isinstance(x, str):\n            return x.strip()\n        return x\n    \n    df = df.applymap(strip_if_str)\n    \n    # Drop rows where all values are missing (NaN or NA)\n    df = df.dropna(how='all')\n    \n    # Reset index\n    df = df.reset_index(drop=True)\n    \n    return df\n",
+    "prompt_sha": "f6a62d8a6de25b85",
+    "cases": [
+     {
+      "name": "t_clean",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_numeric",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_inner_spaces_kept",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_flag_readings",
+    "code": "import pandas as pd\n\ndef flag_readings(df: pd.DataFrame, column: str, low: float, high: float) -> pd.DataFrame:\n    \"\"\"\n    Returns a copy of the input DataFrame with an added 'status' column.\n    The 'status' column contains:\n      - \"low\" where df[column] < low,\n      - \"high\" where df[column] > high,\n      - \"ok\" otherwise.\n\n    The input DataFrame is not modified.\n\n    Parameters:\n    - df: pandas.DataFrame\n    - column: str - column name to evaluate\n    - low: float - lower threshold\n    - high: float - upper threshold\n\n    Returns:\n    - pandas.DataFrame: copy of df with added 'status' column\n    \"\"\"\n    df_copy = df.copy()\n    conditions = [\n        df_copy[column] < low,\n        df_copy[column] > high\n    ]\n    choices = ['low', 'high']\n    df_copy['status'] = pd.Series(pd.NA, index=df_copy.index)\n    df_copy['status'] = pd.Series(pd.Categorical(pd.Series(pd.NA, index=df_copy.index), categories=['low', 'ok', 'high']))\n    df_copy.loc[conditions[0], 'status'] = 'low'\n    df_copy.loc[conditions[1], 'status'] = 'high'\n    df_copy.loc[~(conditions[0] | conditions[1]), 'status'] = 'ok'\n    return df_copy\n",
+    "prompt_sha": "3ce21c1f15d35555",
+    "cases": [
+     {
+      "name": "t_status",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_out",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_ledger_append",
+    "code": "import pandas as pd\n\ndef append_transactions(ledger: pd.DataFrame, transactions: list) -> pd.DataFrame:\n    \"\"\"\n    Append transactions to the ledger and return a new DataFrame with a running balance.\n\n    Parameters:\n    - ledger: pandas.DataFrame with columns \"date\", \"account\", \"amount\" and optionally \"balance\".\n    - transactions: list of dicts with keys \"date\", \"account\", \"amount\".\n\n    Returns:\n    - pandas.DataFrame with the transactions appended, index reset, and a \"balance\" column\n      containing the running total of \"amount\" over the entire DataFrame.\n    \"\"\"\n    # Create a DataFrame from transactions\n    transactions_df = pd.DataFrame(transactions, columns=[\"date\", \"account\", \"amount\"])\n    \n    # Concatenate ledger and transactions without modifying ledger\n    combined = pd.concat([ledger.loc[:, [\"date\", \"account\", \"amount\"]], transactions_df], ignore_index=True)\n    \n    # Calculate running balance as float\n    combined[\"balance\"] = combined[\"amount\"].cumsum().astype(float)\n    \n    return combined\n",
+    "prompt_sha": "25d10fe70de0267f",
+    "cases": [
+     {
+      "name": "t_append",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty_ledger",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_existing_balance_recomputed",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_monthly_revenue",
+    "code": "import pandas as pd\nfrom io import StringIO\n\ndef monthly_revenue(json_text: str) -> dict:\n    \"\"\"\n    Calculate monthly revenue totals from JSON text input.\n\n    Parameters:\n    json_text (str): JSON array of objects with keys \"date\" (YYYY-MM-DD) and \"amount\" (number).\n\n    Returns:\n    dict: Mapping \"YYYY-MM\" to float total of amounts for every calendar month from earliest to latest,\n          including months with no records (total 0.0), keys in chronological order.\n    \"\"\"\n    # Read JSON into DataFrame\n    df = pd.read_json(StringIO(json_text))\n    # Convert 'date' to datetime\n    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d')\n    # Set date as index\n    df.set_index('date', inplace=True)\n    # Resample by month and sum amounts\n    monthly_sum = df['amount'].resample('MS').sum()\n    # Create full monthly range from earliest to latest month\n    full_range = pd.date_range(start=monthly_sum.index.min(), end=monthly_sum.index.max(), freq='MS')\n    # Reindex to full range, fill missing with 0.0\n    monthly_sum = monthly_sum.reindex(full_range, fill_value=0.0)\n    # Format index to \"YYYY-MM\" strings\n    monthly_sum.index = monthly_sum.index.strftime('%Y-%m')\n    # Convert to dict and return\n    return monthly_sum.to_dict()\n",
+    "prompt_sha": "6c64f613ad0e3cb0",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_unsorted_year_boundary",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_single",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "pandas_ops",
+  "state": "s1",
+  "date": "2023-04-03",
+  "split": "dev",
+  "event": "pandas-2.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pd_clean_export",
+    "code": "import pandas as pd\nimport re\n\ndef clean_export(csv_text: str) -> pd.DataFrame:\n    \"\"\"\n    Parses CSV text (header row first) and returns a tidy DataFrame:\n    - column names lower-cased and trimmed with runs of non-alphanumeric characters replaced by a single \"_\"\n      (no leading or trailing \"_\")\n    - surrounding whitespace removed from every string cell\n    - rows whose values are all missing dropped\n    - index renumbered from 0\n    - numeric columns remain numeric\n    \"\"\"\n    # Read CSV text into DataFrame\n    df = pd.read_csv(pd.io.common.StringIO(csv_text))\n    \n    # Clean column names\n    def clean_colname(name: str) -> str:\n        name = name.lower().strip()\n        # Replace runs of non-alphanumeric characters with underscore\n        name = re.sub(r'[^a-z0-9]+', '_', name)\n        # Strip leading/trailing underscores\n        name = name.strip('_')\n        return name\n    \n    df.columns = [clean_colname(col) for col in df.columns]\n    \n    # Strip surrounding whitespace from string cells only\n    # We do this column-wise for object/string dtype columns\n    for col in df.select_dtypes(include=['string', 'object']):\n        # Only strip if the column is not entirely missing\n        if not df[col].isna().all():\n            # Use .astype(str) carefully: to preserve NaNs, use .where(~isna, other=np.nan)\n            # But better: use .str.strip() which handles NaNs gracefully\n            df[col] = df[col].astype(\"string\").str.strip()\n            # Convert back to original dtype if possible (but keep string dtype for object)\n            # We keep string dtype for object columns to preserve strings and missing values properly\n    \n    # Drop rows where all values are missing\n    df = df.dropna(how='all')\n    \n    # Reset index to 0-based consecutive integers\n    df = df.reset_index(drop=True)\n    \n    return df\n",
+    "prompt_sha": "e766c8e772714302",
+    "cases": [
+     {
+      "name": "t_clean",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_numeric",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_inner_spaces_kept",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_flag_readings",
+    "code": "import pandas as pd\n\ndef flag_readings(df: pd.DataFrame, column: str, low: float, high: float) -> pd.DataFrame:\n    \"\"\"\n    Returns a copy of the input DataFrame with an added 'status' column.\n    The 'status' column contains:\n      - \"low\" where df[column] < low,\n      - \"high\" where df[column] > high,\n      - \"ok\" otherwise.\n\n    The input DataFrame is not modified.\n\n    Parameters:\n    - df: pandas.DataFrame - input DataFrame\n    - column: str - column name to check values against thresholds\n    - low: float - lower threshold\n    - high: float - upper threshold\n\n    Returns:\n    - pandas.DataFrame - a copy of df with the added 'status' column\n    \"\"\"\n    df_copy = df.copy()\n    conditions = [\n        df_copy[column] < low,\n        df_copy[column] > high\n    ]\n    choices = [\"low\", \"high\"]\n    df_copy[\"status\"] = pd.Series(pd.NA, index=df_copy.index, dtype=\"string\")\n    df_copy.loc[conditions[0], \"status\"] = \"low\"\n    df_copy.loc[conditions[1], \"status\"] = \"high\"\n    df_copy.loc[df_copy[\"status\"].isna(), \"status\"] = \"ok\"\n    return df_copy\n",
+    "prompt_sha": "7e6847d6dc7820e6",
+    "cases": [
+     {
+      "name": "t_status",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_out",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_ledger_append",
+    "code": "import pandas as pd\n\ndef append_transactions(ledger: pd.DataFrame, transactions: list) -> pd.DataFrame:\n    \"\"\"\n    Append transactions to the ledger and compute running balance.\n\n    Parameters:\n    - ledger: pd.DataFrame with columns \"date\", \"account\", \"amount\" and optionally \"balance\".\n    - transactions: list of dicts each with keys \"date\", \"account\", \"amount\".\n\n    Returns:\n    - A new pd.DataFrame with transactions appended, index reset, and a \"balance\" column\n      representing the running total of \"amount\" over the entire DataFrame.\n    \"\"\"\n    # Create DataFrame from transactions list\n    transactions_df = pd.DataFrame(transactions, columns=[\"date\", \"account\", \"amount\"])\n\n    # Concatenate ledger and transactions without modifying ledger\n    combined = pd.concat([ledger, transactions_df], ignore_index=True)\n\n    # Compute running balance as cumulative sum of \"amount\"\n    combined[\"balance\"] = combined[\"amount\"].cumsum().astype(float)\n\n    return combined\n",
+    "prompt_sha": "3f7a84ba3f0ffa7e",
+    "cases": [
+     {
+      "name": "t_append",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty_ledger",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_existing_balance_recomputed",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_monthly_revenue",
+    "code": "import pandas as pd\nfrom io import StringIO\n\ndef monthly_revenue(json_text: str) -> dict:\n    \"\"\"\n    Calculate monthly revenue totals from JSON text of date-amount records.\n\n    Parameters\n    ----------\n    json_text : str\n        JSON array of objects with keys \"date\" (YYYY-MM-DD) and \"amount\" (number).\n\n    Returns\n    -------\n    dict\n        Mapping \"YYYY-MM\" to float total of amounts for every calendar month from earliest\n        to latest month present, including months with no records (total 0.0), keys in\n        chronological order.\n    \"\"\"\n    # Read JSON text into DataFrame\n    df = pd.read_json(StringIO(json_text))\n    if df.empty:\n        return {}\n\n    # Convert 'date' column to datetime\n    df['date'] = pd.to_datetime(df['date'], format='%Y-%m-%d', errors='coerce')\n    df = df.dropna(subset=['date'])\n    if df.empty:\n        return {}\n\n    # Extract year-month period string\n    df['year_month'] = df['date'].dt.to_period('M').astype(str)\n\n    # Aggregate amounts by year_month\n    monthly_totals = df.groupby('year_month', sort=True)['amount'].sum()\n\n    # Create full range of months from earliest to latest\n    start = df['date'].min().to_period('M')\n    end = df['date'].max().to_period('M')\n    full_range = pd.period_range(start=start, end=end, freq='M').astype(str)\n\n    # Reindex to include all months, fill missing with 0.0\n    monthly_totals = monthly_totals.reindex(full_range, fill_value=0.0)\n\n    # Convert to dict with float values\n    return {k: float(v) for k, v in monthly_totals.items()}\n",
+    "prompt_sha": "56f07e9a90fb9d6f",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_unsorted_year_boundary",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_single",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "ledger": "active",
+   "monthly_report": "active",
+   "cleaning": "active",
+   "flagging": "active",
+   "json_records": "active",
+   "grouping": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "pandas_ops",
+  "state": "s2",
+  "date": "2026-01-21",
+  "split": "test",
+  "event": "pandas-3.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pd_clean_export",
+    "code": "import pandas as pd\nimport re\n\ndef clean_export(csv_text: str) -> pd.DataFrame:\n    \"\"\"\n    Parse CSV text (header row first) and return a tidy DataFrame:\n    - Column names lower-cased and trimmed with runs of non-alphanumeric characters replaced by a single \"_\"\n      (no leading or trailing \"_\").\n    - Surrounding whitespace removed from every string cell.\n    - Rows whose values are all missing dropped.\n    - Index renumbered from 0.\n    - Numeric columns remain numeric.\n    \"\"\"\n    # Read CSV text into DataFrame\n    df = pd.read_csv(pd.io.common.StringIO(csv_text))\n    \n    # Clean column names\n    def clean_colname(name: str) -> str:\n        # Lowercase and strip whitespace\n        name = name.lower().strip()\n        # Replace runs of non-alphanumeric characters with underscore\n        name = re.sub(r'[^a-z0-9]+', '_', name)\n        # Remove leading/trailing underscores\n        name = name.strip('_')\n        return name\n    \n    df.columns = [clean_colname(col) for col in df.columns]\n    \n    # Strip surrounding whitespace from string cells only\n    # We use select_dtypes to get string columns (dtype 'str' in pandas 3.0+)\n    str_cols = df.select_dtypes(include=\"string\").columns\n    for col in str_cols:\n        # Use str.strip() to remove surrounding whitespace\n        df[col] = df[col].str.strip()\n    \n    # Drop rows where all values are missing (NaN)\n    df = df.dropna(how='all')\n    \n    # Reset index to 0-based sequential\n    df = df.reset_index(drop=True)\n    \n    return df\n",
+    "prompt_sha": "23ef20cc19886ea2",
+    "cases": [
+     {
+      "name": "t_clean",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_numeric",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_inner_spaces_kept",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_flag_readings",
+    "code": "import pandas as pd\n\ndef flag_readings(df: pd.DataFrame, column: str, low: float, high: float) -> pd.DataFrame:\n    \"\"\"\n    Returns a copy of df with an added string column \"status\":\n    - \"low\" where df[column] < low,\n    - \"high\" where df[column] > high,\n    - \"ok\" otherwise.\n\n    The input DataFrame is not modified.\n\n    Parameters:\n    df (pd.DataFrame): Input DataFrame.\n    column (str): Column name to check values.\n    low (float): Lower threshold.\n    high (float): Upper threshold.\n\n    Returns:\n    pd.DataFrame: Copy of df with added \"status\" column.\n    \"\"\"\n    df_copy = df.copy()\n    conditions = [\n        df_copy[column] < low,\n        df_copy[column] > high\n    ]\n    choices = [\"low\", \"high\"]\n    df_copy[\"status\"] = pd.Series(pd.NA, index=df_copy.index, dtype=\"str\")\n    df_copy.loc[conditions[0], \"status\"] = \"low\"\n    df_copy.loc[conditions[1], \"status\"] = \"high\"\n    df_copy.loc[df_copy[\"status\"].isna(), \"status\"] = \"ok\"\n    return df_copy\n",
+    "prompt_sha": "df14c154f4f64078",
+    "cases": [
+     {
+      "name": "t_status",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_out",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_ledger_append",
+    "code": "import pandas as pd\n\ndef append_transactions(ledger: pd.DataFrame, transactions: list) -> pd.DataFrame:\n    \"\"\"\n    Append transactions to the ledger and compute running balance.\n\n    Parameters\n    ----------\n    ledger : pd.DataFrame\n        Existing ledger with columns \"date\", \"account\", \"amount\" and optionally \"balance\".\n    transactions : list of dict\n        List of transactions to append, each dict with keys \"date\", \"account\", \"amount\".\n\n    Returns\n    -------\n    pd.DataFrame\n        New DataFrame with transactions appended, index reset, and a \"balance\" column\n        with the running total of \"amount\" over the whole result.\n    \"\"\"\n    # Create DataFrame from transactions list\n    transactions_df = pd.DataFrame(transactions)\n\n    # Append transactions to ledger without modifying original ledger\n    combined = pd.concat([ledger, transactions_df], ignore_index=True)\n\n    # Compute running balance as cumulative sum of \"amount\"\n    combined = combined.copy()\n    combined[\"balance\"] = combined[\"amount\"].cumsum().astype(float)\n\n    return combined\n",
+    "prompt_sha": "d9a208da7a88cac1",
+    "cases": [
+     {
+      "name": "t_append",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty_ledger",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_existing_balance_recomputed",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_monthly_revenue",
+    "code": "import pandas as pd\nfrom io import StringIO\n\ndef monthly_revenue(json_text: str) -> dict:\n    \"\"\"\n    Given a JSON array of objects with keys \"date\" (\"YYYY-MM-DD\") and \"amount\" (a number),\n    return a dict mapping \"YYYY-MM\" to the float total of amounts for every calendar month\n    from the earliest to the latest month present, including months with no records (total 0.0),\n    with keys in chronological order.\n    \"\"\"\n    # Read JSON text into DataFrame\n    df = pd.read_json(StringIO(json_text))\n    # Convert date column to datetime\n    df['date'] = pd.to_datetime(df['date'])\n    # Set date as index\n    df = df.set_index('date')\n    # Resample by month, summing amounts, fill missing months with 0.0\n    monthly_totals = df['amount'].resample('MS').sum().reindex(\n        pd.date_range(df.index.min().to_period('M').to_timestamp(),\n                      df.index.max().to_period('M').to_timestamp(),\n                      freq='MS'),\n        fill_value=0.0\n    )\n    # Format index as \"YYYY-MM\" and convert to dict\n    result = {dt.strftime('%Y-%m'): float(val) for dt, val in monthly_totals.items()}\n    return result\n",
+    "prompt_sha": "94d903a2d0ae4566",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_unsorted_year_boundary",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_single",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "ledger": "active",
+   "monthly_report": "active",
+   "cleaning": "active",
+   "flagging": "active",
+   "json_records": "active",
+   "grouping": "active"
+  },
+  "tombstones": 0
+ }
+]

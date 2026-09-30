@@ -1,0 +1,10 @@
+id: pd_clean_export
+function: clean_export
+relevant_skills: [cleaning]
+prompt: |
+  Write a Python function `clean_export(csv_text: str) -> pandas.DataFrame` that parses CSV text (header
+  row first) and returns a tidy DataFrame: column names lower-cased and trimmed with runs of
+  non-alphanumeric characters replaced by a single "_" (no leading or trailing "_"), surrounding
+  whitespace removed from every string cell, rows whose values are all missing dropped, and the index
+  renumbered from 0. Numeric columns must stay numeric.
+tests: tasks/test_pd_clean_export.py

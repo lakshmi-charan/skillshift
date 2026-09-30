@@ -1,0 +1,10 @@
+id: pd_orders_payload
+function: orders_payload
+relevant_skills: [orm_schemas]
+prompt: |
+  Write a Python function `orders_payload(orders: list) -> list` that uses pydantic models to convert ORM
+  order objects into JSON-ready dicts. Each order object has attributes `id` (int), `customer` (an object
+  with `id`, `name`, `email`) and `items` (a list of objects with `sku` and `quantity`); other attributes
+  must not be exported. Return [{"id": ..., "customer": {"id", "name", "email"}, "items": [{"sku",
+  "quantity"}, ...]}, ...]. Raise ValueError if a required attribute is missing or has an invalid value.
+tests: tasks/test_pd_orders_payload.py

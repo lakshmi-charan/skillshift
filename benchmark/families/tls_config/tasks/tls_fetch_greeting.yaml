@@ -1,0 +1,10 @@
+id: tls_fetch_greeting
+function: fetch_greeting
+relevant_skills: [tls_client]
+prompt: |
+  Write a Python function `fetch_greeting(host: str, port: int, cafile: str, server_hostname: str = None) -> bytes`
+  that opens a TLS connection to host:port, verifies the server certificate against the CA bundle `cafile`
+  and the host name (`server_hostname`, defaulting to `host`), and returns the server's greeting: the bytes
+  it sends up to and including the first newline (or until it closes the connection, at most 4096 bytes).
+  Verification failures must raise an ssl.SSLError (or ssl.CertificateError).
+tests: tasks/test_tls_fetch_greeting.py

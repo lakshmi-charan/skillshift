@@ -1,0 +1,12 @@
+id: pd_export_invoice
+function: export_invoice
+relevant_skills: [json_export]
+prompt: |
+  Write a Python function `export_invoice(data: dict) -> str` that validates an invoice with pydantic and
+  returns its JSON text for the billing API. Input: `number` (str), `issued_at` (ISO 8601 string or
+  datetime; naive values are UTC), `lines` (list of {"sku": str, "quantity": int >= 1, "unit_price":
+  decimal >= 0 given as str/int/float}). Output JSON object: "number", "issued_at" formatted
+  "YYYY-MM-DDTHH:MM:SSZ" in UTC, "lines" (each with "sku", "quantity" and "unit_price" as a string with
+  exactly two decimals) and "total" (sum of quantity * unit_price, string with two decimals).
+  Raise ValueError for invalid input.
+tests: tasks/test_pd_export_invoice.py

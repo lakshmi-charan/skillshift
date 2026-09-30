@@ -1,0 +1,352 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "legacy_crypto",
+  "state": "s0",
+  "date": "2023-06-01",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nimport os\nimport datetime\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    \"\"\"\n    Encrypt the settlement file for the partner using three-key Triple-DES in CBC mode,\n    with PKCS7 padding and an 8-byte IV prepended to the ciphertext.\n\n    Args:\n        key (bytes): 24-byte shared key for 3-key Triple-DES.\n        settlement (bytes): The plaintext settlement data.\n\n    Returns:\n        bytes: The IV prepended to the ciphertext.\n\n    Raises:\n        PermissionError: If encryption with three-key Triple-DES is disallowed by NIST guidance.\n        ValueError: If the key length is not 24 bytes.\n    \"\"\"\n    # Validate key length\n    if len(key) != 24:\n        raise ValueError(\"Key must be 24 bytes for three-key Triple-DES.\")\n\n    # Check NIST guidance for three-key Triple-DES encryption deprecation date\n    # Encryption with three-key TDEA is deprecated through 2023 and disallowed after 2023.\n    # We allow encryption only if current date is on or before 2023-12-31.\n    today = datetime.date.today()\n    last_allowed_date = datetime.date(2023, 12, 31)\n    if today > last_allowed_date:\n        raise PermissionError(\n            \"Encryption using three-key Triple-DES is disallowed after 2023 per NIST SP 800-131A.\"\n        )\n\n    # Generate a random 8-byte IV\n    iv = os.urandom(8)\n\n    # Create cipher for 3-key Triple-DES in CBC mode\n    cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())\n\n    # Pad the plaintext using PKCS7 with block size 64 bits (8 bytes)\n    padder = padding.PKCS7(64).padder()\n    padded_data = padder.update(settlement) + padder.finalize()\n\n    # Encrypt the padded plaintext\n    encryptor = cipher.encryptor()\n    ciphertext = encryptor.update(padded_data) + encryptor.finalize()\n\n    # Return IV prepended to ciphertext\n    return iv + ciphertext\n",
+    "prompt_sha": "f928afb5ec0da4c7",
+    "cases": [
+     {
+      "name": "t_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Encryption using three-key Triple-DES is disallowed after 2023 per NIST SP 800-131A. [solution.py:33]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nfrom datetime import date\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypts a payload encrypted with three-key Triple-DES in CBC mode with PKCS7 padding.\n    The blob format is: 8-byte IV prepended to ciphertext.\n\n    This is allowed as legacy use under NIST SP 800-131A Rev. 2 through 2023.\n    After 2023, three-key TDEA encryption is disallowed, but decryption remains legacy use.\n\n    Args:\n        key: 24-byte key for three-key Triple-DES.\n        blob: bytes, with 8-byte IV prepended to ciphertext.\n\n    Returns:\n        Decrypted plaintext bytes.\n\n    Raises:\n        ValueError: if key length is not 24 bytes or blob is too short.\n    \"\"\"\n    # Check key length for three-key TDEA (24 bytes)\n    if len(key) != 24:\n        raise ValueError(\"Key length must be 24 bytes for three-key Triple-DES\")\n\n    # Check blob length for IV + ciphertext\n    if len(blob) < 8:\n        raise ValueError(\"Blob too short, must contain 8-byte IV + ciphertext\")\n\n    # Extract IV and ciphertext\n    iv = blob[:8]\n    ciphertext = blob[8:]\n\n    # According to NIST SP 800-131A Rev. 2:\n    # - Three-key TDEA decryption is allowed for legacy use.\n    # - Encryption is deprecated through 2023, disallowed after.\n    # This function only decrypts, so legacy use is permitted.\n\n    # Create cipher for Triple-DES CBC mode\n    cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())\n    decryptor = cipher.decryptor()\n    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()\n\n    # Remove PKCS7 padding with block size 64 bits (8 bytes)\n    unpadder = padding.PKCS7(64).unpadder()\n    plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()\n\n    return plaintext\n",
+    "prompt_sha": "0ba8fd4878228af5",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "from cryptography.hazmat.primitives.asymmetric import rsa, padding\nfrom cryptography.hazmat.primitives import serialization\nfrom datetime import date\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    \"\"\"\n    Encrypt the session_key using the partner's RSA public key with PKCS#1 v1.5 padding.\n\n    According to the current NIST guidance (SP 800-131A Rev. 2):\n    - Use of PKCS#1 v1.5 padding for RSA key transport is deprecated through 2023 and disallowed after 2023.\n    - This operation is allowed only for legacy use.\n    - Since the partner system still uses this scheme, we allow it here as legacy use.\n    - The RSA key modulus length must be >= 2048 bits to be acceptable.\n\n    Raises:\n        PermissionError: If the RSA key length is less than 2048 bits or if the operation is disallowed by policy.\n    \"\"\"\n    # Load the RSA public key\n    public_key = serialization.load_pem_public_key(partner_public_pem)\n\n    if not isinstance(public_key, rsa.RSAPublicKey):\n        raise TypeError(\"Provided key is not an RSA public key\")\n\n    # Check modulus length\n    key_size = public_key.key_size\n    if key_size < 2048:\n        # Disallowed by NIST SP 800-131A for RSA key transport schemes with modulus < 2048\n        raise PermissionError(\"RSA key modulus length less than 2048 bits is disallowed for key transport\")\n\n    # Check current date for PKCS#1 v1.5 padding allowance\n    # Deprecated through 2023, disallowed after 2023\n    today = date.today()\n    cutoff_date = date(2023, 12, 31)\n    if today > cutoff_date:\n        # Disallowed after 2023\n        raise PermissionError(\"Use of PKCS#1 v1.5 padding for RSA key transport is disallowed after 2023\")\n\n    # Encrypt the session key using PKCS#1 v1.5 padding\n    encrypted_key = public_key.encrypt(\n        session_key,\n        padding.PKCS1v15()\n    )\n    return encrypted_key\n",
+    "prompt_sha": "6f296d29e2a43866",
+    "cases": [
+     {
+      "name": "t_send",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Use of PKCS#1 v1.5 padding for RSA key transport is disallowed after 2023 [solution.py:36]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from cryptography.hazmat.primitives import hashes\nfrom cryptography.hazmat.primitives.asymmetric import dsa, utils\nfrom cryptography.hazmat.primitives.serialization import load_pem_private_key\nfrom cryptography.exceptions import InvalidSignature\n\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    \"\"\"\n    Sign the release manifest using a DSA private key with SHA-256 digest.\n\n    This function performs DSA signing only, which is allowed by the current\n    NIST guidance for legacy use (verifying old signatures). Signing new data\n    with DSA is disallowed by FIPS 186-5, so this function raises PermissionError.\n\n    Raises:\n        PermissionError: Because DSA signing is disallowed by current NIST guidance.\n    \"\"\"\n    raise PermissionError(\"DSA signing is disallowed by current NIST guidance (FIPS 186-5).\")\n",
+    "prompt_sha": "c4700803a923fdbd",
+    "cases": [
+     {
+      "name": "t_sign",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: DSA signing is disallowed by current NIST guidance (FIPS 186-5). [solution.py:18]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "legacy_crypto",
+  "state": "s1",
+  "date": "2024-01-01",
+  "split": "dev",
+  "event": "sp800-131a-r2-2024",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nimport os\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    \"\"\"\n    Encrypt settlement data for partner using three-key Triple-DES in CBC mode with PKCS7 padding.\n    The IV (8 bytes) is prepended to the ciphertext.\n\n    Args:\n        key (bytes): 24-byte shared key for 3-key Triple-DES.\n        settlement (bytes): plaintext settlement data.\n\n    Returns:\n        bytes: IV prepended ciphertext.\n\n    Raises:\n        PermissionError: If encryption with three-key Triple-DES is disallowed by current NIST guidance.\n        ValueError: If key length is not 24 bytes.\n    \"\"\"\n    # Check key length\n    if len(key) != 24:\n        raise ValueError(\"Key must be 24 bytes for three-key Triple-DES.\")\n\n    # According to NIST SP 800-131A Rev. 2, three-key TDEA encryption is disallowed after 2023,\n    # and current date is after 2023-12-31, so encryption is disallowed.\n    # Encryption with three-key TDEA is disallowed after 2023 unless specifically allowed by other NIST guidance.\n    # The partner system still uses it, but our service must not encrypt new data with it.\n    # So we must raise PermissionError.\n    raise PermissionError(\"Three-key Triple-DES encryption is disallowed after 2023 by NIST SP 800-131A Rev. 2.\")\n\n    # The code below is for reference only and must not be executed under current policy.\n    # backend = default_backend()\n    # iv = os.urandom(8)  # 8-byte IV for DES block size\n    # padder = padding.PKCS7(64).padder()  # DES block size is 64 bits\n    # padded_data = padder.update(settlement) + padder.finalize()\n    # cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=backend)\n    # encryptor = cipher.encryptor()\n    # ciphertext = encryptor.update(padded_data) + encryptor.finalize()\n    # return iv + ciphertext\n",
+    "prompt_sha": "50cbf42e677251c4",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "tdea_encryption_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nimport datetime\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypts an archived payload encrypted with three-key Triple-DES in CBC mode,\n    with PKCS7 padding and an 8-byte IV prepended to the ciphertext.\n\n    Args:\n        key (bytes): The 24-byte key for three-key Triple-DES.\n        blob (bytes): The encrypted payload with the 8-byte IV prepended.\n\n    Returns:\n        bytes: The decrypted plaintext.\n\n    Raises:\n        PermissionError: If the use of three-key Triple-DES encryption is disallowed by current NIST guidance.\n        ValueError: If input lengths are invalid.\n    \"\"\"\n    # Check current date against transition date: after 2023-12-31, three-key TDEA encryption disallowed\n    # Decryption is allowed for legacy use, so we permit it here.\n    # Confirm key length is 24 bytes (three-key Triple-DES)\n    if len(key) != 24:\n        raise ValueError(\"Invalid key length for three-key Triple-DES; expected 24 bytes.\")\n\n    # The blob must be at least 8 bytes for IV + some ciphertext\n    if len(blob) <= 8:\n        raise ValueError(\"Invalid blob length; must be longer than 8 bytes for IV + ciphertext.\")\n\n    iv = blob[:8]\n    ciphertext = blob[8:]\n\n    # Setup cipher for TripleDES CBC mode\n    cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())\n    decryptor = cipher.decryptor()\n    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()\n\n    # Remove PKCS7 padding (block size 64 bits = 8 bytes)\n    unpadder = padding.PKCS7(64).unpadder()\n    plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()\n\n    return plaintext\n",
+    "prompt_sha": "899aac1fb38ca411",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "from cryptography.hazmat.primitives.asymmetric import rsa, padding\nfrom cryptography.hazmat.primitives import serialization\nfrom cryptography.exceptions import InvalidKey\nimport datetime\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    \"\"\"\n    Encrypts the session_key using the partner's RSA public key with PKCS#1 v1.5 padding.\n\n    NIST SP 800-131A Rev. 2 disallows use of PKCS#1 v1.5 padding for RSA key transport after 2023-12-31.\n    This function raises PermissionError due to policy restrictions.\n\n    :param partner_public_pem: PEM-encoded RSA public key bytes\n    :param session_key: Symmetric session key bytes to encrypt\n    :return: Encrypted session key bytes\n    :raises PermissionError: If operation is disallowed by NIST policy\n    :raises ValueError: If the public key is invalid or not RSA\n    \"\"\"\n    # The policy disallows PKCS#1 v1.5 padding for RSA key transport after 2023-12-31.\n    # Since the current date is after 2023-12-31, this operation is disallowed.\n    raise PermissionError(\n        \"Use of PKCS#1 v1.5 padding for RSA key transport is disallowed after 2023-12-31 by NIST SP 800-131A Rev. 2.\"\n    )\n",
+    "prompt_sha": "a0dfee957664d9a5",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "pkcs1v15_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from cryptography.hazmat.primitives.asymmetric import dsa\nfrom cryptography.hazmat.primitives import hashes\nfrom cryptography.hazmat.primitives.asymmetric.utils import Prehashed\nfrom cryptography.hazmat.primitives.serialization import load_pem_private_key\nfrom cryptography.exceptions import InvalidSignature\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    \"\"\"\n    Sign the release manifest using the provided DSA private key with SHA-256 digest.\n    This function only supports verification of legacy DSA signatures as per FIPS 186-4,\n    since generating new DSA signatures is disallowed by FIPS 186-5.\n\n    Raises:\n        PermissionError: DSA signature generation is disallowed by current NIST guidance.\n    \"\"\"\n    # According to FIPS 186-5, DSA signing is disallowed, only verification of legacy signatures is allowed.\n    # Therefore, signing with DSA must be disallowed in this service.\n    raise PermissionError(\"DSA signature generation is disallowed by current NIST guidance (FIPS 186-5).\")\n",
+    "prompt_sha": "b1d6bc62da8a44d5",
+    "cases": [
+     {
+      "name": "t_sign",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: DSA signature generation is disallowed by current NIST guidance (FIPS 186-5). [solution.py:18]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "legacy_cipher": "active",
+   "record_cipher": "active",
+   "key_transport": "active",
+   "signing": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "legacy_crypto",
+  "state": "s2",
+  "date": "2024-02-03",
+  "split": "dev",
+  "event": "fips-186-4-withdrawn",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nimport os\nimport datetime\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    \"\"\"\n    Encrypt the settlement file with three-key Triple-DES in CBC mode with PKCS7 padding.\n    The IV (8 bytes) is prepended to the ciphertext.\n\n    Args:\n        key (bytes): 24-byte shared key for 3-key Triple-DES.\n        settlement (bytes): plaintext settlement data to encrypt.\n\n    Returns:\n        bytes: IV + ciphertext\n\n    Raises:\n        PermissionError: If encryption with three-key Triple-DES is disallowed by policy.\n        ValueError: If key length is not 24 bytes.\n    \"\"\"\n    # Check key length\n    if len(key) != 24:\n        raise ValueError(\"Key must be 24 bytes for three-key Triple-DES\")\n\n    # Check policy for three-key TDEA encryption disallowed after 2023-12-31\n    # Current date assumed to be >= 2024-01-01 per policy\n    # So encryption with three-key TDEA is disallowed\n    # Raise PermissionError accordingly\n    # (Policy excerpt: \"After December 31, 2023, three-key TDEA encryption is disallowed unless specifically allowed by other NIST guidance.\")\n    # No other allowance stated, so disallow.\n    raise PermissionError(\n        \"Three-key Triple-DES encryption is disallowed after 2023-12-31 by NIST SP 800-131A Rev. 2\"\n    )\n\n    # The following code would be the encryption implementation if allowed:\n\n    # iv = os.urandom(8)  # 8-byte IV for DES block size\n    # padder = padding.PKCS7(64).padder()  # DES block size is 64 bits\n    # padded_data = padder.update(settlement) + padder.finalize()\n\n    # cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())\n    # encryptor = cipher.encryptor()\n    # ciphertext = encryptor.update(padded_data) + encryptor.finalize()\n\n    # return iv + ciphertext\n",
+    "prompt_sha": "79c5f93ef4f6a8f2",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "tdea_encryption_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypts a payload encrypted with three-key Triple-DES in CBC mode with PKCS7 padding.\n    The blob is expected to have an 8-byte IV prepended.\n\n    Args:\n        key (bytes): 24-byte key for three-key Triple-DES.\n        blob (bytes): Encrypted data with 8-byte IV prepended.\n\n    Returns:\n        bytes: The decrypted plaintext.\n\n    Raises:\n        PermissionError: If encryption operation is attempted or key length is invalid.\n        ValueError: If input lengths are invalid.\n    \"\"\"\n    # Validate key length for three-key TDEA (24 bytes)\n    if len(key) != 24:\n        raise ValueError(\"Key length must be 24 bytes for three-key Triple-DES.\")\n\n    # According to NIST SP 800-131A Rev. 2, three-key TDEA encryption is disallowed after 2023,\n    # but decryption is allowed for legacy use. This function performs decryption only, so permitted.\n\n    # Validate blob length: must be at least 8 bytes for IV + some ciphertext\n    if len(blob) <= 8:\n        raise ValueError(\"Blob is too short to contain IV and ciphertext.\")\n\n    iv = blob[:8]\n    ciphertext = blob[8:]\n\n    # Setup Triple-DES cipher in CBC mode\n    cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())\n    decryptor = cipher.decryptor()\n    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()\n\n    # Remove PKCS7 padding (block size 64 bits = 8 bytes)\n    unpadder = padding.PKCS7(64).unpadder()\n    plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()\n\n    return plaintext\n",
+    "prompt_sha": "b21aa7fa37f44dd2",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "from cryptography.hazmat.primitives.serialization import load_pem_public_key\nfrom cryptography.hazmat.primitives.asymmetric import padding\nfrom cryptography.hazmat.backends import default_backend\nimport datetime\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    \"\"\"\n    Encrypts the session key using the partner's RSA public key with PKCS#1 v1.5 padding.\n\n    Raises PermissionError if the use of PKCS#1 v1.5 padding for RSA key transport is disallowed by NIST guidance.\n    \"\"\"\n    # Load the public key\n    public_key = load_pem_public_key(partner_public_pem, backend=default_backend())\n\n    # Check that the key is RSA\n    if not hasattr(public_key, \"key_size\"):\n        raise TypeError(\"The provided public key is not an RSA key.\")\n\n    key_size_bits = public_key.key_size\n\n    # NIST SP 800-131A Rev. 2 rules:\n    # - PKCS#1 v1.5 padding for RSA key transport is disallowed after 2023-12-31\n    # - Also disallowed if key size < 2048 bits\n    # The current date is after 2023-12-31, so PKCS#1 v1.5 is disallowed for new use.\n    # The request is to encrypt a session key with PKCS#1 v1.5 padding, which is disallowed now.\n    # According to the standing rule, only legacy use is permitted where allowed.\n    # Encrypting a new session key with PKCS#1 v1.5 padding is disallowed.\n\n    # Therefore, raise PermissionError\n    raise PermissionError(\n        \"PKCS#1 v1.5 padding for RSA key transport is disallowed after 2023-12-31 by NIST SP 800-131A Rev. 2.\"\n        \" Encryption of new session keys with this padding scheme is prohibited.\"\n    )\n",
+    "prompt_sha": "75127f9a7aa513dc",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "pkcs1v15_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from cryptography.hazmat.primitives.asymmetric import dsa\nfrom cryptography.hazmat.primitives import hashes\nfrom cryptography.hazmat.primitives.asymmetric.utils import Prehashed\nfrom cryptography.hazmat.primitives.serialization import load_pem_private_key\nfrom cryptography.exceptions import InvalidKey\nimport datetime\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    \"\"\"\n    Sign the release manifest with the provided DSA private key using SHA-256.\n\n    Raises PermissionError because DSA signature generation is disallowed under current NIST guidance.\n    \"\"\"\n    # According to FIPS 186-5 effective 2023-02-03 and withdrawal of FIPS 186-4 after 2024-02-03,\n    # DSA signing is no longer approved. Only verification of legacy DSA signatures is permitted.\n    # Therefore, signing must be disallowed.\n    raise PermissionError(\"DSA signature generation is disallowed under current NIST guidance.\")\n\n    # The following code is for reference only and must not be executed:\n    # private_key = load_pem_private_key(private_key_pem, password=None)\n    # if not isinstance(private_key, dsa.DSAPrivateKey):\n    #     raise ValueError(\"Provided key is not a DSA private key\")\n    # # Hash the manifest with SHA-256\n    # digest = hashes.Hash(hashes.SHA256())\n    # digest.update(manifest)\n    # hashed_manifest = digest.finalize()\n    # # Sign the prehashed digest\n    # signature = private_key.sign(hashed_manifest, Prehashed(hashes.SHA256()))\n    # return signature\n",
+    "prompt_sha": "7165f3bd02ee200f",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "dsa_generation_not_approved",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "legacy_cipher": "active",
+   "record_cipher": "active",
+   "key_transport": "active",
+   "signing": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 0,
+  "family": "legacy_crypto",
+  "state": "s3",
+  "date": "2024-07-20",
+  "split": "test",
+  "event": "cryptography-43.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "lc_partner_payload",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nimport os\nimport datetime\n\ndef build_partner_payload(key: bytes, settlement: bytes) -> bytes:\n    # Check key length for three-key TDEA (24 bytes)\n    if len(key) != 24:\n        raise ValueError(\"Key must be 24 bytes for three-key Triple-DES\")\n\n    # Check current date to enforce NIST SP 800-131A Rev. 2 restrictions\n    # After 2023-12-31, three-key TDEA encryption is disallowed except if specifically allowed by other NIST guidance.\n    # The deployment context states the partner system still receives three-key TDEA encrypted payloads,\n    # so this is a legacy use case and thus disallowed for new encryption.\n    # The standing rule allows legacy use only for decrypting, not encrypting.\n    # Therefore, encryption with three-key TDEA is disallowed here.\n    today = datetime.date.today()\n    if today >= datetime.date(2024, 1, 1):\n        raise PermissionError(\n            \"Three-key Triple-DES encryption is disallowed after 2023-12-31 by NIST SP 800-131A Rev. 2\"\n        )\n\n    # Pad the plaintext using PKCS7 with block size 64 bits (8 bytes) for TripleDES\n    padder = padding.PKCS7(64).padder()\n    padded_data = padder.update(settlement) + padder.finalize()\n\n    # Generate a random 8-byte IV\n    iv = os.urandom(8)\n\n    # Create TripleDES cipher in CBC mode\n    cipher = Cipher(algorithms.TripleDES(key), modes.CBC(iv), backend=default_backend())\n    encryptor = cipher.encryptor()\n\n    # Encrypt the padded data\n    ciphertext = encryptor.update(padded_data) + encryptor.finalize()\n\n    # Prepend the IV to the ciphertext\n    return iv + ciphertext\n",
+    "prompt_sha": "40c5b274ca03227b",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "tdea_encryption_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_read_archive",
+    "code": "from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes\nfrom cryptography.hazmat.primitives import padding\nfrom cryptography.hazmat.backends import default_backend\nfrom cryptography.hazmat.primitives.ciphers.algorithms import TripleDES\nfrom cryptography.hazmat.primitives.ciphers import algorithms as cipher_algorithms\nfrom cryptography.hazmat.primitives.ciphers import modes as cipher_modes\nfrom cryptography.hazmat.primitives.ciphers import Cipher as CipherClass\nfrom cryptography.hazmat.primitives.ciphers.algorithms import TripleDES as TripleDESAlgorithm\nfrom cryptography.hazmat.primitives.ciphers.modes import CBC\nfrom cryptography.hazmat.primitives import padding as padding_module\nfrom cryptography.hazmat.backends import default_backend\nfrom cryptography.hazmat.primitives.ciphers.algorithms import TripleDES as TripleDESDecrepit\nfrom cryptography.hazmat.primitives.ciphers import Cipher as CipherDecrepit\nfrom cryptography.hazmat.primitives.ciphers.modes import CBC as CBCMode\nfrom cryptography.hazmat.primitives import padding as padding_primitive\nfrom cryptography.hazmat.primitives.ciphers import algorithms as algos\nfrom cryptography.hazmat.primitives.ciphers import Cipher as CipherMain\nfrom cryptography.hazmat.primitives.ciphers.modes import CBC as CBCMain\nfrom cryptography.hazmat.backends import default_backend as backend_default\nfrom cryptography.hazmat.primitives.ciphers.algorithms import TripleDES as TripleDESMain\nfrom cryptography.hazmat.primitives import padding as pad\nfrom cryptography.hazmat.primitives.ciphers import Cipher as CipherMainClass\nfrom cryptography.hazmat.primitives.ciphers.modes import CBC as CBCMainMode\nfrom cryptography.hazmat.backends import default_backend as default_backend_func\nfrom cryptography.hazmat.primitives.ciphers.algorithms import TripleDES as TripleDESMainAlgo\nfrom cryptography.hazmat.primitives import padding as padding_main\nfrom cryptography.hazmat.primitives.ciphers import Cipher as CipherMainFunc\nfrom cryptography.hazmat.primitives.ciphers.modes import CBC as CBCMainFunc\nfrom cryptography.hazmat.backends import default_backend as default_backend_func2\n\nfrom cryptography.hazmat.primitives.ciphers.algorithms import TripleDES as TripleDESDeprecated\nfrom cryptography.hazmat.primitives.ciphers import Cipher as CipherDeprecated\nfrom cryptography.hazmat.primitives.ciphers.modes import CBC as CBCDeprecated\nfrom cryptography.hazmat.primitives import padding as paddingDeprecated\nfrom cryptography.hazmat.backends import default_backend as default_backendDeprecated\n\nimport datetime\n\ndef read_archived_payload(key: bytes, blob: bytes) -> bytes:\n    \"\"\"\n    Decrypts a payload encrypted with three-key Triple-DES in CBC mode with PKCS7 padding.\n    The IV is prepended to the blob (8 bytes).\n    This is legacy decryption use only, permitted under current NIST guidance.\n    \"\"\"\n    # Check key length: three-key TripleDES requires 24 bytes key\n    if len(key) != 24:\n        raise ValueError(\"TripleDES three-key requires 24-byte key\")\n\n    # Extract IV (first 8 bytes)\n    if len(blob) < 8:\n        raise ValueError(\"Blob too short to contain IV\")\n\n    iv = blob[:8]\n    ciphertext = blob[8:]\n\n    # Use TripleDES from the decrepit module (legacy)\n    # Import here to avoid confusion with deprecated warnings\n    from cryptography.hazmat.primitives.ciphers.algorithms import TripleDES as TripleDESLegacy\n    from cryptography.hazmat.primitives.ciphers import Cipher as CipherLegacy\n    from cryptography.hazmat.primitives.ciphers.modes import CBC as CBCLegacy\n    from cryptography.hazmat.backends import default_backend as backendLegacy\n    from cryptography.hazmat.primitives import padding as paddingLegacy\n\n    # Construct cipher for decryption\n    cipher = CipherLegacy(TripleDESLegacy(key), CBCLegacy(iv), backend=backendLegacy())\n    decryptor = cipher.decryptor()\n    padded_plaintext = decryptor.update(ciphertext) + decryptor.finalize()\n\n    # Remove PKCS7 padding (block size 64 bits = 8 bytes)\n    unpadder = paddingLegacy.PKCS7(64).unpadder()\n    plaintext = unpadder.update(padded_plaintext) + unpadder.finalize()\n\n    return plaintext\n",
+    "prompt_sha": "1bcf3ac8cd25a64f",
+    "cases": [
+     {
+      "name": "t_read",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_send_key",
+    "code": "from cryptography.hazmat.primitives.asymmetric import rsa, padding\nfrom cryptography.hazmat.primitives import serialization\nfrom cryptography.exceptions import InvalidKey\nimport datetime\n\ndef send_session_key(partner_public_pem: bytes, session_key: bytes) -> bytes:\n    \"\"\"\n    Encrypts the session_key using the partner's RSA public key with PKCS#1 v1.5 padding.\n\n    NIST SP 800-131A Rev. 2 disallows PKCS#1 v1.5 padding for RSA key transport after 2023.\n    This function permits only legacy use, so it raises PermissionError to disallow this operation.\n\n    Args:\n        partner_public_pem (bytes): PEM-encoded RSA public key of the partner.\n        session_key (bytes): The symmetric session key to encrypt.\n\n    Returns:\n        bytes: The RSA-encrypted session key.\n\n    Raises:\n        PermissionError: If the operation is disallowed by current NIST guidance.\n        ValueError: If the public key is invalid or not RSA.\n    \"\"\"\n    # Current date to check policy enforcement date\n    current_date = datetime.date.today()\n    # Disallow PKCS#1 v1.5 padding for key transport after 2023-12-31\n    disallow_date = datetime.date(2024, 1, 1)\n    if current_date >= disallow_date:\n        raise PermissionError(\n            \"PKCS#1 v1.5 padding for RSA key transport is disallowed after 2023-12-31 by NIST SP 800-131A Rev. 2.\"\n        )\n\n    # Load the partner's public key\n    try:\n        public_key = serialization.load_pem_public_key(partner_public_pem)\n    except Exception as e:\n        raise ValueError(f\"Invalid public key data: {e}\")\n\n    # Ensure the key is RSA\n    if not isinstance(public_key, rsa.RSAPublicKey):\n        raise ValueError(\"Provided public key is not an RSA public key.\")\n\n    # Check RSA key size >= 2048 bits as per NIST guidance for any RSA key transport\n    key_size = public_key.key_size\n    if key_size < 2048:\n        raise PermissionError(\n            \"RSA key size less than 2048 bits is disallowed for key transport by NIST SP 800-131A Rev. 2.\"\n        )\n\n    # Encrypt the session key using RSA PKCS#1 v1.5 padding (legacy allowed only before 2024)\n    encrypted_session_key = public_key.encrypt(\n        session_key,\n        padding.PKCS1v15()\n    )\n    return encrypted_session_key\n",
+    "prompt_sha": "59c1e0b0ad1f017c",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "pkcs1v15_disallowed",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "lc_sign_release",
+    "code": "from cryptography.hazmat.primitives import hashes\nfrom cryptography.hazmat.primitives.asymmetric import dsa, utils\nfrom cryptography.hazmat.primitives.serialization import load_pem_private_key\nfrom cryptography.exceptions import InvalidSignature\n\ndef sign_release(private_key_pem: bytes, manifest: bytes) -> bytes:\n    \"\"\"\n    Sign the release manifest using a DSA private key with SHA-256.\n\n    This function only supports verifying previously generated DSA signatures,\n    but per the current policy, DSA signature generation is disallowed.\n    Hence, signing with DSA is not permitted and raises PermissionError.\n\n    Args:\n        private_key_pem (bytes): PEM-encoded DSA private key.\n        manifest (bytes): The release manifest data to sign.\n\n    Returns:\n        bytes: The DSA signature over the SHA-256 digest of the manifest.\n\n    Raises:\n        PermissionError: DSA signature generation is disallowed by current NIST guidance.\n    \"\"\"\n    raise PermissionError(\"DSA signature generation is disallowed by current NIST guidance.\")\n",
+    "prompt_sha": "8030d691612585ec",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "dsa_generation_not_approved",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "legacy_cipher": "active",
+   "record_cipher": "active",
+   "key_transport": "active",
+   "signing": "active"
+  },
+  "tombstones": 0
+ }
+]

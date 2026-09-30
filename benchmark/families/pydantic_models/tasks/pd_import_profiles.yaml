@@ -1,0 +1,11 @@
+id: pd_import_profiles
+function: import_profiles
+relevant_skills: [profile_models]
+prompt: |
+  Write a Python function `import_profiles(rows: list) -> list` that validates profile rows (dicts from a
+  CSV/JSON import) with a pydantic model and returns the valid ones as dicts
+  {"user_id": int, "display_name": str, "bio": str or None, "zip_code": str}, in input order, silently
+  skipping invalid rows. `user_id` is an integer (numeric strings allowed), `display_name` is required and
+  its internal whitespace is collapsed to single spaces (blank names are invalid), `bio` is optional, and
+  `zip_code` is required and may arrive as a string or an integer (keep it as a string).
+tests: tasks/test_pd_import_profiles.py

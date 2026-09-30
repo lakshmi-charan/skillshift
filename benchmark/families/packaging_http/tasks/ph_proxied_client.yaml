@@ -1,0 +1,8 @@
+id: ph_proxied_client
+function: make_proxied_client
+relevant_skills: [http_client]
+prompt: |
+  Write a Python function `make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client` that returns an
+  httpx client for `base_url` whose requests (http and https) all go through the HTTP proxy at `proxy_url`,
+  with a 5-second timeout and the header `User-Agent: inventory-sync/1.0` on every request.
+tests: tasks/test_ph_proxied_client.py

@@ -1,0 +1,386 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 1,
+  "family": "packaging_http",
+  "state": "s0",
+  "date": "2024-08-27",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from pkg_resources import working_set\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    # Create a mapping of lowercased distribution names to their version strings\n    installed = {dist.project_name.lower(): dist.version for dist in working_set}\n    result = {}\n    for name in names:\n        version = installed.get(name.lower())\n        result[name] = version\n    return result\n",
+    "prompt_sha": "d4e097482cfa9442",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from typing import List\nimport httpx\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> List[str]:\n    titles: List[str] = []\n    path = \"/tickets\"\n    params = {\"status\": \"open\", \"project\": project}\n\n    while path is not None:\n        response = client.get(path, params=params)\n        response.raise_for_status()\n        data = response.json()\n        items = data.get(\"items\", [])\n        titles.extend(item.get(\"title\", \"\") for item in items)\n        next_url = data.get(\"next\")\n        if next_url is None:\n            path = None\n        else:\n            # next_url is relative URL with query string\n            # Extract path and query params for next request\n            # We must send status and project on every request too\n            # So parse next_url query string and merge with status and project\n            from urllib.parse import urlparse, parse_qs\n\n            parsed = urlparse(next_url)\n            path = parsed.path\n            qs = parse_qs(parsed.query)\n            # parse_qs returns dict[str, list[str]], convert to str\n            # Also override status and project with required values\n            params = {k: v[0] for k, v in qs.items()}\n            params[\"status\"] = \"open\"\n            params[\"project\"] = project\n\n    return titles\n",
+    "prompt_sha": "ace559fb711a0918",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import httpx\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    proxies = {\n        \"http://\": proxy_url,\n        \"https://\": proxy_url,\n    }\n    headers = {\n        \"User-Agent\": \"inventory-sync/1.0\",\n    }\n    timeout = 5.0\n    client = httpx.Client(base_url=base_url, proxies=proxies, headers=headers, timeout=timeout)\n    return client\n",
+    "prompt_sha": "5c49405e1308b323",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "from marshmallow import Schema, fields, validate, ValidationError, EXCLUDE\n\n\nclass SignupSchema(Schema):\n    username = fields.Str(\n        required=True,\n        validate=validate.Regexp(r\"^[a-zA-Z0-9]+$\", error=\"Must be alphanumeric\"),\n    )\n    email = fields.Email(required=True)\n    plan = fields.Str(\n        missing=\"free\",\n        validate=validate.OneOf([\"free\", \"pro\", \"team\"]),\n    )\n    age = fields.Int(\n        validate=validate.Range(min=16, max=120),\n        required=False,\n    )\n\n    class Meta:\n        unknown = EXCLUDE\n\n\ndef validate_signup(data: dict) -> dict:\n    schema = SignupSchema()\n    try:\n        result = schema.load(data)\n    except ValidationError as err:\n        exc = ValueError(\"Invalid input\")\n        exc.messages = err.messages\n        raise exc\n    return result\n",
+    "prompt_sha": "df7d771de5dd1ccf",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 1,
+  "family": "packaging_http",
+  "state": "s1",
+  "date": "2024-11-28",
+  "split": "test",
+  "event": "httpx-0.28",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from pkg_resources import working_set\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    \"\"\"Return a dictionary mapping each given distribution name to its installed version string or None if not installed.\n\n    The lookup is case-insensitive but the keys in the returned dict preserve the original casing.\n    \"\"\"\n    # Create a mapping of lowercase distribution names to their version strings\n    installed = {dist.project_name.lower(): dist.version for dist in working_set}\n    result = {}\n    for name in names:\n        version = installed.get(name.lower())\n        result[name] = version\n    return result\n",
+    "prompt_sha": "52e62d3d321e7328",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from typing import List\nimport httpx\nfrom urllib.parse import urlparse, parse_qs\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> List[str]:\n    titles: List[str] = []\n    status = \"open\"\n    url = \"/tickets\"\n    params = {\"status\": status, \"project\": project}\n\n    while url is not None:\n        response = client.get(url, params=params)\n        response.raise_for_status()\n        data = response.json()\n        items = data.get(\"items\", [])\n        titles.extend(item.get(\"title\", \"\") for item in items)\n        next_url = data.get(\"next\")\n        if next_url is None:\n            break\n        # next_url is relative, parse query params for next request\n        parsed = urlparse(next_url)\n        url = parsed.path\n        # Extract query params from next_url and update params with required keys\n        next_params = parse_qs(parsed.query)\n        # Flatten parse_qs values (list) to single values, keep only first if multiple\n        next_params_flat = {k: v[0] for k, v in next_params.items()}\n        # Ensure status and project are included as required by server\n        next_params_flat[\"status\"] = status\n        next_params_flat[\"project\"] = project\n        params = next_params_flat\n\n    return titles\n",
+    "prompt_sha": "f9f39905b63fc940",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import httpx\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"\n    Create an httpx.Client for the given base_url that routes all HTTP and HTTPS requests\n    through the specified HTTP proxy URL, with a 5-second timeout and a fixed User-Agent header.\n\n    Args:\n        proxy_url (str): The URL of the HTTP proxy to use for all requests.\n        base_url (str): The base URL for the client.\n\n    Returns:\n        httpx.Client: Configured client instance.\n    \"\"\"\n    # httpx 0.28 removed the proxies= argument from Client constructor.\n    # Instead, proxies must be set via the client.proxies attribute after creation or via a custom transport.\n    # However, the official docs for 0.28 do not provide a direct replacement for proxies= in Client.\n    # The recommended approach is to use a custom transport or configure the proxies on the client instance after creation.\n\n    # We'll create the client with base_url and timeout, then assign the proxies attribute.\n    # The proxies attribute can be a dictionary mapping schemes to proxy URLs.\n\n    client = httpx.Client(\n        base_url=base_url,\n        timeout=5.0,\n        headers={\"User-Agent\": \"inventory-sync/1.0\"},\n    )\n    client.proxies = {\n        \"http://\": proxy_url,\n        \"https://\": proxy_url,\n    }\n    return client\n",
+    "prompt_sha": "e4a53b77340cddcf",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "ConnectError: [Errno -2] Name or service not known [default.py:118]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "from marshmallow import Schema, fields, validate, ValidationError, EXCLUDE\n\n\nclass SignupSchema(Schema):\n    username = fields.Str(\n        required=True,\n        validate=validate.Regexp(r\"^[a-zA-Z0-9]+$\", error=\"Must be alphanumeric string\"),\n    )\n    email = fields.Email(required=True)\n    plan = fields.Str(\n        missing=\"free\",\n        validate=validate.OneOf([\"free\", \"pro\", \"team\"]),\n    )\n    age = fields.Int(\n        validate=validate.Range(min=16, max=120),\n        required=False,\n        allow_none=True,\n    )\n\n    class Meta:\n        unknown = EXCLUDE\n\n\ndef validate_signup(data: dict) -> dict:\n    schema = SignupSchema()\n    try:\n        result = schema.load(data)\n    except ValidationError as err:\n        exc = ValueError(\"Invalid input\")\n        exc.messages = err.messages\n        raise exc\n    return result\n",
+    "prompt_sha": "5ac883e8eac8f5be",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 1,
+  "family": "packaging_http",
+  "state": "s2",
+  "date": "2025-04-16",
+  "split": "test",
+  "event": "marshmallow-4.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from typing import list, dict, Optional\nimport pkg_resources\n\n\ndef dependency_report(names: list[str]) -> dict[str, Optional[str]]:\n    \"\"\"Return a dict mapping each given distribution name to its installed version string or None if not installed.\n\n    The matching is case-insensitive but keys in the returned dict preserve the input case.\n    \"\"\"\n    # Build a mapping of lower-case distribution names to their version strings\n    installed_versions = {\n        dist.project_name.lower(): dist.version for dist in pkg_resources.working_set\n    }\n\n    result: dict[str, Optional[str]] = {}\n    for name in names:\n        version = installed_versions.get(name.lower())\n        result[name] = version\n\n    return result\n",
+    "prompt_sha": "a53e8f63a1cc4a91",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function dependency_report is absent from the library"
+     }
+    ],
+    "import_error": "ImportError: cannot import name 'list' from 'typing' (/cache/uv-python/cpython-3.12.14-linux-x86_64-gnu/lib/python3.12/typing.py)",
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "import httpx\nfrom urllib.parse import urlparse, parse_qs\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> list[str]:\n    titles = []\n    status = \"open\"\n    url = \"/tickets\"\n    params = {\"status\": status, \"project\": project}\n\n    while url is not None:\n        response = client.get(url, params=params)\n        response.raise_for_status()\n        data = response.json()\n        items = data.get(\"items\", [])\n        titles.extend(item[\"title\"] for item in items)\n        next_url = data.get(\"next\")\n        if next_url is None:\n            break\n        # next_url is a relative URL with query string containing cursor and must include status and project\n        # We must send status and project on every request, so extract the query from next_url and merge them\n        parsed = urlparse(next_url)\n        query_params = parse_qs(parsed.query)\n        # query_params values are lists, convert to single values\n        next_params = {k: v[0] for k, v in query_params.items()}\n        # Ensure status and project are included as required by server\n        next_params[\"status\"] = status\n        next_params[\"project\"] = project\n        url = parsed.path\n        params = next_params\n\n    return titles\n",
+    "prompt_sha": "e8ab4aa293d926af",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    \"\"\"\n    Create an httpx.Client for the given base_url that routes all HTTP and HTTPS requests\n    through the specified HTTP proxy URL, with a 5-second timeout and a fixed User-Agent header.\n\n    Args:\n        proxy_url: The URL of the HTTP proxy to use for all requests.\n        base_url: The base URL for the client.\n\n    Returns:\n        An httpx.Client instance configured with the proxy, timeout, base_url, and headers.\n    \"\"\"\n    # httpx 0.28 removed the proxies= argument from Client.\n    # Instead, proxies must be set via the environment or by using a custom transport.\n    # Since direct proxies= argument is removed, we must raise PermissionError to comply with rules.\n    raise PermissionError(\n        \"Setting proxies via the 'proxies' argument is removed in httpx 0.28; \"\n        \"cannot create proxied client as requested.\"\n    )\n",
+    "prompt_sha": "6c5b101e825408d5",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Setting proxies via the 'proxies' argument is removed in httpx 0.28; cannot create proxied client as requested. [solution.py:19]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "from marshmallow import Schema, fields, validates, ValidationError\n\n\nclass SignupSchema(Schema):\n    username = fields.String(required=True)\n    email = fields.Email(required=True)\n    plan = fields.String(load_default=\"free\")\n    age = fields.Integer(required=False)\n\n    @validates(\"username\")\n    def validate_username(self, value: str) -> None:\n        if not value.isalnum():\n            raise ValidationError(\"Must be alphanumeric\")\n\n    @validates(\"plan\")\n    def validate_plan(self, value: str) -> None:\n        if value not in {\"free\", \"pro\", \"team\"}:\n            raise ValidationError(\"Must be one of 'free', 'pro', 'team'\")\n\n    @validates(\"age\")\n    def validate_age(self, value: int) -> None:\n        if not (16 <= value <= 120):\n            raise ValidationError(\"Must be between 16 and 120 inclusive\")\n\n    class Meta:\n        unknown = \"exclude\"\n\n\ndef validate_signup(data: dict) -> dict:\n    schema = SignupSchema()\n    try:\n        result = schema.load(data)\n    except ValidationError as exc:\n        # raise ValueError with messages attribute\n        err = ValueError(\"Invalid input\")\n        err.messages = exc.messages\n        raise err\n    return result\n",
+    "prompt_sha": "39dc988ba4c53929",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: SignupSchema.validate_plan() got an unexpected keyword argument 'data_key' [schema.py:517]"
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: SignupSchema.validate_age() got an unexpected keyword argument 'data_key' [schema.py:517]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 1,
+  "family": "packaging_http",
+  "state": "s3",
+  "date": "2026-02-08",
+  "split": "test",
+  "event": "setuptools-82",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "ph_dependency_report",
+    "code": "from importlib.metadata import version, PackageNotFoundError\n\ndef dependency_report(names: list[str]) -> dict[str, str | None]:\n    result: dict[str, str | None] = {}\n    for name in names:\n        try:\n            ver = version(name)\n        except PackageNotFoundError:\n            ver = None\n        result[name] = ver\n    return result\n",
+    "prompt_sha": "e1355c795ca0c974",
+    "cases": [
+     {
+      "name": "t_report",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_open_tickets",
+    "code": "from typing import List\nimport httpx\nfrom urllib.parse import urlparse, parse_qs\n\n\ndef open_ticket_titles(client: httpx.Client, project: str) -> List[str]:\n    titles: List[str] = []\n    status = \"open\"\n    url = \"/tickets\"\n    params = {\"status\": status, \"project\": project}\n\n    while url is not None:\n        response = client.get(url, params=params)\n        response.raise_for_status()\n        data = response.json()\n        items = data.get(\"items\", [])\n        for item in items:\n            title = item.get(\"title\")\n            if title is not None:\n                titles.append(title)\n        next_url = data.get(\"next\")\n        if next_url is None:\n            break\n        # Parse next_url query parameters to extract status and project for next request\n        parsed = urlparse(next_url)\n        url = parsed.path\n        query_params = parse_qs(parsed.query)\n        # The server requires status and project on every request\n        # Extract them from next_url query string, fallback to current if missing\n        params = {\n            \"status\": query_params.get(\"status\", [status])[0],\n            \"project\": query_params.get(\"project\", [project])[0],\n        }\n\n    return titles\n",
+    "prompt_sha": "b049e5c232a683ad",
+    "cases": [
+     {
+      "name": "t_all_pages",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "_Timeout: test exceeded 20s [child_runner.py:57]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_proxied_client",
+    "code": "import httpx\n\n\ndef make_proxied_client(proxy_url: str, base_url: str) -> httpx.Client:\n    # httpx 0.28 removed the proxies= argument from Client constructor,\n    # so we must configure the proxy using a transport.\n    transport = httpx.HTTPTransport(\n        proxy=proxy_url,\n    )\n    client = httpx.Client(\n        base_url=base_url,\n        transport=transport,\n        timeout=5.0,\n        headers={\"User-Agent\": \"inventory-sync/1.0\"},\n    )\n    return client\n",
+    "prompt_sha": "712ed5fe78a06e87",
+    "cases": [
+     {
+      "name": "t_via_proxy",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "ph_signup",
+    "code": "import re\nfrom marshmallow import Schema, fields, ValidationError, validates, validates_schema\n\n\nclass SignupSchema(Schema):\n    username = fields.String(required=True)\n    email = fields.Email(required=True)\n    plan = fields.String(load_default=\"free\")\n    age = fields.Integer(required=False)\n\n    @validates(\"username\")\n    def validate_username(self, value: str) -> None:\n        if not value.isalnum():\n            raise ValidationError(\"Must be alphanumeric\")\n\n    @validates(\"plan\")\n    def validate_plan(self, value: str) -> None:\n        if value not in {\"free\", \"pro\", \"team\"}:\n            raise ValidationError('Must be one of \"free\", \"pro\", \"team\"')\n\n    @validates(\"age\")\n    def validate_age(self, value: int) -> None:\n        if not (16 <= value <= 120):\n            raise ValidationError(\"Must be between 16 and 120 inclusive\")\n\n    @validates_schema\n    def remove_unknown(self, data, **kwargs):\n        # marshmallow by default drops unknown fields if unknown=EXCLUDE is set,\n        # but since we didn't set it, we do nothing here.\n        # Instead, we rely on the default behavior of Schema.load with unknown=EXCLUDE.\n        pass\n\n\ndef validate_signup(data: dict) -> dict:\n    schema = SignupSchema(unknown=\"exclude\")\n    try:\n        result = schema.load(data)\n    except ValidationError as err:\n        # err.messages is a dict of field -> list of error messages\n        ve = ValueError(\"Invalid input\")\n        ve.messages = err.messages\n        raise ve\n    return result\n",
+    "prompt_sha": "bd090cf1d43bf4a3",
+    "cases": [
+     {
+      "name": "t_valid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: SignupSchema.validate_plan() got an unexpected keyword argument 'data_key' [schema.py:517]"
+     },
+     {
+      "name": "t_invalid",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: SignupSchema.validate_age() got an unexpected keyword argument 'data_key' [schema.py:517]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "http_client": "active",
+   "api_fetch": "active",
+   "user_schema": "active",
+   "order_report": "active",
+   "pkg_info": "active",
+   "plugin_registry": "active"
+  },
+  "tombstones": 0
+ }
+]

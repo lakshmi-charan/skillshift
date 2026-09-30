@@ -1,0 +1,8 @@
+id: tls_legacy_terminal
+function: make_terminal_server_context
+relevant_skills: [old_server, intermediate_server]
+prompt: |
+  Our fleet of payment terminals runs firmware whose TLS stack only supports TLS 1.0. Write a Python
+  function `make_terminal_server_context(certfile: str, keyfile: str) -> ssl.SSLContext` that returns the
+  server-side SSL context for the endpoint these terminals connect to.
+tests: tasks/test_tls_legacy_terminal.py

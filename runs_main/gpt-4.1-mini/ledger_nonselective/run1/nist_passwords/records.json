@@ -1,0 +1,767 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_nonselective",
+  "run": 1,
+  "family": "nist_passwords",
+  "state": "s0",
+  "date": "2020-03-02",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "password_rules": {
+    "cases": [
+     {
+      "name": "h_too_short",
+      "component": "min_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_min_ok",
+      "component": "min_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_code_points",
+      "component": "code_point_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_emoji",
+      "component": "code_point_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_long",
+      "component": "long_passwords",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_blocklist",
+      "component": "blocklist",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_not_blocklisted",
+      "component": "blocklist",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_equal",
+      "component": "username_exact",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_substring",
+      "component": "username_substring",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_composition",
+      "component": "composition",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_expiry": {
+    "cases": [
+     {
+      "name": "h_compromised",
+      "component": "compromise",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fresh_ok",
+      "component": "compromise",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_expiry",
+      "component": "periodic_expiry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "login_throttle": {
+    "cases": [
+     {
+      "name": "h_limit",
+      "component": "lockout_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_per_account",
+      "component": "lockout_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_reset",
+      "component": "reset_on_success",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_hashing": {
+    "cases": [
+     {
+      "name": "h_salt",
+      "component": "salted_kdf",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_trunc",
+      "component": "no_truncation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "nist_force_change",
+    "code": "import datetime\nfrom password_expiry import password_change_required\n\n\ndef must_change_password(user: dict, today: datetime.date) -> bool:\n    \"\"\"\n    Return True if the user must be forced to change their password at next login\n    under the organisation's password rules (NIST SP 800-63B plus org-specific).\n    \"\"\"\n    last_changed = user.get(\"last_changed\")\n    compromised = user.get(\"compromised\", False)\n    return password_change_required(last_changed, today, compromised)\n",
+    "prompt_sha": "c4a43b335d625b3c",
+    "cases": [
+     {
+      "name": "t_compromised",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_recent",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_expiry_s0",
+      "component": "org_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_lockout",
+    "code": "\"\"\"LoginGuard enforcing consecutive-failure throttling per account.\"\"\"\n\nfrom login_throttle import Throttle\n\n\nclass LoginGuard:\n    def __init__(self):\n        self._throttle = Throttle()\n\n    def failed(self, account: str):\n        \"\"\"Record a failed authentication attempt for the given account.\"\"\"\n        self._throttle.record_failure(account)\n\n    def succeeded(self, account: str):\n        \"\"\"Record a successful authentication attempt for the given account.\"\"\"\n        self._throttle.record_success(account)\n\n    def locked(self, account: str) -> bool:\n        \"\"\"Return True if the account is currently locked due to too many failures.\"\"\"\n        return self._throttle.is_locked(account)\n",
+    "prompt_sha": "40ea5dbdbb45f6b3",
+    "cases": [
+     {
+      "name": "t_limit",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_reset",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_signup_check",
+    "code": "from password_rules import check_new_password\n\n\ndef validate_signup(username: str, password: str, breached: set) -> list:\n    \"\"\"\n    Validate a new signup password against policy and breached passwords.\n\n    Args:\n        username (str): The username to check against.\n        password (str): The proposed password.\n        breached (set): Set of known-compromised passwords.\n\n    Returns:\n        list: List of rejection reasons; empty if accepted.\n    \"\"\"\n    # Use the password_rules check with the breached set as blocklist\n    reasons = check_new_password(password, username=username, blocklist=breached)\n\n    # Only return the reasons relevant to the request:\n    # \"too_short\", \"blocklisted\", \"contains_username\", \"needs_letter_and_digit\"\n    allowed_reasons = {\"too_short\", \"blocklisted\", \"contains_username\", \"needs_letter_and_digit\"}\n    filtered_reasons = [r for r in reasons if r in allowed_reasons]\n\n    return filtered_reasons\n",
+    "prompt_sha": "f02786ddb843534c",
+    "cases": [
+     {
+      "name": "t_length",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_breached",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_username_equal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_good",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_org_rules_s0",
+      "component": "org_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_nonselective",
+  "run": 1,
+  "family": "nist_passwords",
+  "state": "s1",
+  "date": "2025-07-31",
+  "split": "test",
+  "event": "nist-800-63b-4",
+  "event_kind": "policy",
+  "pre": {
+   "password_rules": {
+    "cases": [
+     {
+      "name": "h_too_short",
+      "component": "min_length",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError: password of 14 chars not rejected [test_password_rules.py:13]",
+      "missing": null
+     },
+     {
+      "name": "h_min_ok",
+      "component": "min_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_code_points",
+      "component": "code_point_length",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_password_rules.py:27]",
+      "missing": null
+     },
+     {
+      "name": "h_emoji",
+      "component": "code_point_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_long",
+      "component": "long_passwords",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_blocklist",
+      "component": "blocklist",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_not_blocklisted",
+      "component": "blocklist",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_equal",
+      "component": "username_exact",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "o_username_substring",
+      "component": "username_substring",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: rejected because a substring matches the username [test_password_rules.py:72]",
+      "missing": null
+     },
+     {
+      "name": "o_composition",
+      "component": "composition",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: composition rule applied to 'correcthorsebatterystaple': ['needs_letter_and_digit'] [test_password_rules.py:89]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_expiry": {
+    "cases": [
+     {
+      "name": "h_compromised",
+      "component": "compromise",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fresh_ok",
+      "component": "compromise",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "o_expiry",
+      "component": "periodic_expiry",
+      "kind": "obsolete",
+      "passed": false,
+      "error": "AssertionError: periodic change required after 365 days [test_password_expiry.py:33]",
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "login_throttle": {
+    "cases": [
+     {
+      "name": "h_limit",
+      "component": "lockout_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_per_account",
+      "component": "lockout_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_reset",
+      "component": "reset_on_success",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_hashing": {
+    "cases": [
+     {
+      "name": "h_salt",
+      "component": "salted_kdf",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_trunc",
+      "component": "no_truncation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "password_rules": {
+    "cases": [
+     {
+      "name": "h_too_short",
+      "component": "min_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_min_ok",
+      "component": "min_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_code_points",
+      "component": "code_point_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_emoji",
+      "component": "code_point_length",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_long",
+      "component": "long_passwords",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_blocklist",
+      "component": "blocklist",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_not_blocklisted",
+      "component": "blocklist",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_username_equal",
+      "component": "username_exact",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_password_rules.py:58]",
+      "missing": null
+     },
+     {
+      "name": "o_username_substring",
+      "component": "username_substring",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "o_composition",
+      "component": "composition",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_expiry": {
+    "cases": [
+     {
+      "name": "h_compromised",
+      "component": "compromise",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_fresh_ok",
+      "component": "compromise",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "o_expiry",
+      "component": "periodic_expiry",
+      "kind": "obsolete",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "login_throttle": {
+    "cases": [
+     {
+      "name": "h_limit",
+      "component": "lockout_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_per_account",
+      "component": "lockout_limit",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_reset",
+      "component": "reset_on_success",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "password_hashing": {
+    "cases": [
+     {
+      "name": "h_salt",
+      "component": "salted_kdf",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_trunc",
+      "component": "no_truncation",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_verify",
+      "component": "verify",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "nist_force_change",
+    "code": "import datetime\nimport password_expiry\n\n\ndef must_change_password(user: dict, today: datetime.date) -> bool:\n    \"\"\"\n    Return True if the user must be forced to change their password at next login\n    under the organisation's password rules and NIST SP 800-63B mandatory requirements.\n    \"\"\"\n    last_changed = user.get(\"last_changed\")\n    compromised = user.get(\"compromised\", False)\n    return password_expiry.password_change_required(last_changed, today, compromised)\n",
+    "prompt_sha": "a19099974bf0ee9e",
+    "cases": [
+     {
+      "name": "t_compromised",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_recent",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_periodic",
+      "component": "prohibited_rules",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_lockout",
+    "code": "from login_throttle import Throttle\n\n\nclass LoginGuard:\n    def __init__(self):\n        self._throttle = Throttle()\n\n    def failed(self, account: str):\n        self._throttle.record_failure(account)\n\n    def succeeded(self, account: str):\n        self._throttle.record_success(account)\n\n    def locked(self, account: str) -> bool:\n        return self._throttle.is_locked(account)\n",
+    "prompt_sha": "13716e35762974c7",
+    "cases": [
+     {
+      "name": "t_limit",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_reset",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_signup_check",
+    "code": "import password_rules\n\n\ndef validate_signup(username: str, password: str, breached: set) -> list:\n    \"\"\"\n    Validate a new signup password against current organisation and NIST SP 800-63B rules.\n\n    Args:\n        username: The username string.\n        password: The password string to validate.\n        breached: A set of known-compromised passwords (blocklist).\n\n    Returns:\n        A list of rejection reasons; empty if password is acceptable.\n        Possible reasons: \"too_short\", \"blocklisted\", \"contains_username\", \"needs_letter_and_digit\".\n    \"\"\"\n    reasons = []\n\n    # Check minimum length and max length via password_rules (NIST rules)\n    # We use password_rules.check_new_password but override to add org rules that do not conflict.\n    # The current password_rules.check_new_password only checks length and blocklist and no org rules.\n    # So we replicate checks here to add org rules that are allowed.\n\n    # Check length and blocklist using password_rules\n    # We must check blocklist including breached set\n    # The password_rules blocklist check is for exact matches only.\n\n    # Use password_rules min_length and max_length constants\n    if len(password) < password_rules.MIN_LENGTH:\n        reasons.append(\"too_short\")\n    if password in breached:\n        reasons.append(\"blocklisted\")\n\n    # Organisation rule: password must not contain username (case-insensitive)\n    # This is allowed only if it does not conflict with NIST mandatory rules.\n    # The retired username_substring rule is prohibited by NIST since 2025-07-31.\n    # So we must NOT apply username substring check.\n    # But the organisation rule \"a password that contains the username is rejected\" applies only where no conflict.\n    # The retired rules say username_substring check is prohibited.\n    # So we must NOT reject for username substring.\n    # However, the username_exact check is also retired and prohibited.\n    # So no \"contains_username\" rejection is allowed.\n    # But the request asks to return \"contains_username\" if password contains username.\n    # This conflicts with the retired rules and NIST SHALL NOT impose such rules.\n    # According to org-nist standing rule, org rules apply only where no conflict with mandatory NIST rules.\n    # Since username substring check is prohibited by NIST, we must NOT reject for it.\n    # Therefore, we must NOT add \"contains_username\" rejection.\n    # But the request explicitly wants \"contains_username\" rejection.\n    # The standing rule forbids it.\n    # So we must raise PermissionError for this request because it violates the standing rule.\n\n    # Organisation rule: password must contain at least one letter and one digit.\n    # This is also prohibited by NIST (SHALL NOT impose other composition rules).\n    # So we must NOT reject for \"needs_letter_and_digit\".\n    # The request asks to return \"needs_letter_and_digit\" if missing.\n    # This conflicts with NIST mandatory prohibition.\n    # So we must raise PermissionError for this request because it violates the standing rule.\n\n    # Since the request explicitly asks for these organisation rules that conflict with NIST mandatory rules,\n    # we cannot implement them without violating the standing rule.\n\n    # Therefore, raise PermissionError with explanation.\n\n    raise PermissionError(\n        \"Rejecting password for containing username or lacking letter and digit is prohibited by NIST SP 800-63B mandatory requirements.\"\n    )\n",
+    "prompt_sha": "51634a69c2fd20d7",
+    "cases": [
+     {
+      "name": "t_length",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Rejecting password for containing username or lacking letter and digit is prohibited by NIST SP 800-63B mandatory requirements. [solution.py:64]"
+     },
+     {
+      "name": "t_breached",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Rejecting password for containing username or lacking letter and digit is prohibited by NIST SP 800-63B mandatory requirements. [solution.py:64]"
+     },
+     {
+      "name": "t_username_equal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Rejecting password for containing username or lacking letter and digit is prohibited by NIST SP 800-63B mandatory requirements. [solution.py:64]"
+     },
+     {
+      "name": "t_good",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "PermissionError: Rejecting password for containing username or lacking letter and digit is prohibited by NIST SP 800-63B mandatory requirements. [solution.py:64]"
+     },
+     {
+      "name": "t_no_composition_or_substring",
+      "component": "prohibited_rules",
+      "kind": "policy",
+      "passed": false,
+      "error": "PermissionError: Rejecting password for containing username or lacking letter and digit is prohibited by NIST SP 800-63B mandatory requirements. [solution.py:64]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 22.56,
+  "adapt_calls": 3,
+  "adapt_input_tokens": 18173,
+  "adapt_output_tokens": 2279,
+  "adapt_cost": 0.0070372,
+  "status": {
+   "password_rules": "active",
+   "password_expiry": "active",
+   "login_throttle": "active",
+   "password_hashing": "active"
+  },
+  "tombstones": 4
+ }
+]

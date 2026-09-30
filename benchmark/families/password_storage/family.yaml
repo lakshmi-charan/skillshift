@@ -1,0 +1,100 @@
+id: password_storage
+title: Password storage under the OWASP Password Storage Cheat Sheet
+domain: policy
+summary: >
+  The organisation's rule is that new password hashes must follow the current revision of the OWASP
+  Password Storage Cheat Sheet. The deployment has Argon2id (argon2-cffi) and scrypt (hashlib) available,
+  and a FIPS-mode subsystem uses PBKDF2. Library versions are fixed; only the policy text changes.
+  Existing stored hashes of any format must remain verifiable (legacy verification is always permitted).
+standing_policy:
+  - id: org-owasp
+    text: "New password hashes must meet the current OWASP Password Storage Cheat Sheet. Stored hashes of older formats must still verify so that users can log in and be re-hashed."
+states:
+  - id: s0
+    date: "2021-03-17"
+    label: "OWASP cheat sheet @728bbcd"
+    env: {python: "3.11", packages: {bcrypt: "4.0.1", argon2-cffi: "21.3.0"}}
+    policy_doc: docs/owasp-2021-03-17-full.md
+  - id: s1
+    date: "2022-06-10"
+    label: "OWASP cheat sheet @422ec84"
+    env: {python: "3.11", packages: {bcrypt: "4.0.1", argon2-cffi: "21.3.0"}}
+    policy_doc: docs/owasp-2022-06-10-full.md
+    event: {id: owasp-2022-06-10, kind: policy, title: "OWASP Password Storage Cheat Sheet revision (Argon2id first; bcrypt for legacy systems; scrypt parameters)",
+            source: "https://github.com/OWASP/CheatSheetSeries/commit/422ec84", doc: docs/owasp-2022-06-10-diff.md}
+  - id: s2
+    date: "2023-01-24"
+    label: "OWASP cheat sheet @f14bc4c"
+    env: {python: "3.11", packages: {bcrypt: "4.0.1", argon2-cffi: "21.3.0"}}
+    policy_doc: docs/owasp-2023-01-24-full.md
+    event: {id: owasp-2023-01-24, kind: policy, title: "OWASP Password Storage Cheat Sheet revision (PBKDF2 iterations; Argon2id 19 MiB; scrypt 2^17)",
+            source: "https://github.com/OWASP/CheatSheetSeries/commit/f14bc4c", doc: docs/owasp-2023-01-24-diff.md}
+  - id: s3
+    date: "2024-12-09"
+    label: "OWASP cheat sheet @f387056"
+    env: {python: "3.11", packages: {bcrypt: "4.0.1", argon2-cffi: "21.3.0"}}
+    policy_doc: docs/owasp-2024-12-09-full.md
+    event: {id: owasp-2024-12-09, kind: policy, title: "OWASP Password Storage Cheat Sheet revision (bcrypt only for legacy systems without Argon2/scrypt)",
+            source: "https://github.com/OWASP/CheatSheetSeries/commit/f387056", doc: docs/owasp-2024-12-09-diff.md}
+  - id: s4
+    date: "2026-03-26"
+    label: "OWASP cheat sheet @02bfdad"
+    env: {python: "3.11", packages: {bcrypt: "4.0.1", argon2-cffi: "21.3.0"}}
+    policy_doc: docs/owasp-2026-03-26-full.md
+    event: {id: owasp-2026-03-26, kind: policy, title: "OWASP Password Storage Cheat Sheet revision (PBKDF2-SHA1 and SHA512 iterations)",
+            source: "https://github.com/OWASP/CheatSheetSeries/commit/02bfdad", doc: docs/owasp-2026-03-26-diff.md}
+  - id: s5
+    date: "2026-05-12"
+    label: "OWASP cheat sheet @c3c1952"
+    env: {python: "3.11", packages: {bcrypt: "4.0.1", argon2-cffi: "21.3.0"}}
+    policy_doc: docs/owasp-2026-05-12-full.md
+    event: {id: owasp-2026-05-12, kind: policy, title: "OWASP Password Storage Cheat Sheet revision (PBKDF2-HMAC-SHA1 legacy only)",
+            source: "https://github.com/OWASP/CheatSheetSeries/commit/c3c1952", doc: docs/owasp-2026-05-12-diff.md}
+skills:
+  - id: pbkdf2_hasher
+    file: skills/pbkdf2_hasher.py
+    visible_tests: visible/test_pbkdf2_hasher.py
+    hidden_tests: hidden/test_pbkdf2_hasher.py
+    purpose: "PBKDF2-HMAC hashing for the FIPS subsystem. Format: $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>."
+    components:
+      - {id: sha256_iterations, requirement: "hash_pbkdf2(pw, 'sha256') uses at least the currently recommended PBKDF2-HMAC-SHA256 iteration count."}
+      - {id: sha512_iterations, requirement: "hash_pbkdf2(pw, 'sha512') uses at least the currently recommended PBKDF2-HMAC-SHA512 iteration count."}
+      - {id: sha1_new_hashes, requirement: "hash_pbkdf2(pw, 'sha1') uses at least the recommended PBKDF2-HMAC-SHA1 count while SHA1 is permitted for new hashes."}
+      - {id: salt, requirement: "Each hash uses a fresh random salt of at least 16 bytes."}
+      - {id: verify, requirement: "verify_pbkdf2 accepts the right password and rejects wrong ones, for any stored digest and iteration count."}
+  - id: argon2_hasher
+    file: skills/argon2_hasher.py
+    visible_tests: visible/test_argon2_hasher.py
+    hidden_tests: hidden/test_argon2_hasher.py
+    purpose: "Argon2id hashing (PHC string format from argon2-cffi)."
+    components:
+      - {id: memory_cost, requirement: "hash_argon2 uses at least the currently recommended Argon2id memory."}
+      - {id: time_parallelism, requirement: "Iteration count at least 2 and parallelism 1."}
+      - {id: verify, requirement: "verify_argon2 accepts the right password and rejects wrong ones for any stored parameters."}
+  - id: scrypt_hasher
+    file: skills/scrypt_hasher.py
+    visible_tests: visible/test_scrypt_hasher.py
+    hidden_tests: hidden/test_scrypt_hasher.py
+    purpose: "scrypt hashing via hashlib. Format: $scrypt$ln=<log2 N>,r=<r>,p=<p>$<salt_b64>$<hash_b64>."
+    components:
+      - {id: cost_parameter, requirement: "hash_scrypt uses at least the currently recommended CPU/memory cost N, block size r=8 and p=1."}
+      - {id: verify, requirement: "verify_scrypt accepts the right password and rejects wrong ones for any stored parameters."}
+  - id: bcrypt_hasher
+    file: skills/bcrypt_hasher.py
+    visible_tests: visible/test_bcrypt_hasher.py
+    hidden_tests: hidden/test_bcrypt_hasher.py
+    purpose: "bcrypt hashing of new passwords and verification of stored bcrypt hashes."
+    components:
+      - {id: work_factor, requirement: "hash_bcrypt uses at least the currently recommended bcrypt work factor while bcrypt is permitted for new hashes."}
+      - {id: input_limit, requirement: "hash_bcrypt rejects (ValueError) passwords beyond the currently recommended limit instead of silently truncating."}
+      - {id: new_hashes_permitted, requirement: "hash_bcrypt may create new hashes only while the cheat sheet permits bcrypt for this deployment."}
+      - {id: verify, requirement: "verify_bcrypt checks stored bcrypt hashes (legacy verification is always permitted)."}
+  - id: password_store
+    file: skills/password_store.py
+    visible_tests: visible/test_password_store.py
+    hidden_tests: hidden/test_password_store.py
+    purpose: "Application-facing API: hash_new_password, verify_password (any stored format), needs_rehash."
+    components:
+      - {id: primary_algorithm, requirement: "hash_new_password uses the cheat sheet's first-choice algorithm with compliant parameters."}
+      - {id: verify_all_formats, requirement: "verify_password verifies every stored format ($pbkdf2-*, $argon2id$, $scrypt$, $2b$)."}
+      - {id: rehash_thresholds, requirement: "needs_rehash is True exactly when a stored hash is below current parameters or uses an algorithm no longer permitted for new hashes."}

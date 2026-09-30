@@ -1,0 +1,11 @@
+id: pd_validate_signup
+function: validate_signup
+relevant_skills: [signup_form]
+prompt: |
+  Write a Python function `validate_signup(data: dict) -> dict` that validates a sign-up payload with
+  pydantic. Fields: `username` must match ^[a-z0-9_]{3,20}$; `email` must contain "@" and is returned
+  stripped and lower-cased; `phone` has spaces, dots, dashes and parentheses removed and must then be "+"
+  followed by 8-15 digits; `password` needs at least 8 characters and `password_confirm` must equal it.
+  Return {"username": ..., "email": ..., "phone": <compact phone>}. Raise ValueError (pydantic's
+  ValidationError is fine) for any missing or invalid field.
+tests: tasks/test_pd_validate_signup.py

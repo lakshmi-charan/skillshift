@@ -1,0 +1,88 @@
+id: pydantic_models
+title: API data models built on pydantic
+domain: tool
+summary: >
+  A shared library of pydantic models and helpers used by the web services: sign-up form validation,
+  user profile records, API schemas populated from ORM objects, service settings read from APP_*
+  environment variables, invoice JSON export for the billing API, and catalogue items with constrained
+  fields. Callers rely on the documented behaviour of each helper (validation errors are raised as
+  pydantic ValidationError, which is a ValueError). The library must keep working with the pydantic
+  version installed in the deployment; installed packages cannot be changed.
+states:
+  - id: s0
+    date: "2023-06-07"
+    label: "pydantic 1.10.9"
+    env: {python: "3.11", packages: {pydantic: "1.10.9"}}
+  - id: s1
+    date: "2023-06-30"
+    label: "pydantic 2.0.3 (+ pydantic-settings 2.0.2)"
+    env: {python: "3.11", packages: {pydantic: "2.0.3", pydantic-settings: "2.0.2"}}
+    event:
+      id: pydantic-2.0
+      kind: tool
+      title: "Pydantic 2.0: V1 APIs deprecated or removed (validators, config keys, Field arguments, custom types, BaseSettings moved to pydantic-settings, stricter coercion)"
+      source: "https://github.com/pydantic/pydantic/blob/v2.0/docs/migration.md"
+      doc: docs/pydantic-2.0.md
+skills:
+  - id: signup_form
+    file: skills/signup_form.py
+    visible_tests: visible/test_signup_form.py
+    hidden_tests: hidden/test_signup_form.py
+    purpose: "Validate sign-up payloads: username pattern, matching passwords, normalised phone number."
+    components:
+      - {id: username_pattern, requirement: "parse_signup(data) accepts usernames matching ^[a-z0-9_]{3,20}$ and rejects (ValueError) any other username."}
+      - {id: passwords_match, requirement: "parse_signup rejects (ValueError) a password shorter than 8 characters or a password_confirm different from password."}
+      - {id: phone_normalised, requirement: "The phone value has spaces, dots, dashes and parentheses removed and must then be '+' followed by 8-15 digits (stored in that compact form); anything else, including non-strings, is rejected with ValueError."}
+  - id: profile_models
+    file: skills/profile_models.py
+    visible_tests: visible/test_profile_models.py
+    hidden_tests: hidden/test_profile_models.py
+    purpose: "Validate user profile payloads and produce public views and modified copies."
+    components:
+      - {id: required_fields, requirement: "load_profile(data) requires user_id (int, numeric strings accepted), display_name and zip_code, collapses whitespace in display_name and rejects a blank one (ValueError)."}
+      - {id: optional_bio, requirement: "bio and website may be omitted and then default to None."}
+      - {id: zip_as_string, requirement: "zip_code may be given as a string or an integer and is stored as a string."}
+      - {id: public_view, requirement: "public_view(profile) returns a dict of all fields except user_id, leaving out fields whose value is None."}
+      - {id: apply_changes, requirement: "apply_changes(profile, changes) returns a new profile with the given field values replaced; the original is unchanged."}
+  - id: orm_schemas
+    file: skills/orm_schemas.py
+    visible_tests: visible/test_orm_schemas.py
+    hidden_tests: hidden/test_orm_schemas.py
+    purpose: "UserSchema/OrderSchema API schemas built from ORM objects or dicts, plus schema introspection."
+    components:
+      - {id: from_orm_object, requirement: "user_from_orm(obj) builds a UserSchema from any object exposing id, name and email attributes (other attributes ignored); missing or invalid attributes raise ValueError."}
+      - {id: from_orm_list, requirement: "orders_from_orm(objs) turns an iterable of ORM order objects (with nested customer and items objects) into a list of OrderSchema; invalid data raises ValueError."}
+      - {id: from_dict, requirement: "user_from_dict(data) builds a UserSchema from a dict, coercing numeric strings for id; missing fields raise ValueError."}
+      - {id: field_names, requirement: "field_names(model) returns the field names of any pydantic model class in declaration order."}
+      - {id: required_fields, requirement: "required_fields(model) returns, in declaration order, the fields of a pydantic model class that have no default."}
+  - id: app_settings
+    file: skills/app_settings.py
+    visible_tests: visible/test_app_settings.py
+    hidden_tests: hidden/test_app_settings.py
+    purpose: "Service settings (app_name, debug, port, database_url, allowed_hosts) from APP_* environment variables."
+    components:
+      - {id: env_values, requirement: "load_settings() reads each field from the APP_<FIELD> environment variable, converting types (bool, int, JSON list); an unconvertible value raises ValueError."}
+      - {id: defaults_and_overrides, requirement: "Unset fields take their defaults (orders-api, False, 8000, ['localhost']) and keyword arguments to load_settings override the environment."}
+      - {id: required_database_url, requirement: "database_url is required: without APP_DATABASE_URL (unprefixed variables are ignored) or a keyword override, load_settings raises ValueError."}
+  - id: json_export
+    file: skills/json_export.py
+    visible_tests: visible/test_json_export.py
+    hidden_tests: hidden/test_json_export.py
+    purpose: "Invoice/Line models with JSON export for the billing API and the audit log."
+    components:
+      - {id: json_content, requirement: "invoice_to_json(invoice) returns JSON text with number, issued_at and lines (sku, quantity, exact unit_price), leaving out notes when it is None."}
+      - {id: timestamp_format, requirement: "In the exported JSON, issued_at is written as YYYY-MM-DDTHH:MM:SSZ (UTC, second precision, trailing Z)."}
+      - {id: pretty_json, requirement: "invoice_to_pretty_json(invoice) returns the same data as JSON indented by 2 spaces, leaving out None fields."}
+      - {id: from_json, requirement: "invoice_from_json(text) parses and validates invoice JSON (coercing numeric strings); malformed JSON or invalid data raises ValueError."}
+      - {id: invoice_total, requirement: "invoice_total(invoice) returns the exact Decimal sum of quantity * unit_price over the lines."}
+  - id: catalog_items
+    file: skills/catalog_items.py
+    visible_tests: visible/test_catalog_items.py
+    hidden_tests: hidden/test_catalog_items.py
+    purpose: "Immutable catalogue Item model with constrained name, price, stock and tags."
+    components:
+      - {id: name_rules, requirement: "make_item strips the name and requires 1-60 characters (ValueError otherwise)."}
+      - {id: price_rules, requirement: "price is a Decimal greater than 0 with at most 10 digits and 2 decimal places (ValueError otherwise)."}
+      - {id: stock_and_tags, requirement: "stock defaults to 0 and must be >= 0; tags accept a comma-separated string or a list, are stripped, lower-cased, empties dropped, and at most 5 are allowed."}
+      - {id: immutable, requirement: "Items are immutable: assigning to any field fails and leaves the value unchanged."}
+      - {id: invalid_returns_none, requirement: "try_parse_item(data) returns the Item, or None for any invalid input (including tags given as None or a number)."}

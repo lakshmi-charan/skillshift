@@ -1,0 +1,105 @@
+id: packaging_http
+title: HTTP clients, schemas and package metadata (httpx, marshmallow, setuptools/pkg_resources)
+domain: tool
+summary: >
+  Service-side helper library for a Python 3.12 application: an httpx client factory and JSON API
+  helpers (tests use httpx.MockTransport or in-process apps; no network), marshmallow schemas for
+  user and order records, and runtime package metadata / plugin discovery through setuptools'
+  pkg_resources. At the start the environment pins httpx 0.27.2 (released 2024-08-27),
+  marshmallow 3.22.0 (2024-08-20) and setuptools 73.0.1 (2024-08-20, ships pkg_resources).
+  Dependencies are upgraded one library at a time; the helpers must keep working.
+states:
+  - id: s0
+    date: "2024-08-27"
+    label: "httpx 0.27.2, marshmallow 3.22.0, setuptools 73.0.1"
+    env: {python: "3.12", packages: {httpx: "0.27.2", marshmallow: "3.22.0", setuptools: "73.0.1"}}
+  - id: s1
+    date: "2024-11-28"
+    label: "httpx 0.28.1"
+    env: {python: "3.12", packages: {httpx: "0.28.1", marshmallow: "3.22.0", setuptools: "73.0.1"}}
+    event:
+      id: httpx-0.28
+      kind: tool
+      title: "httpx 0.28: proxies= and app= arguments removed; params= no longer merged into an existing query string"
+      source: "https://github.com/encode/httpx/blob/master/CHANGELOG.md"
+      doc: docs/httpx-0.28.md
+  - id: s2
+    date: "2025-04-16"
+    label: "marshmallow 4.0.1"
+    env: {python: "3.12", packages: {httpx: "0.28.1", marshmallow: "4.0.1", setuptools: "73.0.1"}}
+    event:
+      id: marshmallow-4.0
+      kind: tool
+      title: "marshmallow 4.0: missing=/default=, Schema.context and pass_many removed; validators must raise"
+      source: "https://github.com/marshmallow-code/marshmallow/blob/dev/CHANGELOG.rst"
+      doc: docs/marshmallow-4.0.md
+  - id: s3
+    date: "2026-02-08"
+    label: "setuptools 82.0.1"
+    env: {python: "3.12", packages: {httpx: "0.28.1", marshmallow: "4.0.1", setuptools: "82.0.1"}}
+    event:
+      id: setuptools-82
+      kind: tool
+      title: "setuptools 82: pkg_resources removed"
+      source: "https://github.com/pypa/setuptools/blob/main/NEWS.rst"
+      doc: docs/setuptools-82.md
+skills:
+  - id: http_client
+    file: skills/http_client.py
+    visible_tests: visible/test_http_client.py
+    hidden_tests: hidden/test_http_client.py
+    purpose: "Create configured httpx clients (base URL, headers, timeout, proxy, error hook, in-process WSGI)."
+    components:
+      - {id: base_config, requirement: "make_client(base_url, headers=, timeout=, transport=) returns a client using that base URL, default headers, timeout (default 10 s) and transport."}
+      - {id: proxy_routing, requirement: "make_client(..., proxy_url=URL) sends every request through that HTTP proxy; without proxy_url requests go to the transport directly."}
+      - {id: wsgi_client, requirement: "make_wsgi_client(app, base_url='http://testserver', headers=None) returns a client that serves requests by calling the WSGI app in-process."}
+      - {id: error_hook, requirement: "make_client(..., raise_errors=True) raises httpx.HTTPStatusError on 4xx/5xx responses; by default responses are returned."}
+  - id: api_fetch
+    file: skills/api_fetch.py
+    visible_tests: visible/test_api_fetch.py
+    hidden_tests: hidden/test_api_fetch.py
+    purpose: "GET/POST JSON against REST APIs with retries, error mapping and pagination."
+    components:
+      - {id: fetch_json, requirement: "fetch_json(client, path, params=None, retries=2) GETs path with params added to any query string already in path, retries 502/503/504 and returns decoded JSON."}
+      - {id: api_error, requirement: "Error statuses (after retries) raise ApiError with status_code and body."}
+      - {id: post_json, requirement: "post_json(client, path, payload) POSTs payload as JSON (application/json) and returns the decoded JSON; errors raise ApiError."}
+      - {id: iter_items, requirement: "iter_items(client, path, params=None) yields items across pages by following 'next' URLs, sending the filter params with every page request."}
+  - id: user_schema
+    file: skills/user_schema.py
+    visible_tests: visible/test_user_schema.py
+    hidden_tests: hidden/test_user_schema.py
+    purpose: "Validate and serialise user records with marshmallow."
+    components:
+      - {id: load_defaults, requirement: "load_user fills role='member' and a fresh empty tags list when absent and drops unknown keys."}
+      - {id: dump_defaults, requirement: "dump_user outputs active=True when the user has no 'active' value; given values are kept."}
+      - {id: validation, requirement: "load_user rejects age outside 13..130, non-alphanumeric usernames, invalid emails and missing required fields with UserError(messages) keyed by field."}
+      - {id: batch_load, requirement: "load_users accepts a list or {'users': [...]}, applying the same rules; errors are keyed by list index."}
+  - id: order_report
+    file: skills/order_report.py
+    visible_tests: visible/test_order_report.py
+    hidden_tests: hidden/test_order_report.py
+    purpose: "Load orders and serialise invoices with computed totals."
+    components:
+      - {id: load_validation, requirement: "load_order validates required fields and quantity >= 1 (raising marshmallow.ValidationError) and loads unit_price as Decimal."}
+      - {id: dump_items, requirement: "dump_items(items) serialises line items with 2-decimal string prices, keys in order sku, quantity, unit_price."}
+      - {id: context_totals, requirement: "dump_order(order, tax_rate=0, currency='USD') adds subtotal, tax (half-up to cents), total and currency, keys in declaration order."}
+      - {id: summary, requirement: "order_summary(orders, tax_rate, currency) returns {'orders': [...], 'count': n, 'grand_total': sum of totals}."}
+  - id: pkg_info
+    file: skills/pkg_info.py
+    visible_tests: visible/test_pkg_info.py
+    hidden_tests: hidden/test_pkg_info.py
+    purpose: "Installed distribution versions and package data files."
+    components:
+      - {id: installed_version, requirement: "installed_version(name) returns the installed distribution's version (name matched case-insensitively)."}
+      - {id: missing_distribution, requirement: "installed_version returns None for a distribution that is not installed."}
+      - {id: resource_text, requirement: "read_resource_text(package, 'dir/file', encoding='utf-8') returns the text of a data file inside an importable package."}
+      - {id: resource_listing, requirement: "list_resources(package, subdir) returns the sorted entry names of a data directory inside the package."}
+  - id: plugin_registry
+    file: skills/plugin_registry.py
+    visible_tests: visible/test_plugin_registry.py
+    hidden_tests: hidden/test_plugin_registry.py
+    purpose: "Discover and load plugins registered as entry points."
+    components:
+      - {id: plugin_names, requirement: "plugin_names(group, paths=None) returns the sorted entry-point names of group in distributions on paths (default sys.path)."}
+      - {id: discover_plugins, requirement: "discover_plugins(group, paths=None) returns {name: loaded object} for every entry point in group."}
+      - {id: load_plugin, requirement: "load_plugin(group, name, paths=None) loads one entry point or raises LookupError if absent."}

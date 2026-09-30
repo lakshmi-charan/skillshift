@@ -1,0 +1,731 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s0",
+  "date": "2024-02-05",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: np.ndarray) -> str:\n    \"\"\"\n    Return a cache key for a NumPy array.\n\n    Format: \"<dtype>|<shape>|<digest>\"\n\n    - dtype: arr.dtype.str\n    - shape: dimensions joined by \"x\" (e.g. \"3x4\"; empty string for 0-d arrays)\n    - digest: SHA-256 hex digest of the array's raw data bytes in C (row-major)\n      order. For non-contiguous arrays, the digest is computed from a C-contiguous\n      view/copy of the data.\n    \"\"\"\n    if not isinstance(arr, np.ndarray):\n        raise TypeError(f\"arr must be a NumPy array, got {type(arr)!r}\")\n\n    dtype_str = arr.dtype.str\n\n    # Shape formatting: empty string for 0-d arrays.\n    shape_str = \"x\".join(str(d) for d in arr.shape)\n\n    # Ensure C-contiguous raw bytes in row-major order.\n    # ascontiguousarray avoids mutating the original; it will copy only if needed.\n    c_arr = np.ascontiguousarray(arr)\n\n    # Use the actual bytes backing the contiguous array.\n    data_bytes = c_arr.tobytes(order=\"C\")\n    digest = hashlib.sha256(data_bytes).hexdigest()\n\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "7876bbb2ed612e8f",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "from __future__ import annotations\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule and return energy in kWh.\n\n    Parameters\n    ----------\n    timestamps_s : array-like\n        Increasing sample times in seconds (not necessarily evenly spaced).\n    power_w : array-like\n        Power readings in watts at those times.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours (1 kWh = 3.6e6 J). Returns 0.0 when fewer than two\n        samples are given.\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    if t.ndim != 1 or p.ndim != 1:\n        # Match typical NumPy behavior for 1D-only numeric procedures.\n        raise ValueError(\"timestamps_s and power_w must be 1D array-like inputs.\")\n\n    if t.shape[0] != p.shape[0]:\n        raise ValueError(\"timestamps_s and power_w must have the same length.\")\n\n    if t.shape[0] < 2:\n        return 0.0\n\n    energy_joules = np.trapz(p, x=t)\n    energy_kwh = energy_joules / 3.6e6\n    return float(energy_kwh)\n",
+    "prompt_sha": "8e3bb5f637720d47",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "from __future__ import annotations\n\nfrom typing import Sequence, List, Any\nimport numpy as np\n\n\ndef filter_events(ids: Sequence[int], allowed: Sequence[int], blocked: Sequence[int]) -> list:\n    \"\"\"\n    Return, as a Python list in the original order with duplicates kept, the IDs that\n    occur in `allowed` and do not occur in `blocked`.\n\n    Parameters\n    ----------\n    ids:\n        Sequence (list or 1-D array) of integer event IDs; may contain duplicates.\n    allowed:\n        Sequence of integer IDs that are permitted.\n    blocked:\n        Sequence of integer IDs that must be excluded.\n\n    Returns\n    -------\n    list\n        IDs from `ids` that are present in `allowed` and not present in `blocked`,\n        preserving original order and duplicates.\n    \"\"\"\n    ids_arr = np.asarray(ids)\n    if ids_arr.ndim != 1:\n        raise ValueError(\"ids must be a 1-D sequence/array of integer event IDs.\")\n\n    allowed_arr = np.asarray(allowed)\n    blocked_arr = np.asarray(blocked)\n\n    # Preserve original order and duplicates by masking `ids`.\n    keep_allowed = np.isin(ids_arr, allowed_arr, assume_unique=False, invert=False)\n    keep_not_blocked = np.isin(ids_arr, blocked_arr, assume_unique=False, invert=True)\n    mask = keep_allowed & keep_not_blocked\n\n    # Ensure Python list return type.\n    return ids_arr[mask].tolist()\n",
+    "prompt_sha": "2696adfeb474a4d0",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "\"\"\"\nNumeric procedures built on NumPy.\n\nThis module provides a small collection of reusable NumPy-based functions.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Any, Iterable\n\n\nimport numpy as np\n\n\ndef latency_summary(samples_ms: list[float | None]) -> dict[str, Any]:\n    \"\"\"\n    Summarise request latencies.\n\n    Parameters\n    ----------\n    samples_ms : list[float | None]\n        Request latencies in milliseconds. Failed requests appear as None;\n        those entries are ignored.\n\n    Returns\n    -------\n    dict\n        A dictionary with keys:\n        - \"count\": int number of valid samples\n        - \"mean\": float mean of valid samples\n        - \"p50\": float 50th percentile (nearest order statistic)\n        - \"p90\": float 90th percentile (nearest order statistic)\n        - \"p99\": float 99th percentile (nearest order statistic)\n\n    Raises\n    ------\n    ValueError\n        If there is no valid (non-None) sample.\n    \"\"\"\n    if samples_ms is None:\n        raise ValueError(\"No valid samples: samples_ms is None.\")\n\n    valid_samples: list[float] = [x for x in samples_ms if x is not None]\n    if not valid_samples:\n        raise ValueError(\"No valid samples: all entries are None.\")\n\n    arr = np.asarray(valid_samples, dtype=np.float64)\n\n    summary: dict[str, Any] = {\n        \"count\": int(arr.size),\n        \"mean\": float(arr.mean()),\n        \"p50\": float(np.percentile(arr, 50, method=\"nearest\")),\n        \"p90\": float(np.percentile(arr, 90, method=\"nearest\")),\n        \"p99\": float(np.percentile(arr, 99, method=\"nearest\")),\n    }\n    return summary\n",
+    "prompt_sha": "9135077c6a08d0ba",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s1",
+  "date": "2024-06-16",
+  "split": "dev",
+  "event": "numpy-2.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: np.ndarray) -> str:\n    \"\"\"\n    Build a deterministic cache key for a NumPy array.\n\n    Returns a string formatted as: \"<dtype>|<shape>|<digest>\"\n\n    - <dtype> is arr.dtype.str (e.g. \"<f8\")\n    - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\"; empty string for a 0-d array)\n    - <digest> is the SHA-256 hex digest of the array's raw data bytes in C (row-major)\n      order, using the array's dtype representation.\n    \"\"\"\n    if not isinstance(arr, np.ndarray):\n        raise TypeError(f\"arr must be a numpy.ndarray, got {type(arr)!r}\")\n\n    dtype_str = arr.dtype.str\n\n    # For 0-d arrays, shape should be \"\".\n    if arr.ndim == 0:\n        shape_str = \"\"\n    else:\n        shape_str = \"x\".join(str(d) for d in arr.shape)\n\n    # Ensure C-contiguous bytes in row-major order.\n    arr_c = np.ascontiguousarray(arr)\n\n    digest = hashlib.sha256(arr_c.tobytes(order=\"C\")).hexdigest()\n\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "4742372f2bd31d12",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "from __future__ import annotations\n\nfrom typing import Sequence\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s: Sequence[float] | np.ndarray, power_w: Sequence[float] | np.ndarray) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule and return energy in kWh.\n\n    Parameters\n    ----------\n    timestamps_s:\n        Increasing sample times in seconds (not necessarily evenly spaced).\n    power_w:\n        Power readings in watts at those times.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours (1 kWh = 3.6e6 J). Returns 0.0 when fewer than two samples are given.\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    if t.size < 2 or p.size < 2:\n        return 0.0\n\n    if t.shape[0] != p.shape[0]:\n        raise ValueError(\"timestamps_s and power_w must have the same length.\")\n\n    # Trapezoidal integration: J = integral of W dt (W * s)\n    joules = float(np.trapezoid(p, x=t))\n    kwh = joules / 3.6e6\n    return float(kwh)\n",
+    "prompt_sha": "b6b5a046bdd62221",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "from __future__ import annotations\n\nfrom typing import Iterable, Sequence, Any\nimport numpy as np\n\n\ndef filter_events(ids, allowed, blocked) -> list:\n    \"\"\"\n    Filter event IDs using allow/block sets.\n\n    Parameters\n    ----------\n    ids : sequence of int or 1-D array-like of int\n        Event IDs that may contain duplicates.\n    allowed : sequence of int or 1-D array-like of int\n        IDs to keep.\n    blocked : sequence of int or 1-D array-like of int\n        IDs to exclude.\n\n    Returns\n    -------\n    list\n        IDs that occur in `allowed` and do not occur in `blocked`,\n        in the original order with duplicates preserved.\n    \"\"\"\n    ids_arr = np.asarray(ids)\n    if ids_arr.ndim != 1:\n        raise ValueError(\"ids must be a 1-D sequence or array.\")\n\n    # Ensure integer comparison semantics.\n    ids_int = ids_arr.astype(np.int64, copy=False)\n    allowed_arr = np.asarray(allowed).astype(np.int64, copy=False)\n    blocked_arr = np.asarray(blocked).astype(np.int64, copy=False)\n\n    # Keep duplicates and original order by masking the original array.\n    keep_allowed = np.isin(ids_int, allowed_arr, assume_unique=False)\n    keep_blocked = np.isin(ids_int, blocked_arr, assume_unique=False)\n    mask = keep_allowed & ~keep_blocked\n\n    return ids_int[mask].tolist()\n",
+    "prompt_sha": "30aed76e7db1ca5c",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\n\ndef latency_summary(samples_ms) -> dict:\n    \"\"\"\n    Summarize request latencies.\n\n    Parameters\n    ----------\n    samples_ms : list\n        List of request latencies in milliseconds. Failed requests appear as\n        None and are ignored.\n\n    Returns\n    -------\n    dict\n        Dictionary with keys:\n          - \"count\": int, number of valid (non-None) samples\n          - \"mean\": float\n          - \"p50\": float (nearest-order-statistic percentile)\n          - \"p90\": float (nearest-order-statistic percentile)\n          - \"p99\": float (nearest-order-statistic percentile)\n\n    Raises\n    ------\n    ValueError\n        If there is no valid sample.\n    \"\"\"\n    valid = [x for x in samples_ms if x is not None]\n    if not valid:\n        raise ValueError(\"latency_summary: no valid samples (all values are None).\")\n\n    arr = __import__(\"numpy\").asarray(valid, dtype=float)\n\n    # NumPy 2.x: use method=\"nearest\" (nearest-order-statistic).\n    np = __import__(\"numpy\")\n    percentiles = np.percentile(arr, [50, 90, 99], method=\"nearest\")\n\n    return {\n        \"count\": int(arr.size),\n        \"mean\": float(np.mean(arr)),\n        \"p50\": float(percentiles[0]),\n        \"p90\": float(percentiles[1]),\n        \"p99\": float(percentiles[2]),\n    }\n",
+    "prompt_sha": "417dabaa00d0c7d8",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "active",
+   "percentiles": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s2",
+  "date": "2025-06-07",
+  "split": "test",
+  "event": "numpy-2.3",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: Any) -> str:\n    \"\"\"\n    Return a stable cache key for a NumPy array.\n\n    Format: \"<dtype>|<shape>|<digest>\"\n\n    - <dtype> is arr.dtype.str (e.g. \"<f8\")\n    - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\"; empty string for 0-d)\n    - <digest> is the SHA-256 hex digest of the array's raw data bytes in C\n      (row-major) order.\n\n    Notes:\n    - The array may be non-contiguous; the digest is computed after converting to a\n      C-contiguous view/copy when required.\n    \"\"\"\n    a = np.asanyarray(arr)\n\n    dtype_str = a.dtype.str\n    shape_str = \"x\".join(str(s) for s in a.shape) if a.shape else \"\"\n\n    # Ensure C (row-major) byte order for digest, regardless of contiguity.\n    a_c = np.ascontiguousarray(a)\n\n    digest = hashlib.sha256(a_c.tobytes(order=\"C\")).hexdigest()\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "f4af89ae70e3cab7",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "\"\"\"\nNumeric procedures built on NumPy.\n\nThis module provides small reusable functions used by analytics and\nsignal-processing jobs.\n\"\"\"\n\nfrom __future__ import annotations\n\nfrom typing import Sequence\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule and return energy in kWh.\n\n    Parameters\n    ----------\n    timestamps_s : array-like\n        Increasing sample times in seconds (not necessarily evenly spaced).\n    power_w : array-like\n        Power readings in watts at those timestamps.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours as a Python float.\n        Returns 0.0 when fewer than two samples are given.\n        Uses 1 kWh = 3.6e6 J.\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    n = min(t.size, p.size)\n    if n < 2:\n        return 0.0\n\n    # Match lengths in case callers pass arrays of different sizes.\n    t = t[:n]\n    p = p[:n]\n\n    # Trapezoidal integration: integral of power over time gives energy in joules (W*s).\n    energy_joules = np.trapezoid(p, x=t)\n    energy_kwh = energy_joules / 3.6e6\n    return float(energy_kwh)\n",
+    "prompt_sha": "1e7554c07e6f420a",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "from __future__ import annotations\n\nfrom typing import Iterable, List, Sequence\n\nimport numpy as np\n\n\ndef filter_events(ids, allowed, blocked) -> list:\n    \"\"\"\n    Filter event IDs.\n\n    Parameters\n    ----------\n    ids : sequence of int or 1-D array-like of int\n        Event IDs that may contain duplicates.\n    allowed : sequence of int\n        IDs that should be kept.\n    blocked : sequence of int\n        IDs that should be removed.\n\n    Returns\n    -------\n    list\n        A Python list of the IDs that occur in `allowed` and do not occur in\n        `blocked`, preserving the original order from `ids` and keeping duplicates.\n    \"\"\"\n    ids_arr = np.asarray(ids)\n    if ids_arr.ndim != 1:\n        raise ValueError(\"ids must be a 1-D sequence/array of integers\")\n    if ids_arr.size == 0:\n        return []\n\n    allowed_arr = np.asarray(allowed)\n    blocked_arr = np.asarray(blocked)\n\n    # Match membership while preserving order and duplicates via a boolean mask.\n    is_allowed = np.isin(ids_arr, allowed_arr, assume_unique=False)\n    is_blocked = np.isin(ids_arr, blocked_arr, assume_unique=False)\n    keep_mask = is_allowed & ~is_blocked\n\n    return ids_arr[keep_mask].tolist()\n",
+    "prompt_sha": "844e31ac33d94bb3",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\n\ndef latency_summary(samples_ms) -> dict:\n    \"\"\"\n    Summarize request latency samples.\n\n    Parameters\n    ----------\n    samples_ms : list\n        List of request latencies in milliseconds. Failed requests are represented\n        as None and are ignored.\n\n    Returns\n    -------\n    dict\n        A dictionary with keys:\n          - \"count\": int number of valid (non-None) samples\n          - \"mean\": float mean of valid samples\n          - \"p50\": float nearest order statistic to the 50th percentile position\n          - \"p90\": float nearest order statistic to the 90th percentile position\n          - \"p99\": float nearest order statistic to the 99th percentile position\n\n    Raises\n    ------\n    ValueError\n        If there are no valid samples.\n    \"\"\"\n    # Filter out failed requests (None) while preserving numeric values as-is.\n    valid = [x for x in samples_ms if x is not None]\n\n    if not valid:\n        raise ValueError(\"No valid latency samples provided.\")\n\n    import numpy as np\n\n    arr = np.asarray(valid, dtype=np.float64)\n\n    count = int(arr.size)\n    mean = float(arr.mean())\n\n    # NumPy's \"nearest\" percentile method returns the order statistic nearest\n    # to the linear-interpolation position.\n    percentiles = np.percentile(arr, [50, 90, 99], method=\"nearest\")\n    p50, p90, p99 = (float(x) for x in percentiles)\n\n    return {\n        \"count\": count,\n        \"mean\": mean,\n        \"p50\": p50,\n        \"p90\": p90,\n        \"p99\": p99,\n    }\n",
+    "prompt_sha": "eefaecd0cb68e85d",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "active",
+   "percentiles": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s3",
+  "date": "2025-12-20",
+  "split": "test",
+  "event": "numpy-2.4",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: np.ndarray) -> str:\n    \"\"\"\n    Build a stable cache key for a NumPy array.\n\n    Returns \"<dtype>|<shape>|<digest>\" where:\n      - <dtype> is arr.dtype.str (e.g. \"<f8\")\n      - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\").\n        For a 0-d array, this is an empty string.\n      - <digest> is the SHA-256 hex digest of the array's raw data bytes in\n        C (row-major) order.\n\n    Notes:\n      - If the input array is non-contiguous, it is converted to a contiguous\n        C-ordered view/copy for hashing.\n    \"\"\"\n    if not isinstance(arr, np.ndarray):\n        raise TypeError(f\"arr must be a numpy.ndarray, got {type(arr).__name__}\")\n\n    dtype_str = arr.dtype.str\n\n    # Shape formatting: 0-d array -> \"\"\n    if arr.ndim == 0:\n        shape_str = \"\"\n    else:\n        shape_str = \"x\".join(str(s) for s in arr.shape)\n\n    # Hash raw bytes in C order.\n    # Use ascontiguousarray to ensure row-major layout for non-contiguous arrays.\n    c_arr = np.ascontiguousarray(arr)\n    digest = hashlib.sha256(c_arr.tobytes(order=\"C\")).hexdigest()\n\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "b1cc8c54e30a66c5",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "\"\"\"\nNumeric utilities built on NumPy.\n\nThis module provides:\n- energy_kwh(timestamps_s, power_w) -> float\n\"\"\"\n\nfrom __future__ import annotations\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate power over time using the trapezoidal rule.\n\n    Parameters\n    ----------\n    timestamps_s : array-like\n        Increasing sample times in seconds (not necessarily evenly spaced).\n    power_w : array-like\n        Power readings in watts at those times.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours (1 kWh = 3.6e6 J). Returns 0.0 when fewer\n        than two samples are given.\n    \"\"\"\n    t = np.asarray(timestamps_s)\n    p = np.asarray(power_w)\n\n    # Return 0.0 when fewer than two samples are given.\n    if t.size < 2 or p.size < 2:\n        return 0.0\n\n    # Compute trapezoidal integral of power over time => Joules (W*s)\n    # Then convert Joules to kWh.\n    joules = np.trapezoid(p, x=t)\n    return float(joules / 3.6e6)\n",
+    "prompt_sha": "635c16200b760556",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "from __future__ import annotations\n\nfrom typing import Iterable, Sequence, Any, List\n\nimport numpy as np\n\n\ndef filter_events(ids: Sequence[int] | np.ndarray, allowed: Iterable[int], blocked: Iterable[int]) -> list:\n    \"\"\"\n    Filter event IDs using NumPy.\n\n    Parameters\n    ----------\n    ids:\n        Sequence (list or 1-D array) of integer event IDs. May contain duplicates.\n    allowed:\n        Iterable of integer IDs that are permitted.\n    blocked:\n        Iterable of integer IDs that must be excluded.\n\n    Returns\n    -------\n    list\n        IDs from `ids`, in the original order, keeping duplicates, such that each ID\n        occurs in `allowed` and does *not* occur in `blocked`.\n    \"\"\"\n    ids_arr = np.asarray(ids)\n\n    if ids_arr.ndim != 1:\n        raise ValueError(\"ids must be a 1-D sequence/array of integer event IDs.\")\n\n    # Ensure integer comparison semantics\n    if ids_arr.dtype.kind not in {\"i\", \"u\"}:\n        ids_arr = ids_arr.astype(np.int64, copy=False)\n\n    allowed_arr = np.asarray(list(allowed))\n    blocked_arr = np.asarray(list(blocked))\n\n    if allowed_arr.size == 0:\n        return []\n    if ids_arr.size == 0:\n        return []\n\n    if allowed_arr.dtype.kind not in {\"i\", \"u\"}:\n        allowed_arr = allowed_arr.astype(np.int64, copy=False)\n    if blocked_arr.dtype.kind not in {\"i\", \"u\"}:\n        blocked_arr = blocked_arr.astype(np.int64, copy=False)\n\n    in_allowed = np.isin(ids_arr, allowed_arr, assume_unique=False)\n    in_blocked = np.isin(ids_arr, blocked_arr, assume_unique=False)\n\n    result = ids_arr[in_allowed & ~in_blocked]\n    # Convert to Python list, preserving order and duplicates\n    return result.tolist()\n",
+    "prompt_sha": "db72278665f48ce1",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "from __future__ import annotations\n\nfrom typing import Any\n\n\ndef latency_summary(samples_ms) -> dict:\n    \"\"\"\n    Summarize request latency samples.\n\n    Parameters\n    ----------\n    samples_ms : list\n        A list of request latencies in milliseconds. Failed requests appear as\n        None. None values are ignored.\n\n    Returns\n    -------\n    dict\n        A dictionary with keys:\n          - \"count\": int (number of valid samples)\n          - \"mean\": float\n          - \"p50\": float\n          - \"p90\": float\n          - \"p99\": float\n\n    Notes\n    -----\n    Percentiles use NumPy's \"nearest\" percentile method: the order statistic\n    nearest to the linear-interpolation position.\n    \"\"\"\n    if samples_ms is None:\n        valid = []\n    else:\n        valid = [x for x in samples_ms if x is not None]\n\n    if not valid:\n        raise ValueError(\"No valid latency samples provided\")\n\n    arr = __import__(\"numpy\").asarray(valid, dtype=float)\n    # NumPy 2.4: use method=, not interpolation=\n    percentiles = __import__(\"numpy\").percentile(arr, [50, 90, 99], method=\"nearest\")\n\n    summary: dict[str, Any] = {\n        \"count\": int(arr.size),\n        \"mean\": float(arr.mean()),\n        \"p50\": float(percentiles[0]),\n        \"p90\": float(percentiles[1]),\n        \"p99\": float(percentiles[2]),\n    }\n    return summary\n",
+    "prompt_sha": "bf503ecb66bea55f",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "active",
+   "percentiles": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "numpy_ops",
+  "state": "s4",
+  "date": "2026-06-21",
+  "split": "test",
+  "event": "numpy-2.5",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "np_cache_key",
+    "code": "from __future__ import annotations\n\nimport hashlib\nfrom typing import Any\n\nimport numpy as np\n\n\ndef array_cache_key(arr: Any) -> str:\n    \"\"\"\n    Return a stable cache key for the provided NumPy array.\n\n    Format: \"<dtype>|<shape>|<digest>\"\n\n    - <dtype> is arr.dtype.str (e.g. \"<f8\")\n    - <shape> is the dimensions joined by \"x\" (e.g. \"3x4\"; empty for 0-d)\n    - <digest> is the SHA-256 hex digest of the array's raw data bytes in\n      C (row-major) order. Non-contiguous inputs are handled by using a\n      C-contiguous view/copy of the array.\n    \"\"\"\n    a = np.asarray(arr)\n    dtype_str = a.dtype.str\n\n    if a.ndim == 0:\n        shape_str = \"\"\n    else:\n        shape_str = \"x\".join(str(s) for s in a.shape)\n\n    a_c = np.ascontiguousarray(a)\n    data_bytes = a_c.tobytes(order=\"C\")\n\n    digest = hashlib.sha256(data_bytes).hexdigest()\n    return f\"{dtype_str}|{shape_str}|{digest}\"\n",
+    "prompt_sha": "0d41d50731afc1f1",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_non_contiguous",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_zero_d",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_energy_kwh",
+    "code": "from __future__ import annotations\n\nfrom typing import Sequence\n\nimport numpy as np\n\n\ndef energy_kwh(timestamps_s, power_w) -> float:\n    \"\"\"\n    Integrate sampled power over time using the trapezoidal rule.\n\n    Parameters\n    ----------\n    timestamps_s : array-like\n        Increasing sample times in seconds (not necessarily evenly spaced).\n    power_w : array-like\n        Power readings in watts at those times.\n\n    Returns\n    -------\n    float\n        Energy in kilowatt-hours as a Python float (1 kWh = 3.6e6 J).\n        Returns 0.0 when fewer than two samples are given.\n    \"\"\"\n    t = np.asarray(timestamps_s, dtype=np.float64)\n    p = np.asarray(power_w, dtype=np.float64)\n\n    n_t = t.size\n    if n_t < 2:\n        return 0.0\n\n    # Ensure same number of samples (NumPy will raise helpful errors otherwise,\n    # but we enforce a clear check for 0-d edge cases).\n    if p.size != n_t:\n        raise ValueError(\n            f\"timestamps_s and power_w must have the same number of samples; \"\n            f\"got {n_t} and {p.size}.\"\n        )\n\n    # Trapezoidal integration: integral of W over seconds -> Joules.\n    # Use numpy.trapezoid (np.trapz removed/deprecated).\n    joules = float(np.trapezoid(p, x=t))\n    return joules / 3.6e6\n",
+    "prompt_sha": "fbd2d8d4c9de9c5e",
+    "cases": [
+     {
+      "name": "t_constant",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_uneven_ramp",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_short",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_filter_events",
+    "code": "from __future__ import annotations\n\nfrom typing import Iterable, Sequence, List, Any\n\nimport numpy as np\n\n\ndef filter_events(ids: Sequence[int] | np.ndarray,\n                   allowed: Sequence[int] | np.ndarray,\n                   blocked: Sequence[int] | np.ndarray) -> List[int]:\n    \"\"\"\n    Filter event IDs using NumPy membership tests.\n\n    Parameters\n    ----------\n    ids:\n        Sequence (list or 1-D array) of integer event IDs. May contain\n        duplicates.\n    allowed:\n        Sequence of integer IDs that are permitted.\n    blocked:\n        Sequence of integer IDs that are excluded.\n\n    Returns\n    -------\n    list\n        IDs from `ids` that occur in `allowed` and do NOT occur in `blocked`,\n        preserving the original order and keeping duplicates.\n    \"\"\"\n    ids_arr = np.asarray(ids)\n    if ids_arr.ndim != 1:\n        raise ValueError(\"ids must be a 1-D sequence or array of integers.\")\n\n    # Ensure integer comparison semantics\n    ids_int = ids_arr.astype(np.int64, copy=False)\n    allowed_arr = np.asarray(allowed).astype(np.int64, copy=False)\n    blocked_arr = np.asarray(blocked).astype(np.int64, copy=False)\n\n    in_allowed = np.isin(ids_int, allowed_arr, assume_unique=False)\n    in_blocked = np.isin(ids_int, blocked_arr, assume_unique=False)\n\n    mask = in_allowed & ~in_blocked\n    return ids_int[mask].tolist()\n",
+    "prompt_sha": "7239c96295271b9e",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_arrays_and_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_large",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "np_latency_summary",
+    "code": "from __future__ import annotations\n\nfrom typing import Any, Iterable\n\n\nimport numpy as np\n\n\ndef latency_summary(samples_ms: Iterable[Any]) -> dict:\n    \"\"\"\n    Summarise request latency samples.\n\n    Parameters\n    ----------\n    samples_ms:\n        Iterable of request latencies in milliseconds. Failed requests should\n        be represented as None and will be ignored.\n\n    Returns\n    -------\n    dict\n        A dictionary with keys:\n        - \"count\": int number of valid samples\n        - \"mean\": float mean latency over valid samples\n        - \"p50\": float 50th percentile (nearest order statistic)\n        - \"p90\": float 90th percentile (nearest order statistic)\n        - \"p99\": float 99th percentile (nearest order statistic)\n\n    Raises\n    ------\n    ValueError\n        If there are no valid (non-None) samples.\n    \"\"\"\n    # Filter out failed requests (None). Keep other values as-is; NumPy will\n    # raise if they can't be converted to a numeric dtype.\n    valid_list = [x for x in samples_ms if x is not None]\n    if not valid_list:\n        raise ValueError(\"No valid latency samples (all are None).\")\n\n    data = np.asarray(valid_list, dtype=float)\n    count = int(data.size)\n\n    mean = float(np.mean(data))\n\n    # NumPy 2.x removed interpolation=; use method=\"nearest\" to get the\n    # nearest observed order statistic.\n    p50, p90, p99 = np.percentile([50, 90, 99], q=[50, 90, 99], method=\"nearest\")  # type: ignore[call-arg]\n    # The above line is incorrect: keep a single call for clarity.\n    # (We keep code correct below.)\n    # ---- corrected implementation ----\n    percentiles = np.percentile(data, q=[50, 90, 99], method=\"nearest\")\n    p50, p90, p99 = (float(percentiles[0]), float(percentiles[1]), float(percentiles[2]))\n\n    return {\n        \"count\": count,\n        \"mean\": mean,\n        \"p50\": p50,\n        \"p90\": p90,\n        \"p99\": p99,\n    }\n",
+    "prompt_sha": "141d769a45e535fa",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_small",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "stats_summary": "active",
+   "membership": "active",
+   "integration": "active",
+   "serialization": "active",
+   "stacking": "active",
+   "percentiles": "active"
+  },
+  "tombstones": 0
+ }
+]

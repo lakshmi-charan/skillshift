@@ -1,0 +1,8 @@
+id: nist_force_change
+function: must_change_password
+relevant_skills: [password_expiry]
+prompt: |
+  Write a Python function `must_change_password(user: dict, today: datetime.date) -> bool`. `user` has keys
+  "last_changed" (datetime.date) and "compromised" (bool, True when we have evidence the password leaked).
+  Return True when the user must be forced to change their password at next login under our password rules.
+tests: tasks/test_nist_force_change.py

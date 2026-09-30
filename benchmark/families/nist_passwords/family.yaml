@@ -1,0 +1,67 @@
+id: nist_passwords
+title: Password verification under NIST SP 800-63B
+domain: policy
+summary: >
+  The service is a password verifier that must comply with the current revision of NIST SP 800-63B.
+  Passwords are the only authentication factor (single-factor). The organisation implements every
+  mandatory (SHALL / SHALL NOT) requirement of the current revision; SHOULD-level items are organisational
+  choices. When the skills were written the organisation also adopted its own rules, each permitted by the
+  revision then in force: a new password must contain at least one letter and one digit; passwords expire
+  365 days after they were last changed; and a password that contains the username is rejected. The
+  organisation's own rules apply only where they do not conflict with a mandatory requirement of the
+  current revision. Library versions never change in this family; only the standard does.
+standing_policy:
+  - id: org-nist
+    text: "Comply with every SHALL / SHALL NOT requirement of the current revision of NIST SP 800-63B; organisation-specific rules apply only where they do not conflict with it."
+states:
+  - id: s0
+    date: "2020-03-02"
+    label: "NIST SP 800-63B (2017, updates of 2020-03-02)"
+    env: {python: "3.11", packages: {}}
+    policy_doc: docs/nist-800-63b-rev3.md
+  - id: s1
+    date: "2025-07-31"
+    label: "NIST SP 800-63B-4 (final)"
+    env: {python: "3.11", packages: {}}
+    policy_doc: docs/nist-800-63b-4.md
+    event: {id: nist-800-63b-4, kind: policy, title: "NIST SP 800-63B-4 published (final)",
+            source: "https://csrc.nist.gov/pubs/sp/800/63/b/4/final", doc: docs/nist-800-63b-4.md}
+skills:
+  - id: password_rules
+    file: skills/password_rules.py
+    visible_tests: visible/test_password_rules.py
+    hidden_tests: hidden/test_password_rules.py
+    purpose: "Check a prospective new password; return a list of rejection reasons (empty list = accepted)."
+    components:
+      - {id: min_length, requirement: "Passwords shorter than the minimum length required by the current revision are rejected with reason 'too_short'."}
+      - {id: code_point_length, requirement: "Length is counted in Unicode code points."}
+      - {id: long_passwords, requirement: "Passwords of 64 characters and more (up to 256) are accepted."}
+      - {id: blocklist, requirement: "A password that equals an entry of the supplied blocklist is rejected with reason 'blocklisted'."}
+      - {id: username_exact, requirement: "A password equal to the username (case-insensitive) is rejected with reason 'contains_username'."}
+      - {id: username_substring, requirement: "Organisation rule: a password that contains the username is rejected with reason 'contains_username'."}
+      - {id: composition, requirement: "Organisation rule: a password without at least one letter and one digit is rejected with reason 'needs_letter_and_digit'."}
+  - id: password_expiry
+    file: skills/password_expiry.py
+    visible_tests: visible/test_password_expiry.py
+    hidden_tests: hidden/test_password_expiry.py
+    purpose: "Decide whether a user must change their password now."
+    components:
+      - {id: compromise, requirement: "A change is required when there is evidence the password was compromised."}
+      - {id: periodic_expiry, requirement: "Organisation rule: a change is required 365 days or more after the last change."}
+  - id: login_throttle
+    file: skills/login_throttle.py
+    visible_tests: visible/test_login_throttle.py
+    hidden_tests: hidden/test_login_throttle.py
+    purpose: "Rate limiting of failed password attempts per account."
+    components:
+      - {id: lockout_limit, requirement: "An account is locked once it reaches 100 consecutive failed attempts, not before."}
+      - {id: reset_on_success, requirement: "A successful authentication resets the consecutive-failure count."}
+  - id: password_hashing
+    file: skills/password_hashing.py
+    visible_tests: visible/test_password_hashing.py
+    hidden_tests: hidden/test_password_hashing.py
+    purpose: "Salted PBKDF2-HMAC-SHA256 storage of verifier secrets."
+    components:
+      - {id: salted_kdf, requirement: "Passwords are stored salted (salt of at least 32 bits, fresh per password) with an iterated key derivation function."}
+      - {id: no_truncation, requirement: "Verification uses the entire password; passwords differing in any character do not verify."}
+      - {id: verify, requirement: "verify_password accepts the correct password and rejects others."}

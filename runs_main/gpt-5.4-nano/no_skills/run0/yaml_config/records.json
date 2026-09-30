@@ -1,0 +1,176 @@
+[
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "yaml_config",
+  "state": "s0",
+  "date": "2021-01-20",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "yaml_env_dsn",
+    "code": "from typing import Any, Dict, Tuple, Optional\nimport yaml\n\n\nclass _EnvLoader(yaml.SafeLoader):\n    pass\n\n\ndef _parse_env_tag(value: Any) -> Tuple[str, Optional[str]]:\n    \"\"\"\n    Parses the content of an !env tag.\n\n    Accepts:\n      - \"NAME\"\n      - \"NAME:default\"\n    Returns (NAME, default_or_None).\n    \"\"\"\n    if value is None:\n        raise ValueError(\"!env tag value must not be null\")\n\n    if not isinstance(value, str):\n        # Be strict: the tag content should be a scalar string.\n        raise ValueError(\"!env tag value must be a string\")\n\n    if \":\" in value:\n        name, default = value.split(\":\", 1)\n        name = name.strip()\n        if not name:\n            raise ValueError(\"!env tag must specify a non-empty NAME\")\n        return name, default\n    name = value.strip()\n    if not name:\n        raise ValueError(\"!env tag must specify a non-empty NAME\")\n    return name, None\n\n\ndef _env_constructor(loader: yaml.Loader, node: yaml.Node) -> Any:\n    # Only scalar nodes are expected: !env NAME or !env NAME:default\n    value = loader.construct_scalar(node)\n    name, default = _parse_env_tag(value)\n    env: Dict[str, str] = getattr(loader, \"_env\", {})\n    if name in env:\n        return env[name]\n    if default is not None:\n        return default\n    raise KeyError(f\"Environment variable '{name}' not found and no default provided\")\n\n\n_EnvLoader.add_constructor(\"!env\", _env_constructor)\n\n\ndef build_dsn(config_text: str, env: dict) -> str:\n    \"\"\"\n    Build a PostgreSQL DSN from a YAML document and an environment dictionary.\n\n    Expected YAML structure:\n      database:\n        host, port, name, user, password\n\n    Each value may be:\n      - plain scalar\n      - !env NAME\n      - !env NAME:default\n\n    Returns:\n      \"postgresql://<user>:<password>@<host>:<port>/<name>\"\n    \"\"\"\n    if not isinstance(env, dict):\n        raise TypeError(\"env must be a dict\")\n\n    loader = _EnvLoader(config_text)\n    # Inject env into the loader instance for use by the !env constructor\n    setattr(loader, \"_env\", env)\n\n    try:\n        doc = loader.get_single_data()\n    finally:\n        loader.dispose()\n\n    if not isinstance(doc, dict):\n        raise ValueError(\"YAML root must be a mapping/object\")\n\n    database = doc.get(\"database\")\n    if not isinstance(database, dict):\n        raise ValueError(\"YAML must contain 'database' as a mapping/object\")\n\n    required_keys = [\"host\", \"port\", \"name\", \"user\", \"password\"]\n    missing = [k for k in required_keys if k not in database]\n    if missing:\n        raise KeyError(f\"Missing database keys: {', '.join(missing)}\")\n\n    host = database[\"host\"]\n    port = database[\"port\"]\n    name = database[\"name\"]\n    user = database[\"user\"]\n    password = database[\"password\"]\n\n    # Ensure string formatting is stable; port should typically be numeric.\n    return f\"postgresql://{user}:{password}@{host}:{port}/{name}\"\n",
+    "prompt_sha": "d709281313b50134",
+    "cases": [
+     {
+      "name": "t_env",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_default",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "yaml_service_port",
+    "code": "from typing import Any, Dict\n\nimport yaml\n\n\ndef service_port(config_text: str) -> int:\n    \"\"\"\n    Parse YAML configuration text and return the integer at service.port.\n\n    Raises:\n        ValueError: if the document's top level is not a mapping.\n        KeyError: if service or port keys are missing.\n        TypeError: if service is not a mapping (will manifest as KeyError/TypeError via access).\n        ValueError: if port cannot be converted to an int.\n        yaml.YAMLError: if YAML parsing fails.\n    \"\"\"\n    data: Any = yaml.safe_load(config_text)\n\n    if not isinstance(data, dict):\n        raise ValueError(\"YAML top-level must be a mapping\")\n\n    service = data[\"service\"]  # may raise KeyError\n    if not isinstance(service, dict):\n        # Not specified, but treat as missing/invalid structure.\n        raise KeyError(\"service\")\n\n    port = service[\"port\"]  # may raise KeyError\n    try:\n        return int(port)\n    except (TypeError, ValueError) as e:\n        raise ValueError(\"service.port must be an integer\") from e\n",
+    "prompt_sha": "b80055e700f24dfc",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_not_mapping",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-5.4-nano",
+  "method": "no_skills",
+  "run": 0,
+  "family": "yaml_config",
+  "state": "s1",
+  "date": "2021-10-13",
+  "split": "dev",
+  "event": "pyyaml-6.0",
+  "event_kind": "tool",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "yaml_env_dsn",
+    "code": "import re\nfrom typing import Any, Dict, Optional\n\nimport yaml\n\n\nclass _EnvLoader(yaml.SafeLoader):\n    pass\n\n\ndef _env_constructor(loader: yaml.Loader, node: yaml.Node) -> str:\n    \"\"\"\n    Constructor for !env NAME or !env NAME:default.\n    Returns the resolved string from env, falling back to default if needed.\n    \"\"\"\n    if isinstance(node, yaml.ScalarNode):\n        raw = loader.construct_scalar(node)\n    else:\n        raw = loader.construct_object(node)\n\n    if not isinstance(raw, str):\n        raise ValueError(\"!env tag value must be a string like 'NAME' or 'NAME:default'\")\n\n    # Store env on the loader instance (we set it in build_dsn).\n    env: Dict[str, str] = getattr(loader, \"_env\", {})\n\n    if \":\" in raw:\n        name, default = raw.split(\":\", 1)\n    else:\n        name, default = raw, None\n\n    name = name.strip()\n    if not name:\n        raise ValueError(\"!env tag requires a non-empty NAME\")\n\n    if name in env:\n        val = env[name]\n        # YAML might still want strings; enforce conversion.\n        return \"\" if val is None else str(val)\n\n    if default is None:\n        raise KeyError(f\"Environment variable '{name}' not found and no default was provided\")\n\n    return default\n\n\n_EnvLoader.add_constructor(\"!env\", _env_constructor)\n\n\ndef build_dsn(config_text: str, env: dict) -> str:\n    \"\"\"\n    Build a PostgreSQL DSN from YAML config text.\n\n    Expected YAML structure:\n      database:\n        host, port, name, user, password\n    Values may be written as:\n      !env NAME\n      !env NAME:default\n\n    Returns:\n      \"postgresql://<user>:<password>@<host>:<port>/<name>\"\n    \"\"\"\n    if not isinstance(config_text, str):\n        raise TypeError(\"config_text must be a string\")\n    if not isinstance(env, dict):\n        raise TypeError(\"env must be a dict\")\n\n    # Attach env to the loader instance for the custom constructor.\n    loader = _EnvLoader(config_text)\n    loader._env = env  # type: ignore[attr-defined]\n\n    try:\n        data = yaml.load(config_text, Loader=_EnvLoader)\n    finally:\n        loader.dispose()\n\n    if not isinstance(data, dict):\n        raise ValueError(\"YAML root must be a mapping\")\n\n    database = data.get(\"database\")\n    if not isinstance(database, dict):\n        raise KeyError(\"Missing 'database' mapping in YAML\")\n\n    required_keys = [\"host\", \"port\", \"name\", \"user\", \"password\"]\n    missing = [k for k in required_keys if k not in database]\n    if missing:\n        raise KeyError(f\"Missing database keys in YAML: {', '.join(missing)}\")\n\n    host = str(database[\"host\"])\n    port_val: Any = database[\"port\"]\n    # Port should be representable as an integer in the DSN, but accept strings too.\n    if isinstance(port_val, bool) or port_val is None:\n        raise ValueError(\"database.port must be a valid integer\")\n    try:\n        port = str(int(str(port_val), 10))\n    except (TypeError, ValueError) as e:\n        raise ValueError(\"database.port must be a valid integer\") from e\n\n    name = str(database[\"name\"])\n    user = str(database[\"user\"])\n    password = str(database[\"password\"])\n\n    # Minimal DSN assembly; no URL encoding requested by the spec.\n    return f\"postgresql://{user}:{password}@{host}:{port}/{name}\"\n",
+    "prompt_sha": "ba764749bd622b7e",
+    "cases": [
+     {
+      "name": "t_env",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "KeyError: \"Environment variable 'DB_USER' not found and no default was provided\" [solution.py:42]"
+     },
+     {
+      "name": "t_default",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "KeyError: \"Environment variable 'DB_USER' not found and no default was provided\" [solution.py:42]"
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "yaml_service_port",
+    "code": "from typing import Any\nimport yaml\n\n\ndef service_port(config_text: str) -> int:\n    \"\"\"\n    Parse a YAML configuration document and return the integer at service.port.\n\n    Raises:\n        KeyError: if service.port is missing.\n        ValueError: if the top-level YAML document is not a mapping.\n    \"\"\"\n    # Bandit B506: do not use unsafe loaders. PyYAML 6.0+ requires explicit Loader.\n    data: Any = yaml.load(config_text, Loader=yaml.SafeLoader)\n\n    if not isinstance(data, dict):\n        raise ValueError(\"Top-level YAML document must be a mapping\")\n\n    service = data.get(\"service\", None)\n    if not isinstance(service, dict) or \"port\" not in service:\n        raise KeyError(\"service.port\")\n\n    port = service[\"port\"]\n    if not isinstance(port, int):\n        # Keep behavior strict: only an integer is acceptable.\n        raise ValueError(\"service.port must be an integer\")\n\n    return port\n",
+    "prompt_sha": "9eb37c65a242acb8",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_missing",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_not_mapping",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_apply",
+      "component": "no_object_construction",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "config_loader": "active",
+   "multi_document": "active",
+   "env_tags": "active",
+   "config_writer": "active"
+  },
+  "tombstones": 0
+ }
+]

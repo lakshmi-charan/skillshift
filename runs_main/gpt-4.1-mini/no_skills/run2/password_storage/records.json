@@ -1,0 +1,653 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "password_storage",
+  "state": "s0",
+  "date": "2021-03-17",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "import os\nimport base64\nimport hashlib\nimport hmac\nfrom typing import Literal\n\n# Constants for iteration counts per digest as per OWASP policy\n_PBKDF2_ITERATIONS = {\n    \"sha1\": 720_000,\n    \"sha256\": 310_000,\n    \"sha512\": 120_000,\n}\n\ndef fips_password_hash(password: str, digest: Literal[\"sha1\", \"sha256\", \"sha512\"]) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest.\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    if digest not in _PBKDF2_ITERATIONS:\n        raise ValueError(f\"Unsupported digest '{digest}'. Must be one of: {', '.join(_PBKDF2_ITERATIONS)}\")\n\n    iterations = _PBKDF2_ITERATIONS[digest]\n    salt = os.urandom(16)  # 128-bit salt recommended\n    # Derive key length depends on digest output size\n    dklen = hashlib.new(digest).digest_size\n\n    # PBKDF2-HMAC derive\n    dk = hashlib.pbkdf2_hmac(digest, password.encode(\"utf-8\"), salt, iterations, dklen=dklen)\n\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    hash_b64 = base64.b64encode(dk).decode(\"ascii\")\n\n    return f\"$pbkdf2-{digest}${iterations}${salt_b64}${hash_b64}\"\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored format must be:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if password matches, False otherwise.\n    \"\"\"\n    try:\n        if not stored.startswith(\"$pbkdf2-\"):\n            return False\n        parts = stored.split(\"$\")\n        # parts: ['', 'pbkdf2-<digest>', '<iterations>', '<salt_b64>', '<hash_b64>']\n        if len(parts) != 5:\n            return False\n        algo_part = parts[1]\n        if not algo_part.startswith(\"pbkdf2-\"):\n            return False\n        digest = algo_part[len(\"pbkdf2-\"):]\n        if digest not in _PBKDF2_ITERATIONS:\n            return False\n        iterations_str = parts[2]\n        salt_b64 = parts[3]\n        hash_b64 = parts[4]\n\n        iterations = int(iterations_str)\n        salt = base64.b64decode(salt_b64)\n        stored_hash = base64.b64decode(hash_b64)\n\n        dklen = len(stored_hash)\n\n        computed_hash = hashlib.pbkdf2_hmac(digest, password.encode(\"utf-8\"), salt, iterations, dklen=dklen)\n\n        # Use hmac.compare_digest to prevent timing attacks\n        return hmac.compare_digest(computed_hash, stored_hash)\n    except Exception:\n        # Any error in parsing or decoding means verification fails\n        return False\n",
+    "prompt_sha": "402a4969084c9ef0",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "import bcrypt\nimport hashlib\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a password for partner sync using bcrypt with work factor 12 or more,\n    with a maximum password length of 64 characters, following the OWASP Password Storage Cheat Sheet.\n\n    The password is pre-hashed with SHA-384 and the hex digest is used as bcrypt input,\n    to avoid bcrypt input length limitations and null byte issues.\n\n    Args:\n        password (str): The plaintext password to hash.\n\n    Returns:\n        str: The bcrypt hash as a UTF-8 decoded string.\n    \"\"\"\n    # Enforce maximum password length of 64 characters\n    if len(password) > 64:\n        raise ValueError(\"Password length exceeds maximum of 64 characters for bcrypt.\")\n\n    # Pre-hash password with SHA-384 and encode as hex to avoid null bytes in bcrypt input\n    sha384_hash = hashlib.sha384(password.encode('utf-8')).hexdigest()\n\n    # Generate bcrypt salt with work factor 12\n    salt = bcrypt.gensalt(rounds=12)\n\n    # Hash the pre-hashed password with bcrypt\n    bcrypt_hash = bcrypt.hashpw(sha384_hash.encode('utf-8'), salt)\n\n    # Return the bcrypt hash as a UTF-8 string\n    return bcrypt_hash.decode('utf-8')\n",
+    "prompt_sha": "5fbb4b071e5c0ab9",
+    "cases": [
+     {
+      "name": "t_bcrypt",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_pw_legacy_bcrypt.py:16]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "import hashlib\nimport hmac\nimport base64\nimport re\nfrom typing import Optional\n\nfrom argon2 import PasswordHasher, exceptions as argon2_exceptions\n\n# Constants and configuration according to the OWASP Password Storage Cheat Sheet (2021-03-17)\n# Argon2id parameters inline with IETF draft (section 5.1):\n# - time_cost: 3\n# - memory_cost: 64 MiB (65536 KiB)\n# - parallelism: 4\n# These parameters are a reasonable balance for modern hardware.\n_ARGON2_TIME_COST = 3\n_ARGON2_MEMORY_COST = 65536  # KiB\n_ARGON2_PARALLELISM = 4\n_ARGON2_HASH_LEN = 32\n_ARGON2_SALT_LEN = 16\n\n# PBKDF2 parameters for HMAC-SHA256 (FIPS compliant)\n_PBKDF2_ITERATIONS = 310_000\n_PBKDF2_HASH_NAME = \"sha256\"\n_PBKDF2_DKLEN = 32\n_PBKDF2_SALT_LEN = 16\n\n# bcrypt parameters (legacy)\n# Minimum work factor 12, max password length 64 enforced\n_BCRYPT_WORK_FACTOR = 12\n_BCRYPT_MAX_PASSWORD_LEN = 64\n\n# Legacy formats supported for verification only:\n# - bcrypt (with pre-hashing SHA-384 hex)\n# - argon2id (current)\n# - pbkdf2_hmac_sha256\n# - legacy bcrypt without prehash (rare)\n# - legacy plaintext (not recommended but may exist)\n# - legacy SHA-1 or MD5 (not implemented here, assumed none)\n#\n# We will identify format by prefix in stored string:\n# - argon2id hashes start with \"$argon2id$\"\n# - bcrypt hashes start with \"$2b$\" or \"$2a$\" or \"$2y$\"\n# - pbkdf2 hashes start with \"pbkdf2_sha256$\"\n# - legacy plaintext stored as \"plain$...\"\n\nimport bcrypt\nimport os\n\n# Argon2id hasher instance with configured parameters\n_argon2_hasher = PasswordHasher(\n    time_cost=_ARGON2_TIME_COST,\n    memory_cost=_ARGON2_MEMORY_COST,\n    parallelism=_ARGON2_PARALLELISM,\n    hash_len=_ARGON2_HASH_LEN,\n    salt_len=_ARGON2_SALT_LEN,\n    type=argon2.low_level.Type.ID,\n)\n\n\ndef _prehash_password_for_bcrypt(password: str) -> bytes:\n    \"\"\"\n    Pre-hash the password with SHA-384 and encode hex for bcrypt input.\n    This avoids bcrypt input length and null byte issues.\n    \"\"\"\n    sha384_digest = hashlib.sha384(password.encode(\"utf-8\")).hexdigest()\n    return sha384_digest.encode(\"ascii\")\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password according to the current OWASP Password Storage Cheat Sheet policy.\n    Uses Argon2id with recommended parameters.\n    Returns the encoded string to store.\n    \"\"\"\n    if not isinstance(password, str):\n        raise TypeError(\"Password must be a string\")\n\n    # Argon2id automatically salts internally, no need for manual salt\n    # No max length limit specified for Argon2id in policy, so no truncation here\n    # Return the encoded hash string from argon2-cffi\n    return _argon2_hasher.hash(password)\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against the stored hash.\n    Supports current Argon2id hashes and legacy bcrypt and pbkdf2_sha256 hashes.\n    Legacy formats are verified to allow seamless upgrade on login.\n    \"\"\"\n    if not isinstance(password, str) or not isinstance(stored, str):\n        return False\n\n    stored = stored.strip()\n\n    # Detect Argon2id hash (current format)\n    if stored.startswith(\"$argon2id$\"):\n        try:\n            return _argon2_hasher.verify(stored, password)\n        except argon2_exceptions.VerifyMismatchError:\n            return False\n        except Exception:\n            # Any other argon2 error treat as failure\n            return False\n\n    # Detect bcrypt hash (legacy)\n    # bcrypt hashes start with $2a$, $2b$, or $2y$\n    if stored.startswith((\"$2a$\", \"$2b$\", \"$2y$\")):\n        # bcrypt input limit: max 72 bytes, so legacy code prehashed with SHA-384 hex\n        # Try verifying with prehash first (recommended)\n        try:\n            prehashed = _prehash_password_for_bcrypt(password)\n            if bcrypt.checkpw(prehashed, stored.encode(\"utf-8\")):\n                return True\n        except Exception:\n            pass\n\n        # Try verifying password directly (legacy, not recommended)\n        try:\n            if bcrypt.checkpw(password.encode(\"utf-8\"), stored.encode(\"utf-8\")):\n                return True\n        except Exception:\n            pass\n\n        return False\n\n    # Detect pbkdf2_sha256 format (legacy)\n    # Format: pbkdf2_sha256$iterations$salt$hash\n    if stored.startswith(\"pbkdf2_sha256$\"):\n        try:\n            parts = stored.split(\"$\")\n            if len(parts) != 4:\n                return False\n            _, iter_str, salt_b64, hash_b64 = parts\n            iterations = int(iter_str)\n            salt = base64.b64decode(salt_b64)\n            stored_hash = base64.b64decode(hash_b64)\n            # Derive key from password\n            derived = hashlib.pbkdf2_hmac(\n                _PBKDF2_HASH_NAME, password.encode(\"utf-8\"), salt, iterations, dklen=len(stored_hash)\n            )\n            return hmac.compare_digest(derived, stored_hash)\n        except Exception:\n            return False\n\n    # Detect legacy plaintext (not recommended, but verify for legacy support)\n    # Format: plain$<password>\n    if stored.startswith(\"plain$\"):\n        legacy_password = stored[6:]\n        return hmac.compare_digest(password, legacy_password)\n\n    # Unknown format, cannot verify\n    return False\n",
+    "prompt_sha": "98f425865d935c6d",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": false,
+      "error": "function check_login is absent from the library"
+     }
+    ],
+    "import_error": "NameError: name 'argon2' is not defined",
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "password_storage",
+  "state": "s1",
+  "date": "2022-06-10",
+  "split": "dev",
+  "event": "owasp-2022-06-10",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport re\n\n# Allowed digests and their minimum iteration counts per OWASP cheat sheet\n_FIPS_DIGESTS = {\n    \"sha1\": 720_000,\n    \"sha256\": 310_000,\n    \"sha512\": 120_000,\n}\n\n# Regex to parse stored hash format: $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n_FIPS_HASH_RE = re.compile(\n    r\"^\\$pbkdf2-(sha1|sha256|sha512)\\$(\\d+)\\$([A-Za-z0-9+/=]+)\\$([A-Za-z0-9+/=]+)$\"\n)\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest.\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    digest = digest.lower()\n    if digest not in _FIPS_DIGESTS:\n        raise ValueError(f\"Unsupported digest '{digest}'. Must be one of {list(_FIPS_DIGESTS.keys())}.\")\n\n    iterations = _FIPS_DIGESTS[digest]\n\n    # Generate a 16-byte salt using a secure CSPRNG\n    salt = os.urandom(16)\n\n    # Derive key length depends on digest output size\n    dklen = hashlib.new(digest).digest_size\n\n    # Encode password as UTF-8 bytes\n    password_bytes = password.encode(\"utf-8\")\n\n    # Compute PBKDF2-HMAC\n    dk = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations, dklen=dklen)\n\n    # Base64 encode salt and derived key without newlines\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    dk_b64 = base64.b64encode(dk).decode(\"ascii\")\n\n    return f\"$pbkdf2-{digest}${iterations}${salt_b64}${dk_b64}\"\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2-HMAC hash string.\n    The stored format must be:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if password matches, False otherwise.\n    \"\"\"\n    m = _FIPS_HASH_RE.fullmatch(stored)\n    if not m:\n        # Stored hash does not match expected format\n        return False\n\n    digest, iterations_str, salt_b64, hash_b64 = m.groups()\n\n    try:\n        iterations = int(iterations_str)\n    except ValueError:\n        return False\n\n    # Validate digest and iterations per OWASP minimums\n    if digest not in _FIPS_DIGESTS:\n        return False\n    if iterations < _FIPS_DIGESTS[digest]:\n        return False\n\n    try:\n        salt = base64.b64decode(salt_b64, validate=True)\n        expected_hash = base64.b64decode(hash_b64, validate=True)\n    except (base64.binascii.Error, ValueError):\n        return False\n\n    dklen = len(expected_hash)\n    password_bytes = password.encode(\"utf-8\")\n\n    # Compute PBKDF2-HMAC with extracted parameters\n    computed_hash = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations, dklen=dklen)\n\n    # Use hmac.compare_digest for timing-safe comparison\n    return hmac.compare_digest(computed_hash, expected_hash)\n",
+    "prompt_sha": "7c38f1320c75f9b2",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "import bcrypt\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a password for the partner directory sync using bcrypt with a work factor of 10 or more,\n    and enforcing a maximum password length of 72 bytes as per OWASP Password Storage Cheat Sheet.\n\n    Args:\n        password (str): The plaintext password to hash.\n\n    Returns:\n        str: The bcrypt hashed password encoded as a UTF-8 string.\n\n    Raises:\n        ValueError: If the password encoded in UTF-8 exceeds 72 bytes.\n    \"\"\"\n    # Encode password to UTF-8 bytes\n    password_bytes = password.encode('utf-8')\n\n    # Enforce maximum password length of 72 bytes for bcrypt\n    if len(password_bytes) > 72:\n        raise ValueError(\"Password exceeds bcrypt maximum length of 72 bytes\")\n\n    # Generate bcrypt salt with work factor 10 (minimum recommended)\n    salt = bcrypt.gensalt(rounds=10)\n\n    # Hash the password using bcrypt\n    hashed = bcrypt.hashpw(password_bytes, salt)\n\n    # Return the hashed password as UTF-8 string\n    return hashed.decode('utf-8')\n",
+    "prompt_sha": "f251713596529e7e",
+    "cases": [
+     {
+      "name": "t_bcrypt",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport re\nfrom typing import Optional\n\nfrom argon2 import PasswordHasher, exceptions as argon2_exceptions\nimport bcrypt\n\n# Constants and configuration per OWASP Password Storage Cheat Sheet (2022-06-10)\n\n# Argon2id recommended minimum config (memory_cost in kibibytes, time_cost, parallelism)\nARGON2_MEMORY_COST_KIB = 15 * 1024  # 15 MiB\nARGON2_TIME_COST = 2\nARGON2_PARALLELISM = 1\n\n# bcrypt minimum work factor and max password length\nBCRYPT_MIN_ROUNDS = 10\nBCRYPT_MAX_PASSWORD_BYTES = 72\n\n# scrypt recommended minimum config (N, r, p)\nSCRYPT_MIN_N = 2**16  # CPU/memory cost parameter\nSCRYPT_MIN_R = 8      # block size (1024 bytes)\nSCRYPT_MIN_P = 1      # parallelization\n\n# PBKDF2 recommended minimum iteration count for HMAC-SHA256\nPBKDF2_MIN_ITERATIONS = 310_000\nPBKDF2_HASH_NAME = \"sha256\"\n\n# Pepper usage note:\n# The policy mentions peppering as optional and does not require it.\n# We do not implement peppering here because no pepper secret is provided.\n\n# Legacy hash prefixes for detection and verification\n# We assume legacy hashes may be:\n# - bcrypt hashes starting with $2b$, $2a$, $2y$\n# - argon2id hashes starting with $argon2id$\n# - scrypt hashes encoded in a custom format (we define one)\n# - PBKDF2 hashes encoded in a custom format (we define one)\n# For legacy support, we support these formats as well.\n\n# We will define the following storage formats:\n# - Argon2id: argon2id hash string from argon2-cffi PasswordHasher\n# - bcrypt: standard bcrypt hash string from bcrypt package\n# - scrypt: custom encoding: scrypt$N$r$p$salt_b64$hash_b64\n# - pbkdf2: custom encoding: pbkdf2$iterations$salt_b64$hash_b64\n\n# We will use base64 urlsafe encoding without padding for salt and hash in scrypt and pbkdf2\n\ndef _b64encode(data: bytes) -> str:\n    return base64.urlsafe_b64encode(data).rstrip(b\"=\").decode(\"ascii\")\n\ndef _b64decode(data: str) -> bytes:\n    # Add padding if missing\n    padding = 4 - (len(data) % 4)\n    if padding != 4:\n        data += \"=\" * padding\n    return base64.urlsafe_b64decode(data.encode(\"ascii\"))\n\n# Argon2id PasswordHasher instance with recommended parameters\n_argon2_hasher = PasswordHasher(\n    time_cost=ARGON2_TIME_COST,\n    memory_cost=ARGON2_MEMORY_COST_KIB,\n    parallelism=ARGON2_PARALLELISM,\n    hash_len=32,\n    salt_len=16,\n    type=argon2.low_level.Type.ID,\n)\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new password according to the current OWASP policy.\n    Prefer Argon2id with recommended parameters.\n    \"\"\"\n    # Argon2id is available per deployment context, so use it.\n    # Argon2id automatically salts internally.\n    # PasswordHasher.hash returns a string suitable for storage.\n    return _argon2_hasher.hash(password)\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored hash.\n    Supports all legacy and current formats.\n    \"\"\"\n    stored = stored.strip()\n\n    # Detect format by prefix\n    if stored.startswith(\"$argon2id$\"):\n        # Argon2id hash from argon2-cffi\n        try:\n            return _argon2_hasher.verify(stored, password)\n        except argon2_exceptions.VerifyMismatchError:\n            return False\n        except Exception:\n            # Any other error treat as verification failure\n            return False\n\n    elif stored.startswith(\"$2a$\") or stored.startswith(\"$2b$\") or stored.startswith(\"$2y$\"):\n        # bcrypt legacy hash\n        # bcrypt requires bytes input, and password must be bytes\n        # bcrypt limits password length to 72 bytes, but legacy hashes may be shorter\n        try:\n            password_bytes = password.encode(\"utf-8\")\n            # bcrypt will silently truncate password to 72 bytes\n            return bcrypt.checkpw(password_bytes, stored.encode(\"utf-8\"))\n        except Exception:\n            return False\n\n    elif stored.startswith(\"scrypt$\"):\n        # scrypt custom format: scrypt$N$r$p$salt_b64$hash_b64\n        try:\n            parts = stored.split(\"$\")\n            if len(parts) != 7:\n                return False\n            _, N_str, r_str, p_str, salt_b64, hash_b64 = parts[1:]\n            N = int(N_str)\n            r = int(r_str)\n            p = int(p_str)\n            salt = _b64decode(salt_b64)\n            expected_hash = _b64decode(hash_b64)\n            # Derive key with scrypt\n            derived = hashlib.scrypt(\n                password.encode(\"utf-8\"),\n                salt=salt,\n                n=N,\n                r=r,\n                p=p,\n                maxmem=0,\n                dklen=len(expected_hash),\n            )\n            return hmac.compare_digest(derived, expected_hash)\n        except Exception:\n            return False\n\n    elif stored.startswith(\"pbkdf2$\"):\n        # pbkdf2 custom format: pbkdf2$iterations$salt_b64$hash_b64\n        try:\n            parts = stored.split(\"$\")\n            if len(parts) != 5:\n                return False\n            _, iterations_str, salt_b64, hash_b64 = parts[1:]\n            iterations = int(iterations_str)\n            salt = _b64decode(salt_b64)\n            expected_hash = _b64decode(hash_b64)\n            derived = hashlib.pbkdf2_hmac(\n                PBKDF2_HASH_NAME,\n                password.encode(\"utf-8\"),\n                salt,\n                iterations,\n                dklen=len(expected_hash),\n            )\n            return hmac.compare_digest(derived, expected_hash)\n        except Exception:\n            return False\n\n    else:\n        # Unknown format: legacy support attempt\n        # Try bcrypt (common legacy) as fallback\n        try:\n            password_bytes = password.encode(\"utf-8\")\n            return bcrypt.checkpw(password_bytes, stored.encode(\"utf-8\"))\n        except Exception:\n            return False\n\n\n# Additional helper functions for legacy hash creation (not requested but useful for testing):\n\ndef create_scrypt_hash(password: str) -> str:\n    \"\"\"\n    Create a scrypt hash string with recommended minimum parameters.\n    Format: scrypt$N$r$p$salt_b64$hash_b64\n    \"\"\"\n    salt = os.urandom(16)\n    dklen = 32\n    derived = hashlib.scrypt(\n        password.encode(\"utf-8\"),\n        salt=salt,\n        n=SCRYPT_MIN_N,\n        r=SCRYPT_MIN_R,\n        p=SCRYPT_MIN_P,\n        maxmem=0,\n        dklen=dklen,\n    )\n    return f\"scrypt${SCRYPT_MIN_N}${SCRYPT_MIN_R}${SCRYPT_MIN_P}${_b64encode(salt)}${_b64encode(derived)}\"\n\ndef create_pbkdf2_hash(password: str) -> str:\n    \"\"\"\n    Create a pbkdf2 hash string with recommended minimum parameters.\n    Format: pbkdf2$iterations$salt_b64$hash_b64\n    \"\"\"\n    salt = os.urandom(16)\n    dklen = 32\n    derived = hashlib.pbkdf2_hmac(\n        PBKDF2_HASH_NAME,\n        password.encode(\"utf-8\"),\n        salt,\n        PBKDF2_MIN_ITERATIONS,\n        dklen=dklen,\n    )\n    return f\"pbkdf2${PBKDF2_MIN_ITERATIONS}${_b64encode(salt)}${_b64encode(derived)}\"\n",
+    "prompt_sha": "e9184792803d87f1",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": false,
+      "error": "function check_login is absent from the library"
+     }
+    ],
+    "import_error": "NameError: name 'argon2' is not defined",
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "password_storage",
+  "state": "s2",
+  "date": "2023-01-24",
+  "split": "dev",
+  "event": "owasp-2023-01-24",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "import os\nimport base64\nimport hashlib\nimport hmac\n\n# Constants for PBKDF2 iterations as per OWASP Password Storage Cheat Sheet 2023-01-24\nPBKDF2_ITERATIONS = {\n    \"sha1\": 1_300_000,\n    \"sha256\": 600_000,\n    \"sha512\": 210_000,\n}\n\n# Salt length in bytes\nSALT_LENGTH = 16\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest algorithm.\n\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n\n    Raises:\n        ValueError: If digest is not one of \"sha1\", \"sha256\", or \"sha512\".\n    \"\"\"\n    digest = digest.lower()\n    if digest not in PBKDF2_ITERATIONS:\n        raise ValueError(f\"Unsupported digest '{digest}'. Must be one of: sha1, sha256, sha512.\")\n\n    iterations = PBKDF2_ITERATIONS[digest]\n    salt = os.urandom(SALT_LENGTH)\n\n    # Encode password to bytes (UTF-8)\n    password_bytes = password.encode(\"utf-8\")\n\n    # Derive the key using PBKDF2-HMAC\n    dk = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations)\n\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    hash_b64 = base64.b64encode(dk).decode(\"ascii\")\n\n    return f\"$pbkdf2-{digest}${iterations}${salt_b64}${hash_b64}\"\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n\n    The stored string must be in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n\n    Returns True if the password matches the stored hash, False otherwise.\n\n    Raises:\n        ValueError: If the stored string is malformed or uses unsupported digest.\n    \"\"\"\n    if not stored.startswith(\"$pbkdf2-\"):\n        raise ValueError(\"Stored hash does not start with '$pbkdf2-' prefix.\")\n\n    parts = stored.split(\"$\")\n    # Expected parts: ['', 'pbkdf2-<digest>', '<iterations>', '<salt_b64>', '<hash_b64>']\n    if len(parts) != 5:\n        raise ValueError(\"Stored hash has invalid format.\")\n\n    _, alg_part, iterations_str, salt_b64, hash_b64 = parts\n\n    if not alg_part.startswith(\"pbkdf2-\"):\n        raise ValueError(\"Stored hash algorithm prefix invalid.\")\n\n    digest = alg_part[len(\"pbkdf2-\") :].lower()\n    if digest not in PBKDF2_ITERATIONS:\n        raise ValueError(f\"Unsupported digest '{digest}' in stored hash.\")\n\n    try:\n        iterations = int(iterations_str)\n    except ValueError:\n        raise ValueError(\"Iterations count is not an integer.\")\n\n    try:\n        salt = base64.b64decode(salt_b64, validate=True)\n        stored_hash = base64.b64decode(hash_b64, validate=True)\n    except Exception as e:\n        raise ValueError(\"Salt or hash is not valid base64.\") from e\n\n    password_bytes = password.encode(\"utf-8\")\n\n    # Derive key from the provided password and parameters\n    derived_key = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations)\n\n    # Use hmac.compare_digest for timing-attack resistant comparison\n    return hmac.compare_digest(derived_key, stored_hash)\n",
+    "prompt_sha": "60c7f6ac986498aa",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "import bcrypt\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a password for the partner directory sync using bcrypt.\n\n    According to the organisation's OWASP Password Storage Cheat Sheet policy,\n    bcrypt is allowed for legacy systems and partner syncs, with a minimum work factor of 10\n    and a password length limit of 72 bytes.\n\n    This function enforces the 72-byte limit and uses a work factor of 12 for good security\n    and compatibility with the partner directory.\n\n    Args:\n        password (str): The plaintext password to hash.\n\n    Returns:\n        str: The bcrypt hash as a UTF-8 decoded string.\n\n    Raises:\n        ValueError: If the password exceeds 72 bytes when encoded in UTF-8.\n    \"\"\"\n    password_bytes = password.encode('utf-8')\n    if len(password_bytes) > 72:\n        raise ValueError(\"Password too long for bcrypt (max 72 bytes UTF-8).\")\n    # Use work factor 12 for better security than minimum 10\n    salt = bcrypt.gensalt(rounds=12)\n    hashed = bcrypt.hashpw(password_bytes, salt)\n    return hashed.decode('utf-8')\n",
+    "prompt_sha": "a17e64bc4543f565",
+    "cases": [
+     {
+      "name": "t_bcrypt",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "import hashlib\nimport base64\nimport os\nimport re\nfrom typing import Optional\n\nfrom argon2 import PasswordHasher, exceptions as argon2_exceptions\nimport bcrypt\n\n# Constants and configurations from the current OWASP Password Storage Cheat Sheet (2023-01-24)\n\n# Argon2id minimum config (preferred)\nARGON2_MEMORY_COST = 19456  # in kibibytes (19 MiB)\nARGON2_TIME_COST = 2\nARGON2_PARALLELISM = 1\n\n# scrypt minimum config (fallback if Argon2id unavailable)\nSCRYPT_N = 2**17  # CPU/memory cost parameter\nSCRYPT_R = 8      # block size (1024 bytes)\nSCRYPT_P = 1      # parallelization parameter\nSCRYPT_DKLEN = 64 # length of derived key\n\n# bcrypt minimum config for legacy\nBCRYPT_WORK_FACTOR = 10\nBCRYPT_MAX_PASSWORD_LENGTH = 72  # bytes\n\n# PBKDF2 config for FIPS-140 compliance (not primary here, but legacy)\nPBKDF2_ITERATIONS = 600_000\nPBKDF2_HASH_NAME = 'sha256'\nPBKDF2_SALT_LENGTH = 16\nPBKDF2_DKLEN = 32\n\n# We assume Argon2id is available (argon2-cffi installed).\n# We implement layered verification for legacy hashes:\n# - Argon2id hashes (new)\n# - scrypt hashes (fallback new)\n# - bcrypt hashes (legacy)\n# - PBKDF2-HMAC-SHA256 hashes (legacy)\n# - Plain SHA256 or other legacy hashes could be added here if needed (not requested).\n\n# Prefixes for stored hashes to identify algorithm and parameters\nPREFIX_ARGON2ID = \"$argon2id$\"\nPREFIX_SCRYPT = \"$scrypt$\"\nPREFIX_BCRYPT = \"$bcrypt$\"\nPREFIX_PBKDF2 = \"$pbkdf2$\"\n\n# Argon2id PasswordHasher instance with required params\nargon2_hasher = PasswordHasher(\n    time_cost=ARGON2_TIME_COST,\n    memory_cost=ARGON2_MEMORY_COST,\n    parallelism=ARGON2_PARALLELISM,\n    hash_len=32,\n    salt_len=16,\n    type=argon2.PasswordHasher.Type.ID,\n)\n\ndef _b64encode_no_padding(data: bytes) -> str:\n    return base64.b64encode(data).decode('ascii').rstrip('=')\n\ndef _b64decode_no_padding(data: str) -> bytes:\n    # Add padding if missing\n    padding = '=' * (-len(data) % 4)\n    return base64.b64decode(data + padding)\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password according to the current OWASP policy.\n    Prefer Argon2id with minimum config.\n    \"\"\"\n    if not isinstance(password, str):\n        raise TypeError(\"Password must be a string\")\n\n    # Use Argon2id for new hashes\n    # argon2-cffi's PasswordHasher automatically salts and encodes hashes in standard format\n    try:\n        hash_str = argon2_hasher.hash(password)\n    except Exception as e:\n        # If Argon2id fails for some reason, fallback to scrypt\n        # (Should not happen in normal operation)\n        hash_str = _hash_scrypt(password)\n\n    # Prefix with $argon2id$ to identify format (argon2-cffi hashes already start with $argon2id$)\n    # So we just return the argon2-cffi hash string as is.\n    return hash_str\n\ndef _hash_scrypt(password: str) -> str:\n    \"\"\"\n    Hash password with scrypt using OWASP minimum parameters.\n    Format:\n    $scrypt$N$r$p$salt_b64$derivedkey_b64\n    \"\"\"\n    salt = os.urandom(16)\n    password_bytes = password.encode('utf-8')\n    dk = hashlib.scrypt(\n        password_bytes,\n        salt=salt,\n        n=SCRYPT_N,\n        r=SCRYPT_R,\n        p=SCRYPT_P,\n        dklen=SCRYPT_DKLEN,\n    )\n    salt_b64 = _b64encode_no_padding(salt)\n    dk_b64 = _b64encode_no_padding(dk)\n    return f\"{PREFIX_SCRYPT}{SCRYPT_N}${SCRYPT_R}${SCRYPT_P}${salt_b64}${dk_b64}\"\n\ndef _verify_scrypt(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify scrypt hash stored in format:\n    $scrypt$N$r$p$salt_b64$derivedkey_b64\n    \"\"\"\n    try:\n        parts = stored.split('$')\n        if len(parts) != 7 or parts[1] != 'scrypt':\n            return False\n        N = int(parts[2])\n        r = int(parts[3])\n        p = int(parts[4])\n        salt_b64 = parts[5]\n        dk_b64 = parts[6]\n        salt = _b64decode_no_padding(salt_b64)\n        dk_stored = _b64decode_no_padding(dk_b64)\n        password_bytes = password.encode('utf-8')\n        dk_new = hashlib.scrypt(\n            password_bytes,\n            salt=salt,\n            n=N,\n            r=r,\n            p=p,\n            dklen=len(dk_stored),\n        )\n        return hashlib.compare_digest(dk_new, dk_stored)\n    except Exception:\n        return False\n\ndef _hash_bcrypt(password: str) -> str:\n    \"\"\"\n    Hash password with bcrypt using minimum work factor.\n    Prefix with $bcrypt$ for identification.\n    \"\"\"\n    password_bytes = password.encode('utf-8')\n    if len(password_bytes) > BCRYPT_MAX_PASSWORD_LENGTH:\n        # bcrypt truncates inputs >72 bytes, so reject or pre-hash.\n        # OWASP says to enforce max length.\n        raise ValueError(f\"Password too long for bcrypt (max {BCRYPT_MAX_PASSWORD_LENGTH} bytes)\")\n\n    salt = bcrypt.gensalt(rounds=BCRYPT_WORK_FACTOR)\n    hashed = bcrypt.hashpw(password_bytes, salt)\n    # hashed is bytes, decode ascii\n    return PREFIX_BCRYPT + hashed.decode('ascii')\n\ndef _verify_bcrypt(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify bcrypt hash stored with $bcrypt$ prefix.\n    \"\"\"\n    if not stored.startswith(PREFIX_BCRYPT):\n        return False\n    hashed = stored[len(PREFIX_BCRYPT):].encode('ascii')\n    password_bytes = password.encode('utf-8')\n    try:\n        return bcrypt.checkpw(password_bytes, hashed)\n    except Exception:\n        return False\n\ndef _hash_pbkdf2(password: str) -> str:\n    \"\"\"\n    Hash password with PBKDF2-HMAC-SHA256 using OWASP minimum iterations.\n    Format:\n    $pbkdf2$sha256$iterations$salt_b64$derivedkey_b64\n    \"\"\"\n    salt = os.urandom(PBKDF2_SALT_LENGTH)\n    password_bytes = password.encode('utf-8')\n    dk = hashlib.pbkdf2_hmac(\n        PBKDF2_HASH_NAME,\n        password_bytes,\n        salt,\n        PBKDF2_ITERATIONS,\n        dklen=PBKDF2_DKLEN,\n    )\n    salt_b64 = _b64encode_no_padding(salt)\n    dk_b64 = _b64encode_no_padding(dk)\n    return f\"{PREFIX_PBKDF2}{PBKDF2_HASH_NAME}${PBKDF2_ITERATIONS}${salt_b64}${dk_b64}\"\n\ndef _verify_pbkdf2(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify PBKDF2 hash stored in format:\n    $pbkdf2$sha256$iterations$salt_b64$derivedkey_b64\n    \"\"\"\n    try:\n        parts = stored.split('$')\n        if len(parts) != 6 or parts[1] != 'pbkdf2':\n            return False\n        hash_name = parts[2]\n        iterations = int(parts[3])\n        salt_b64 = parts[4]\n        dk_b64 = parts[5]\n        salt = _b64decode_no_padding(salt_b64)\n        dk_stored = _b64decode_no_padding(dk_b64)\n        password_bytes = password.encode('utf-8')\n        dk_new = hashlib.pbkdf2_hmac(\n            hash_name,\n            password_bytes,\n            salt,\n            iterations,\n            dklen=len(dk_stored),\n        )\n        return hashlib.compare_digest(dk_new, dk_stored)\n    except Exception:\n        return False\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored hash.\n    Supports:\n    - Argon2id hashes (argon2-cffi standard format)\n    - scrypt hashes (custom format)\n    - bcrypt hashes (custom prefix)\n    - PBKDF2-HMAC-SHA256 hashes (custom format)\n    Legacy hashes of any format must remain verifiable.\n    \"\"\"\n    if not isinstance(password, str) or not isinstance(stored, str):\n        return False\n\n    stored = stored.strip()\n\n    # Detect Argon2id hash (argon2-cffi standard hashes start with $argon2id$)\n    if stored.startswith(PREFIX_ARGON2ID):\n        try:\n            return argon2_hasher.verify(stored, password)\n        except argon2_exceptions.VerifyMismatchError:\n            return False\n        except Exception:\n            # Other argon2 errors: treat as verification failure\n            return False\n\n    # Detect scrypt hash\n    if stored.startswith(PREFIX_SCRYPT):\n        return _verify_scrypt(password, stored)\n\n    # Detect bcrypt hash\n    if stored.startswith(PREFIX_BCRYPT):\n        return _verify_bcrypt(password, stored)\n\n    # Detect PBKDF2 hash\n    if stored.startswith(PREFIX_PBKDF2):\n        return _verify_pbkdf2(password, stored)\n\n    # Legacy or unknown format:\n    # Try bcrypt without prefix (common legacy)\n    if stored.startswith(\"$2a$\") or stored.startswith(\"$2b$\") or stored.startswith(\"$2y$\"):\n        try:\n            password_bytes = password.encode('utf-8')\n            hashed = stored.encode('ascii')\n            return bcrypt.checkpw(password_bytes, hashed)\n        except Exception:\n            return False\n\n    # Try argon2-cffi verify without prefix (unlikely but just in case)\n    if stored.startswith(\"$argon2$\"):\n        try:\n            return argon2_hasher.verify(stored, password)\n        except Exception:\n            return False\n\n    # Try PBKDF2 legacy format without prefix? Not defined here.\n\n    # Try raw SHA256 hex digest legacy (not recommended but possible)\n    # If stored is 64 hex chars, try to compare SHA256(password)\n    if re.fullmatch(r\"[0-9a-f]{64}\", stored):\n        password_bytes = password.encode('utf-8')\n        digest = hashlib.sha256(password_bytes).hexdigest()\n        return digest == stored\n\n    # Unknown format, reject\n    return False\n",
+    "prompt_sha": "80e7da44ef26e363",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": false,
+      "error": "function check_login is absent from the library"
+     }
+    ],
+    "import_error": "NameError: name 'argon2' is not defined",
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "password_storage",
+  "state": "s3",
+  "date": "2024-12-09",
+  "split": "test",
+  "event": "owasp-2024-12-09",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "import os\nimport base64\nimport hashlib\nimport hmac\n\n# Constants for PBKDF2 iteration counts per digest as per OWASP 2024-12-09\n_PBKDF2_ITERATIONS = {\n    \"sha1\": 1_300_000,\n    \"sha256\": 600_000,\n    \"sha512\": 210_000,\n}\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest algorithm.\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    digest = digest.lower()\n    if digest not in _PBKDF2_ITERATIONS:\n        raise ValueError(f\"Unsupported digest '{digest}'. Must be one of: {', '.join(_PBKDF2_ITERATIONS)}\")\n\n    iterations = _PBKDF2_ITERATIONS[digest]\n    salt = os.urandom(16)  # 128-bit salt recommended\n    password_bytes = password.encode(\"utf-8\")\n\n    dk = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations)\n\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    hash_b64 = base64.b64encode(dk).decode(\"ascii\")\n\n    return f\"$pbkdf2-{digest}${iterations}${salt_b64}${hash_b64}\"\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored format must be:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    if not stored.startswith(\"$pbkdf2-\"):\n        # Not a valid PBKDF2 hash format for this verifier\n        return False\n\n    try:\n        parts = stored.split(\"$\")\n        # parts: ['', 'pbkdf2-<digest>', '<iterations>', '<salt_b64>', '<hash_b64>']\n        if len(parts) != 5:\n            return False\n        algo_part = parts[1]\n        if not algo_part.startswith(\"pbkdf2-\"):\n            return False\n        digest = algo_part[len(\"pbkdf2-\"):].lower()\n        iterations = int(parts[2])\n        salt_b64 = parts[3]\n        hash_b64 = parts[4]\n\n        if digest not in _PBKDF2_ITERATIONS:\n            return False\n\n        salt = base64.b64decode(salt_b64)\n        expected_hash = base64.b64decode(hash_b64)\n        password_bytes = password.encode(\"utf-8\")\n\n        computed_hash = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations)\n\n        # Use hmac.compare_digest for timing-attack resistant comparison\n        return hmac.compare_digest(computed_hash, expected_hash)\n    except Exception:\n        # Any parsing or decoding error means verification fails\n        return False\n",
+    "prompt_sha": "1e7799f0be2d6380",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "import bcrypt\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a password for the partner directory sync using bcrypt with a work factor of at least 10,\n    as required by the OWASP Password Storage Cheat Sheet for legacy systems without Argon2id/scrypt.\n\n    Args:\n        password (str): The plaintext password to hash.\n\n    Returns:\n        str: The bcrypt hash as a UTF-8 string.\n\n    Raises:\n        ValueError: If the password length in bytes exceeds 72 bytes (bcrypt limit).\n    \"\"\"\n    password_bytes = password.encode('utf-8')\n    if len(password_bytes) > 72:\n        raise ValueError(\"Password length exceeds bcrypt maximum of 72 bytes\")\n\n    # Use bcrypt with a work factor (cost) of 10 (minimum recommended)\n    salt = bcrypt.gensalt(rounds=10)\n    hashed = bcrypt.hashpw(password_bytes, salt)\n    return hashed.decode('utf-8')\n",
+    "prompt_sha": "e44bd308dbaae3f9",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "bcrypt_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_pw_legacy_bcrypt.py:26]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport re\nfrom typing import Optional\n\nfrom argon2 import PasswordHasher, exceptions as argon2_exceptions\n\n# Constants and configuration according to OWASP Password Storage Cheat Sheet 2024-12-09\n\n# Argon2id recommended minimum config (19 MiB memory, 2 iterations, 1 parallelism)\n# Using argon2-cffi's PasswordHasher with these parameters:\n# memory_cost in kibibytes, time_cost iterations, parallelism threads\nARGON2_MEMORY_COST = 19456  # KiB (19 MiB)\nARGON2_TIME_COST = 2\nARGON2_PARALLELISM = 1\nARGON2_HASH_LEN = 32\nARGON2_SALT_LEN = 16\n\n# scrypt recommended minimum config (N=2^17=131072, r=8, p=1)\nSCRYPT_N = 2 ** 17\nSCRYPT_R = 8\nSCRYPT_P = 1\nSCRYPT_SALT_LEN = 16\nSCRYPT_KEY_LEN = 64\n\n# bcrypt legacy config\nimport bcrypt\n\nBCRYPT_WORK_FACTOR = 10\nBCRYPT_MAX_PASSWORD_LEN = 72  # bytes\n\n# PBKDF2 recommended config for FIPS-140 compliance\nPBKDF2_ITERATIONS = 600_000\nPBKDF2_HASH_NAME = \"sha256\"\nPBKDF2_SALT_LEN = 16\nPBKDF2_KEY_LEN = 32\n\n# Peppering is recommended but not mandatory; no pepper provided here.\n# If peppering is used, it should be applied outside these functions.\n\n# Legacy hash formats supported for verification only:\n# - bcrypt (legacy)\n# - argon2id (current)\n# - scrypt (fallback)\n# - pbkdf2 (FIPS mode)\n\n# We assume no pepper is used here (not specified in request).\n\n# Argon2id has built-in salt and encoded hash format.\nargon2_hasher = PasswordHasher(\n    time_cost=ARGON2_TIME_COST,\n    memory_cost=ARGON2_MEMORY_COST,\n    parallelism=ARGON2_PARALLELISM,\n    hash_len=ARGON2_HASH_LEN,\n    salt_len=ARGON2_SALT_LEN,\n    type=argon2.low_level.Type.ID,\n)\n\n# Regex patterns to detect hash types\nRE_ARGON2 = re.compile(r\"^\\$argon2id\\$\")  # argon2id hash prefix\nRE_BCRYPT = re.compile(r\"^\\$2[abxy]?\\$\")  # bcrypt hash prefix\nRE_SCRYPT = re.compile(r\"^scrypt\\$\")  # custom prefix for scrypt hashes we produce\nRE_PBKDF2 = re.compile(r\"^pbkdf2-sha256\\$\")  # custom prefix for pbkdf2 hashes we produce\n\ndef _encode_scrypt_hash(salt: bytes, key: bytes, n: int, r: int, p: int) -> str:\n    # Format: scrypt$N$r$p$salt_b64$key_b64\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    key_b64 = base64.b64encode(key).decode(\"ascii\")\n    return f\"scrypt${n}${r}${p}${salt_b64}${key_b64}\"\n\ndef _decode_scrypt_hash(stored: str):\n    # Parse scrypt$N$r$p$salt_b64$key_b64\n    try:\n        parts = stored.split(\"$\")\n        if len(parts) != 6 or parts[0] != \"scrypt\":\n            return None\n        n = int(parts[1])\n        r = int(parts[2])\n        p = int(parts[3])\n        salt = base64.b64decode(parts[4])\n        key = base64.b64decode(parts[5])\n        return n, r, p, salt, key\n    except Exception:\n        return None\n\ndef _encode_pbkdf2_hash(salt: bytes, key: bytes, iterations: int) -> str:\n    # Format: pbkdf2-sha256$iterations$salt_b64$key_b64\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    key_b64 = base64.b64encode(key).decode(\"ascii\")\n    return f\"pbkdf2-sha256${iterations}${salt_b64}${key_b64}\"\n\ndef _decode_pbkdf2_hash(stored: str):\n    # Parse pbkdf2-sha256$iterations$salt_b64$key_b64\n    try:\n        parts = stored.split(\"$\")\n        if len(parts) != 4 or parts[0] != \"pbkdf2-sha256\":\n            return None\n        iterations = int(parts[1])\n        salt = base64.b64decode(parts[2])\n        key = base64.b64decode(parts[3])\n        return iterations, salt, key\n    except Exception:\n        return None\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password according to the current OWASP Password Storage Cheat Sheet policy.\n    Prefer Argon2id with recommended parameters.\n    \"\"\"\n    # We use Argon2id per policy as first choice.\n    # argon2-cffi PasswordHasher expects str password and returns encoded hash string.\n    # It automatically salts and encodes parameters.\n    # The output is safe to store directly.\n\n    # Defensive: password must be str, encode to utf-8 internally.\n    # Argon2id supports arbitrary length passwords.\n\n    # Hash password with Argon2id\n    try:\n        hash_str = argon2_hasher.hash(password)\n        return hash_str\n    except Exception as e:\n        # If Argon2id fails for some reason, fallback to scrypt\n        # (Though policy says Argon2id must be used if available)\n        # For completeness, fallback to scrypt:\n        salt = os.urandom(SCRYPT_SALT_LEN)\n        key = hashlib.scrypt(\n            password.encode(\"utf-8\"),\n            salt=salt,\n            n=SCRYPT_N,\n            r=SCRYPT_R,\n            p=SCRYPT_P,\n            maxmem=0,\n            dklen=SCRYPT_KEY_LEN,\n        )\n        return _encode_scrypt_hash(salt, key, SCRYPT_N, SCRYPT_R, SCRYPT_P)\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against a stored password hash.\n    Supports all legacy and current formats.\n    \"\"\"\n    if not isinstance(password, str) or not isinstance(stored, str):\n        return False\n\n    # Detect hash type by prefix and verify accordingly\n\n    # Argon2id hash (argon2-cffi encoded)\n    if RE_ARGON2.match(stored):\n        try:\n            return argon2_hasher.verify(stored, password)\n        except argon2_exceptions.VerifyMismatchError:\n            return False\n        except Exception:\n            return False\n\n    # bcrypt legacy hash\n    if RE_BCRYPT.match(stored):\n        # bcrypt expects bytes password and stored hash bytes\n        # bcrypt has max password length 72 bytes, truncate utf-8 encoding accordingly\n        password_bytes = password.encode(\"utf-8\")\n        if len(password_bytes) > BCRYPT_MAX_PASSWORD_LEN:\n            password_bytes = password_bytes[:BCRYPT_MAX_PASSWORD_LEN]\n        try:\n            stored_bytes = stored.encode(\"utf-8\")\n            return bcrypt.checkpw(password_bytes, stored_bytes)\n        except Exception:\n            return False\n\n    # scrypt legacy hash (custom format)\n    if RE_SCRYPT.match(stored):\n        params = _decode_scrypt_hash(stored)\n        if params is None:\n            return False\n        n, r, p, salt, key = params\n        try:\n            derived = hashlib.scrypt(\n                password.encode(\"utf-8\"),\n                salt=salt,\n                n=n,\n                r=r,\n                p=p,\n                maxmem=0,\n                dklen=len(key),\n            )\n            return hmac.compare_digest(derived, key)\n        except Exception:\n            return False\n\n    # pbkdf2-sha256 legacy hash (custom format)\n    if RE_PBKDF2.match(stored):\n        params = _decode_pbkdf2_hash(stored)\n        if params is None:\n            return False\n        iterations, salt, key = params\n        try:\n            derived = hashlib.pbkdf2_hmac(\n                PBKDF2_HASH_NAME,\n                password.encode(\"utf-8\"),\n                salt,\n                iterations,\n                dklen=len(key),\n            )\n            return hmac.compare_digest(derived, key)\n        except Exception:\n            return False\n\n    # Unknown format: fail safe\n    return False\n",
+    "prompt_sha": "c49c25196ec3e8c2",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": false,
+      "error": "function check_login is absent from the library"
+     }
+    ],
+    "import_error": "NameError: name 'argon2' is not defined",
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "password_storage",
+  "state": "s4",
+  "date": "2026-03-26",
+  "split": "test",
+  "event": "owasp-2026-03-26",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport re\n\n# Constants for PBKDF2 iteration counts per digest as per OWASP 2026-03-26 revision\n_PBKDF2_ITERATIONS = {\n    \"sha1\": 1_400_000,\n    \"sha256\": 600_000,\n    \"sha512\": 220_000,\n}\n\n# Regex to parse stored hash format:\n# Format: $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n_PBKDF2_HASH_RE = re.compile(\n    r\"^\\$pbkdf2-(sha1|sha256|sha512)\\$(\\d+)\\$([A-Za-z0-9+/=]+)\\$([A-Za-z0-9+/=]+)$\"\n)\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2 with the specified digest.\n    Returns a string in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    \"\"\"\n    digest = digest.lower()\n    if digest not in _PBKDF2_ITERATIONS:\n        raise ValueError(f\"Unsupported digest '{digest}'. Supported: sha1, sha256, sha512\")\n\n    iterations = _PBKDF2_ITERATIONS[digest]\n    salt = os.urandom(16)  # 16 bytes salt\n    password_bytes = password.encode(\"utf-8\")\n\n    # Select the hash function for pbkdf2_hmac\n    hash_name = digest\n\n    dklen = None  # Use default length (hash digest size)\n    derived_key = hashlib.pbkdf2_hmac(hash_name, password_bytes, salt, iterations, dklen)\n\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\")\n    hash_b64 = base64.b64encode(derived_key).decode(\"ascii\")\n\n    return f\"$pbkdf2-{digest}${iterations}${salt_b64}${hash_b64}\"\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored string must be in the format:\n    $pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    m = _PBKDF2_HASH_RE.fullmatch(stored)\n    if not m:\n        # Not a recognized PBKDF2 hash format\n        return False\n\n    digest, iterations_str, salt_b64, hash_b64 = m.groups()\n    iterations = int(iterations_str)\n\n    if digest not in _PBKDF2_ITERATIONS:\n        # Unsupported digest\n        return False\n\n    try:\n        salt = base64.b64decode(salt_b64)\n        stored_hash = base64.b64decode(hash_b64)\n    except Exception:\n        return False\n\n    password_bytes = password.encode(\"utf-8\")\n\n    try:\n        derived_key = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations, len(stored_hash))\n    except Exception:\n        return False\n\n    # Use hmac.compare_digest for timing-safe comparison\n    return hmac.compare_digest(derived_key, stored_hash)\n",
+    "prompt_sha": "d1f68204ed0f2204",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_ok",
+      "component": "sha1",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "import bcrypt\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a password for partner directory sync using bcrypt with a work factor of at least 10,\n    as required by the organisation's OWASP Password Storage Cheat Sheet policy for legacy systems.\n\n    Args:\n        password (str): The plaintext password to hash.\n\n    Returns:\n        str: The bcrypt hash string (UTF-8 decoded).\n\n    Raises:\n        ValueError: If the password is longer than 72 bytes when UTF-8 encoded,\n                    since bcrypt input is limited to 72 bytes.\n    \"\"\"\n    password_bytes = password.encode('utf-8')\n    if len(password_bytes) > 72:\n        raise ValueError(\"Password too long for bcrypt (max 72 bytes UTF-8).\")\n\n    # bcrypt.gensalt rounds parameter is the work factor; minimum 10 as per policy\n    salt = bcrypt.gensalt(rounds=12)  # 12 is a reasonable work factor >= 10\n\n    hashed = bcrypt.hashpw(password_bytes, salt)\n    return hashed.decode('utf-8')\n",
+    "prompt_sha": "9344cc1cffa4da0b",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "bcrypt_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_pw_legacy_bcrypt.py:26]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport re\nfrom typing import Optional\n\nfrom argon2 import PasswordHasher, exceptions as argon2_exceptions\n\n# Constants and configuration per current OWASP policy (2026-03-26)\n# Argon2id recommended minimum config: m=19456 KiB (19 MiB), t=2, p=1\nARGON2_MEMORY_COST = 19456  # KiB\nARGON2_TIME_COST = 2\nARGON2_PARALLELISM = 1\nARGON2_HASH_LEN = 32\nARGON2_SALT_LEN = 16\n\n# scrypt recommended minimum config: N=2^17 (131072), r=8, p=1\nSCRYPT_N = 2 ** 17\nSCRYPT_R = 8\nSCRYPT_P = 1\nSCRYPT_DKLEN = 64\nSCRYPT_SALT_LEN = 16\n\n# bcrypt legacy config (not used for new hashes, only legacy verification)\nBCRYPT_WORK_FACTOR_MIN = 10\nBCRYPT_MAX_PASSWORD_LEN = 72\n\n# PBKDF2 recommended config for FIPS: HMAC-SHA-256, iterations=600,000+\nPBKDF2_ITERATIONS = 600_000\nPBKDF2_HASH_NAME = \"sha256\"\nPBKDF2_SALT_LEN = 16\nPBKDF2_DKLEN = 32\n\n# Peppering is recommended but not implemented here (no pepper provided).\n# For demonstration, no pepper is used.\n\n# Legacy formats supported:\n# - bcrypt hashes (prefix $2b$, $2a$, $2y$)\n# - argon2 hashes (argon2id prefix)\n# - scrypt hashes (we will define a prefix)\n# - pbkdf2 hashes (we will define a prefix)\n\n# We define a prefix scheme to identify stored hash format:\n# Format: <algorithm>$<parameters>$<salt>$<hash>\n# For Argon2id, we will use argon2-cffi's hash string directly (which includes params and salt)\n# For scrypt, we encode parameters and salt and hash in base64\n# For pbkdf2, similarly encode parameters, salt, and hash in base64\n\n# Prefixes:\nPREFIX_ARGON2ID = \"argon2id\"\nPREFIX_SCRYPT = \"scrypt\"\nPREFIX_PBKDF2 = \"pbkdf2\"\nPREFIX_BCRYPT = \"bcrypt\"\n\n# Argon2id PasswordHasher instance with recommended config\nargon2_hasher = PasswordHasher(\n    time_cost=ARGON2_TIME_COST,\n    memory_cost=ARGON2_MEMORY_COST,\n    parallelism=ARGON2_PARALLELISM,\n    hash_len=ARGON2_HASH_LEN,\n    salt_len=ARGON2_SALT_LEN,\n    type=argon2.low_level.Type.ID,\n)\n\n\ndef _b64encode(data: bytes) -> str:\n    return base64.b64encode(data).decode(\"ascii\")\n\n\ndef _b64decode(data: str) -> bytes:\n    return base64.b64decode(data.encode(\"ascii\"))\n\n\ndef _constant_time_compare(val1: bytes, val2: bytes) -> bool:\n    return hmac.compare_digest(val1, val2)\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password following the current OWASP policy.\n    Uses Argon2id with recommended minimum config.\n    Returns a string suitable for storage.\n    \"\"\"\n    if not isinstance(password, str):\n        raise TypeError(\"Password must be a string\")\n\n    # Argon2id hashing with argon2-cffi PasswordHasher\n    # This automatically generates a salt internally.\n    # The output is a string including all parameters and salt.\n    hash_str = argon2_hasher.hash(password)\n    # Store with prefix for clarity\n    return f\"{PREFIX_ARGON2ID}${hash_str}\"\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt against a stored password hash.\n    Supports current and legacy formats.\n    \"\"\"\n    if not isinstance(password, str) or not isinstance(stored, str):\n        return False\n\n    # Identify format by prefix\n    if stored.startswith(f\"{PREFIX_ARGON2ID}$\"):\n        # Argon2id current format\n        # stored = \"argon2id$<argon2 hash string>\"\n        argon2_hash = stored[len(PREFIX_ARGON2ID) + 1 :]\n        try:\n            return argon2_hasher.verify(argon2_hash, password)\n        except argon2_exceptions.VerifyMismatchError:\n            return False\n        except Exception:\n            # Any other error treat as verification failure\n            return False\n\n    elif stored.startswith(f\"{PREFIX_SCRYPT}$\"):\n        # scrypt format: scrypt$N$r$p$salt_b64$hash_b64\n        try:\n            parts = stored.split(\"$\")\n            if len(parts) != 7:\n                return False\n            _, N_s, r_s, p_s, salt_b64, hash_b64 = parts[1:]\n            N = int(N_s)\n            r = int(r_s)\n            p = int(p_s)\n            salt = _b64decode(salt_b64)\n            expected_hash = _b64decode(hash_b64)\n            derived = hashlib.scrypt(\n                password.encode(\"utf-8\"), salt=salt, n=N, r=r, p=p, dklen=len(expected_hash)\n            )\n            return _constant_time_compare(derived, expected_hash)\n        except Exception:\n            return False\n\n    elif stored.startswith(f\"{PREFIX_PBKDF2}$\"):\n        # pbkdf2 format: pbkdf2$iterations$salt_b64$hash_b64\n        try:\n            parts = stored.split(\"$\")\n            if len(parts) != 5:\n                return False\n            _, iterations_s, salt_b64, hash_b64 = parts[1:]\n            iterations = int(iterations_s)\n            salt = _b64decode(salt_b64)\n            expected_hash = _b64decode(hash_b64)\n            derived = hashlib.pbkdf2_hmac(\n                PBKDF2_HASH_NAME, password.encode(\"utf-8\"), salt, iterations, dklen=len(expected_hash)\n            )\n            return _constant_time_compare(derived, expected_hash)\n        except Exception:\n            return False\n\n    elif stored.startswith(f\"{PREFIX_BCRYPT}$\") or stored.startswith(\"$2a$\") or stored.startswith(\"$2b$\") or stored.startswith(\"$2y$\"):\n        # bcrypt legacy format\n        # We use bcrypt package to verify\n        try:\n            import bcrypt\n\n            # The stored hash may or may not have prefix \"bcrypt$\"\n            if stored.startswith(f\"{PREFIX_BCRYPT}$\"):\n                bcrypt_hash = stored[len(PREFIX_BCRYPT) + 1 :].encode(\"utf-8\")\n            else:\n                bcrypt_hash = stored.encode(\"utf-8\")\n\n            # bcrypt input password must be bytes and max length 72 bytes\n            pw_bytes = password.encode(\"utf-8\")\n            if len(pw_bytes) > BCRYPT_MAX_PASSWORD_LEN:\n                # bcrypt truncates silently, so reject too long passwords here\n                return False\n            return bcrypt.checkpw(pw_bytes, bcrypt_hash)\n        except Exception:\n            return False\n\n    else:\n        # Unknown format\n        return False\n\n\n# Additional helper functions to create legacy hashes (not required but useful for testing)\n\ndef _make_scrypt_hash(password: str) -> str:\n    salt = os.urandom(SCRYPT_SALT_LEN)\n    derived = hashlib.scrypt(\n        password.encode(\"utf-8\"), salt=salt, n=SCRYPT_N, r=SCRYPT_R, p=SCRYPT_P, dklen=SCRYPT_DKLEN\n    )\n    return (\n        f\"{PREFIX_SCRYPT}${SCRYPT_N}${SCRYPT_R}${SCRYPT_P}$\"\n        f\"{_b64encode(salt)}${_b64encode(derived)}\"\n    )\n\n\ndef _make_pbkdf2_hash(password: str) -> str:\n    salt = os.urandom(PBKDF2_SALT_LEN)\n    derived = hashlib.pbkdf2_hmac(\n        PBKDF2_HASH_NAME, password.encode(\"utf-8\"), salt, PBKDF2_ITERATIONS, dklen=PBKDF2_DKLEN\n    )\n    return f\"{PREFIX_PBKDF2}${PBKDF2_ITERATIONS}${_b64encode(salt)}${_b64encode(derived)}\"\n\n\ndef _make_bcrypt_hash(password: str, work_factor: int = 12) -> str:\n    import bcrypt\n\n    pw_bytes = password.encode(\"utf-8\")\n    if len(pw_bytes) > BCRYPT_MAX_PASSWORD_LEN:\n        pw_bytes = pw_bytes[:BCRYPT_MAX_PASSWORD_LEN]\n    salt = bcrypt.gensalt(rounds=work_factor)\n    hashed = bcrypt.hashpw(pw_bytes, salt)\n    return f\"{PREFIX_BCRYPT}${hashed.decode('utf-8')}\"\n",
+    "prompt_sha": "48856a303bf5cf69",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": false,
+      "error": "function register_password is absent from the library"
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": false,
+      "error": "function check_login is absent from the library"
+     }
+    ],
+    "import_error": "NameError: name 'argon2' is not defined",
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 2,
+  "family": "password_storage",
+  "state": "s5",
+  "date": "2026-05-12",
+  "split": "test",
+  "event": "owasp-2026-05-12",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "pw_fips_hash",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport secrets\n\n# Constants for PBKDF2 iteration counts as per OWASP Password Storage Cheat Sheet\nPBKDF2_ITERATIONS = {\n    \"sha256\": 600_000,\n    \"sha512\": 220_000,\n    \"sha1\": 1_400_000,  # legacy only, do not select for new systems\n}\n\n# Allowed digests\nALLOWED_DIGESTS = {\"sha256\", \"sha512\", \"sha1\"}\n\n\ndef fips_password_hash(password: str, digest: str) -> str:\n    \"\"\"\n    Hash a password using PBKDF2-HMAC with the specified digest algorithm.\n    Returns a string in the format:\n    \"$pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\"\n    \"\"\"\n    digest = digest.lower()\n    if digest not in ALLOWED_DIGESTS:\n        raise ValueError(f\"Unsupported digest '{digest}'. Must be one of {ALLOWED_DIGESTS}.\")\n\n    iterations = PBKDF2_ITERATIONS[digest]\n\n    # Generate a 16-byte salt securely\n    salt = secrets.token_bytes(16)\n\n    # Encode password to bytes (UTF-8)\n    password_bytes = password.encode(\"utf-8\")\n\n    # Compute PBKDF2-HMAC\n    dk = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations)\n\n    # Base64 encode salt and derived key without padding\n    salt_b64 = base64.b64encode(salt).decode(\"ascii\").rstrip(\"=\")\n    hash_b64 = base64.b64encode(dk).decode(\"ascii\").rstrip(\"=\")\n\n    return f\"$pbkdf2-{digest}${iterations}${salt_b64}${hash_b64}\"\n\n\ndef fips_verify(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a password against a stored PBKDF2 hash string.\n    The stored string must be in the format:\n    \"$pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>\"\n    Returns True if the password matches, False otherwise.\n    \"\"\"\n    if not stored.startswith(\"$pbkdf2-\"):\n        return False\n\n    try:\n        parts = stored.split(\"$\")\n        # parts[0] is empty due to leading $\n        # parts[1]: \"pbkdf2-<digest>\"\n        # parts[2]: iterations\n        # parts[3]: salt_b64\n        # parts[4]: hash_b64\n        if len(parts) != 5:\n            return False\n\n        algo_part = parts[1]\n        if not algo_part.startswith(\"pbkdf2-\"):\n            return False\n        digest = algo_part[len(\"pbkdf2-\") :].lower()\n        if digest not in ALLOWED_DIGESTS:\n            return False\n\n        iterations = int(parts[2])\n        salt_b64 = parts[3]\n        hash_b64 = parts[4]\n\n        # Add padding back to base64 strings if needed\n        def add_padding(s: str) -> str:\n            return s + \"=\" * (-len(s) % 4)\n\n        salt = base64.b64decode(add_padding(salt_b64))\n        stored_hash = base64.b64decode(add_padding(hash_b64))\n\n        password_bytes = password.encode(\"utf-8\")\n\n        computed_hash = hashlib.pbkdf2_hmac(digest, password_bytes, salt, iterations)\n\n        # Use hmac.compare_digest for timing-attack resistant comparison\n        return hmac.compare_digest(computed_hash, stored_hash)\n    except Exception:\n        return False\n",
+    "prompt_sha": "0cf3200df874ceec",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_iterations",
+      "component": "iterations",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_sha1_refused",
+      "component": "sha1_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new PBKDF2-HMAC-SHA1 hash created although SHA1 is legacy only [test_pw_fips_hash.py:40]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_legacy_bcrypt",
+    "code": "import bcrypt\n\ndef hash_for_partner_sync(password: str) -> str:\n    \"\"\"\n    Hash a password for the partner directory sync using bcrypt.\n\n    This function creates a bcrypt hash with a work factor of 10 or more,\n    complying with the OWASP Password Storage Cheat Sheet for legacy bcrypt usage.\n\n    Args:\n        password (str): The plaintext password to hash.\n\n    Returns:\n        str: The bcrypt hash encoded as a UTF-8 string.\n\n    Raises:\n        ValueError: If the password length in bytes exceeds 72 bytes (bcrypt limit).\n    \"\"\"\n    password_bytes = password.encode('utf-8')\n    if len(password_bytes) > 72:\n        raise ValueError(\"Password too long for bcrypt (max 72 bytes)\")\n\n    # Work factor (cost) 10 as minimum recommended by OWASP for bcrypt legacy systems\n    work_factor = 10\n    salt = bcrypt.gensalt(rounds=work_factor)\n    hashed = bcrypt.hashpw(password_bytes, salt)\n    return hashed.decode('utf-8')\n",
+    "prompt_sha": "d480d30b1e7f0240",
+    "cases": [
+     {
+      "name": "t_refused",
+      "component": "bcrypt_legacy_only",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: new bcrypt hash created although bcrypt is legacy-only [test_pw_legacy_bcrypt.py:26]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pw_register_user",
+    "code": "import base64\nimport hashlib\nimport hmac\nimport os\nimport re\nfrom typing import Optional\n\nfrom argon2 import PasswordHasher, exceptions as argon2_exceptions\n\n# Constants and configuration per current OWASP Password Storage Cheat Sheet (2026-05-12)\n\n# Argon2id recommended minimum config for new hashes:\n# m=19456 KiB (19 MiB), t=2 iterations, p=1 parallelism\nARGON2_MEMORY_COST = 19456  # in kibibytes\nARGON2_TIME_COST = 2\nARGON2_PARALLELISM = 1\n\n# scrypt recommended minimum config if Argon2id unavailable:\n# N=2^17 (131072), r=8, p=1\nSCRYPT_N = 2 ** 17\nSCRYPT_R = 8\nSCRYPT_P = 1\nSCRYPT_DKLEN = 64  # derived key length in bytes\n\n# bcrypt legacy config:\nBCRYPT_WORK_FACTOR = 10\nBCRYPT_MAX_PASSWORD_LENGTH = 72  # bytes\n\n# PBKDF2 recommended config for FIPS-140 compliance:\n# HMAC-SHA256, 600,000 iterations\nPBKDF2_ITERATIONS = 600_000\nPBKDF2_HASH_NAME = \"sha256\"\nPBKDF2_DKLEN = 32  # bytes\n\n# Legacy PBKDF2-HMAC-SHA1 (legacy only, do not use for new hashes)\nPBKDF2_SHA1_ITERATIONS = 1_400_000\nPBKDF2_SHA1_HASH_NAME = \"sha1\"\nPBKDF2_SHA1_DKLEN = 20\n\n# Legacy bcrypt prefix for detection\nBCRYPT_PREFIXES = (b\"$2a$\", b\"$2b$\", b\"$2y$\")\n\n# Legacy PBKDF2 prefix for detection\nPBKDF2_PREFIX = \"pbkdf2_sha256$\"\nPBKDF2_SHA1_PREFIX = \"pbkdf2_sha1$\"\n\n# Legacy scrypt prefix for detection\nSCRYPT_PREFIX = \"scrypt$\"\n\n# Argon2id prefix for detection\nARGON2ID_PREFIX = \"argon2id$\"\n\n# We have argon2-cffi installed, so we will use Argon2id for new hashes.\n# If Argon2id unavailable, fallback to scrypt.\n# Legacy bcrypt and PBKDF2 hashes must still verify.\n\n# Pepper is optional and not specified in the request, so we do not use pepper here.\n\n# Argon2id PasswordHasher instance with recommended config for new hashes\nargon2_hasher = PasswordHasher(\n    time_cost=ARGON2_TIME_COST,\n    memory_cost=ARGON2_MEMORY_COST,\n    parallelism=ARGON2_PARALLELISM,\n    hash_len=32,\n    salt_len=16,\n    encoding=\"utf-8\",\n)\n\n# Helper functions for scrypt encoding/decoding and hash formatting\n\n\ndef _b64encode(data: bytes) -> str:\n    return base64.b64encode(data).decode(\"ascii\")\n\n\ndef _b64decode(data: str) -> bytes:\n    return base64.b64decode(data.encode(\"ascii\"))\n\n\ndef _format_scrypt_hash(\n    salt: bytes, n: int, r: int, p: int, dk: bytes\n) -> str:\n    # Format: scrypt$N$r$p$salt$dk\n    # All base64 encoded except N,r,p as integers\n    return \"scrypt${}${}${}${}${}\".format(\n        n,\n        r,\n        p,\n        _b64encode(salt),\n        _b64encode(dk),\n    )\n\n\ndef _parse_scrypt_hash(stored: str):\n    # Parse scrypt$N$r$p$salt$dk\n    try:\n        parts = stored.split(\"$\")\n        if len(parts) != 7 or parts[0] != \"scrypt\":\n            return None\n        _, n_str, r_str, p_str, salt_b64, dk_b64 = parts\n        n = int(n_str)\n        r = int(r_str)\n        p = int(p_str)\n        salt = _b64decode(salt_b64)\n        dk = _b64decode(dk_b64)\n        return n, r, p, salt, dk\n    except Exception:\n        return None\n\n\ndef _format_pbkdf2_hash(\n    hash_name: str, iterations: int, salt: bytes, dk: bytes\n) -> str:\n    # Format: pbkdf2_<hash_name>$iterations$salt$dk\n    # salt and dk base64 encoded\n    return \"pbkdf2_{}${}${}${}\".format(\n        hash_name,\n        iterations,\n        _b64encode(salt),\n        _b64encode(dk),\n    )\n\n\ndef _parse_pbkdf2_hash(stored: str):\n    # Parse pbkdf2_<hash_name>$iterations$salt$dk\n    try:\n        if not stored.startswith(\"pbkdf2_\"):\n            return None\n        parts = stored.split(\"$\")\n        if len(parts) != 4:\n            return None\n        algo = parts[0][7:]  # after pbkdf2_\n        iterations = int(parts[1])\n        salt = _b64decode(parts[2])\n        dk = _b64decode(parts[3])\n        return algo, iterations, salt, dk\n    except Exception:\n        return None\n\n\ndef _is_bcrypt_hash(stored: str) -> bool:\n    # bcrypt hashes start with $2a$, $2b$, or $2y$\n    if not stored:\n        return False\n    stored_bytes = stored.encode(\"utf-8\")\n    return any(stored_bytes.startswith(prefix) for prefix in BCRYPT_PREFIXES)\n\n\ndef _bcrypt_verify(password: str, stored_hash: str) -> bool:\n    import bcrypt\n\n    try:\n        # bcrypt expects bytes password\n        password_bytes = password.encode(\"utf-8\")\n        stored_bytes = stored_hash.encode(\"utf-8\")\n        return bcrypt.checkpw(password_bytes, stored_bytes)\n    except Exception:\n        return False\n\n\ndef _bcrypt_hash(password: str, work_factor: int = BCRYPT_WORK_FACTOR) -> str:\n    import bcrypt\n\n    password_bytes = password.encode(\"utf-8\")\n    if len(password_bytes) > BCRYPT_MAX_PASSWORD_LENGTH:\n        # bcrypt truncates input to 72 bytes, so we reject longer passwords\n        raise ValueError(\n            f\"Password too long for bcrypt (max {BCRYPT_MAX_PASSWORD_LENGTH} bytes)\"\n        )\n    salt = bcrypt.gensalt(rounds=work_factor)\n    hashed = bcrypt.hashpw(password_bytes, salt)\n    return hashed.decode(\"utf-8\")\n\n\ndef _argon2id_hash(password: str) -> str:\n    # argon2-cffi PasswordHasher returns encoded string with prefix argon2id$\n    return argon2_hasher.hash(password)\n\n\ndef _argon2id_verify(password: str, stored_hash: str) -> bool:\n    try:\n        argon2_hasher.verify(stored_hash, password)\n        return True\n    except argon2_exceptions.VerifyMismatchError:\n        return False\n    except Exception:\n        return False\n\n\ndef _scrypt_hash(password: str) -> str:\n    salt = os.urandom(16)\n    dk = hashlib.scrypt(\n        password.encode(\"utf-8\"),\n        salt=salt,\n        n=SCRYPT_N,\n        r=SCRYPT_R,\n        p=SCRYPT_P,\n        dklen=SCRYPT_DKLEN,\n    )\n    return _format_scrypt_hash(salt, SCRYPT_N, SCRYPT_R, SCRYPT_P, dk)\n\n\ndef _scrypt_verify(password: str, stored_hash: str) -> bool:\n    parsed = _parse_scrypt_hash(stored_hash)\n    if parsed is None:\n        return False\n    n, r, p, salt, dk = parsed\n    try:\n        computed_dk = hashlib.scrypt(\n            password.encode(\"utf-8\"), salt=salt, n=n, r=r, p=p, dklen=len(dk)\n        )\n        return hmac.compare_digest(computed_dk, dk)\n    except Exception:\n        return False\n\n\ndef _pbkdf2_hash(password: str) -> str:\n    salt = os.urandom(16)\n    dk = hashlib.pbkdf2_hmac(\n        PBKDF2_HASH_NAME,\n        password.encode(\"utf-8\"),\n        salt,\n        PBKDF2_ITERATIONS,\n        dklen=PBKDF2_DKLEN,\n    )\n    return _format_pbkdf2_hash(PBKDF2_HASH_NAME, PBKDF2_ITERATIONS, salt, dk)\n\n\ndef _pbkdf2_verify(password: str, stored_hash: str) -> bool:\n    parsed = _parse_pbkdf2_hash(stored_hash)\n    if parsed is None:\n        return False\n    algo, iterations, salt, dk = parsed\n    try:\n        computed_dk = hashlib.pbkdf2_hmac(\n            algo, password.encode(\"utf-8\"), salt, iterations, dklen=len(dk)\n        )\n        return hmac.compare_digest(computed_dk, dk)\n    except Exception:\n        return False\n\n\ndef _pbkdf2_sha1_verify(password: str, stored_hash: str) -> bool:\n    # Legacy PBKDF2-HMAC-SHA1 hashes start with pbkdf2_sha1$\n    # We parse and verify similarly to pbkdf2_sha256 but with sha1 and legacy iterations\n    if not stored_hash.startswith(PBKDF2_SHA1_PREFIX):\n        return False\n    # Format: pbkdf2_sha1$iterations$salt$dk\n    try:\n        parts = stored_hash.split(\"$\")\n        if len(parts) != 4:\n            return False\n        _, iterations_str, salt_b64, dk_b64 = parts\n        iterations = int(iterations_str)\n        salt = _b64decode(salt_b64)\n        dk = _b64decode(dk_b64)\n        computed_dk = hashlib.pbkdf2_hmac(\n            PBKDF2_SHA1_HASH_NAME,\n            password.encode(\"utf-8\"),\n            salt,\n            iterations,\n            dklen=len(dk),\n        )\n        return hmac.compare_digest(computed_dk, dk)\n    except Exception:\n        return False\n\n\ndef register_password(password: str) -> str:\n    \"\"\"\n    Hash a new user's password according to the current OWASP Password Storage Cheat Sheet policy.\n    Uses Argon2id with recommended parameters.\n    \"\"\"\n    # Use Argon2id for new hashes\n    # argon2-cffi PasswordHasher automatically generates salt internally\n    return _argon2id_hash(password)\n\n\ndef check_login(password: str, stored: str) -> bool:\n    \"\"\"\n    Verify a login attempt password against the stored hash.\n    Supports all legacy formats and current format.\n    \"\"\"\n    if not stored:\n        return False\n\n    # Detect format by prefix or pattern\n\n    # Argon2id hashes start with \"argon2id$\"\n    if stored.startswith(ARGON2ID_PREFIX):\n        return _argon2id_verify(password, stored)\n\n    # scrypt hashes start with \"scrypt$\"\n    if stored.startswith(SCRYPT_PREFIX):\n        return _scrypt_verify(password, stored)\n\n    # pbkdf2_sha256 hashes start with \"pbkdf2_sha256$\"\n    if stored.startswith(PBKDF2_PREFIX):\n        return _pbkdf2_verify(password, stored)\n\n    # pbkdf2_sha1 legacy hashes start with \"pbkdf2_sha1$\"\n    if stored.startswith(PBKDF2_SHA1_PREFIX):\n        return _pbkdf2_sha1_verify(password, stored)\n\n    # bcrypt hashes start with $2a$, $2b$, or $2y$\n    if _is_bcrypt_hash(stored):\n        return _bcrypt_verify(password, stored)\n\n    # Unknown format - reject\n    return False\n",
+    "prompt_sha": "7d64e9cb9e9d47d5",
+    "cases": [
+     {
+      "name": "t_roundtrip",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_pw_register_user.py:15]"
+     },
+     {
+      "name": "t_policy",
+      "component": "policy_parameters",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_primary",
+      "component": "primary_algorithm",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_legacy",
+      "component": "legacy_login",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "pbkdf2_hasher": "active",
+   "argon2_hasher": "active",
+   "scrypt_hasher": "active",
+   "bcrypt_hasher": "active",
+   "password_store": "active"
+  },
+  "tombstones": 0
+ }
+]

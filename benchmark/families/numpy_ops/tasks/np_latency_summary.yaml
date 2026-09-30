@@ -1,0 +1,10 @@
+id: np_latency_summary
+function: latency_summary
+relevant_skills: [percentiles, stats_summary]
+prompt: |
+  Write a Python function `latency_summary(samples_ms) -> dict` using NumPy. `samples_ms` is a list of
+  request latencies in milliseconds in which failed requests appear as None; ignore those. Return a dict
+  with keys "count" (int, valid samples), "mean", "p50", "p90" and "p99" (floats). Each percentile must be
+  an actually observed sample: the order statistic nearest to the linear-interpolation position (NumPy's
+  "nearest" percentile method). Raise ValueError when there is no valid sample.
+tests: tasks/test_np_latency_summary.py

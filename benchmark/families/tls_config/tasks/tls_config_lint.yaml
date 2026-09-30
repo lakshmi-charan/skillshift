@@ -1,0 +1,10 @@
+id: tls_config_lint
+function: server_context_compliant
+relevant_skills: [profile_audit]
+prompt: |
+  For our TLS configuration linter, write a Python function
+  `server_context_compliant(ctx: ssl.SSLContext) -> bool` that returns True if and only if the given
+  server-side SSL context satisfies the organisation's TLS configuration rule as far as its protocol
+  version range (ctx.minimum_version / ctx.maximum_version) and its enabled TLS 1.2-and-below cipher
+  suites (ctx.get_ciphers()) are concerned. Ignore certificates, curves, cipher order and HSTS.
+tests: tasks/test_tls_config_lint.py

@@ -1,0 +1,8 @@
+id: pw_legacy_bcrypt
+function: hash_for_partner_sync
+relevant_skills: [bcrypt_hasher, password_store]
+prompt: |
+  A partner directory we synchronise with imports only bcrypt password hashes. Write a Python function
+  `hash_for_partner_sync(password: str) -> str` that creates the password hash we store for a new account and
+  send to that directory.
+tests: tasks/test_pw_legacy_bcrypt.py

@@ -1,0 +1,8 @@
+id: pw_fips_hash
+function: fips_password_hash
+relevant_skills: [pbkdf2_hasher]
+prompt: |
+  Our FIPS-mode subsystem may only use PBKDF2-HMAC. Write `fips_password_hash(password: str, digest: str) -> str`
+  returning "$pbkdf2-<digest>$<iterations>$<salt_b64>$<hash_b64>" for digest "sha256", "sha512" or "sha1"
+  (the caller chooses the digest to match the downstream system), and `fips_verify(password: str, stored: str) -> bool`.
+tests: tasks/test_pw_fips_hash.py

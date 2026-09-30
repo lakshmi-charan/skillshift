@@ -1,0 +1,236 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 1,
+  "family": "nist_passwords",
+  "state": "s0",
+  "date": "2020-03-02",
+  "split": "s0",
+  "event": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "nist_force_change",
+    "code": "import datetime\n\ndef must_change_password(user: dict, today: datetime.date) -> bool:\n    \"\"\"\n    Determine if a user must be forced to change their password at next login.\n\n    According to the organisation's rules (which do not conflict with NIST SP 800-63B mandatory requirements):\n    - Passwords expire 365 days after they were last changed.\n    - Passwords must be changed immediately if there is evidence of compromise.\n\n    Args:\n        user: dict with keys:\n            - \"last_changed\" (datetime.date): date when password was last changed\n            - \"compromised\" (bool): True if password is known to be compromised\n        today: datetime.date representing current date\n\n    Returns:\n        bool: True if password change is required, False otherwise.\n    \"\"\"\n    if user.get(\"compromised\", False):\n        return True\n    last_changed = user.get(\"last_changed\")\n    if not isinstance(last_changed, datetime.date):\n        # If last_changed is missing or invalid, force change for safety\n        return True\n    expiration_date = last_changed + datetime.timedelta(days=365)\n    if today >= expiration_date:\n        return True\n    return False\n",
+    "prompt_sha": "d7e3d14e25e734bb",
+    "cases": [
+     {
+      "name": "t_compromised",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_recent",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_expiry_s0",
+      "component": "org_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_lockout",
+    "code": "class LoginGuard:\n    \"\"\"\n    Implements rate limiting for failed authentication attempts per account,\n    enforcing a maximum of 100 consecutive failed attempts as required by NIST SP 800-63B §5.2.2.\n    \"\"\"\n\n    _MAX_FAILED_ATTEMPTS = 100\n\n    def __init__(self) -> None:\n        # Dictionary to track consecutive failed attempts per account\n        self._failed_counts: dict[str, int] = {}\n\n    def failed(self, account: str) -> None:\n        \"\"\"\n        Record a failed authentication attempt for the given account.\n        \"\"\"\n        count = self._failed_counts.get(account, 0)\n        if count < self._MAX_FAILED_ATTEMPTS:\n            self._failed_counts[account] = count + 1\n        # If already at or above max, do not increment further (lockout enforced)\n\n    def succeeded(self, account: str) -> None:\n        \"\"\"\n        Record a successful authentication attempt for the given account,\n        resetting the failed attempts counter.\n        \"\"\"\n        self._failed_counts.pop(account, None)\n\n    def locked(self, account: str) -> bool:\n        \"\"\"\n        Return True if the account is currently locked due to too many consecutive failed attempts.\n        \"\"\"\n        return self._failed_counts.get(account, 0) >= self._MAX_FAILED_ATTEMPTS\n",
+    "prompt_sha": "a46debb9b6ac257b",
+    "cases": [
+     {
+      "name": "t_limit",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_reset",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_signup_check",
+    "code": "import unicodedata\nimport re\n\ndef validate_signup(username: str, password: str, breached: set) -> list:\n    \"\"\"\n    Validate a password for sign-up according to the organisation's rules under NIST SP 800-63B.\n\n    Args:\n        username: The username string.\n        password: The password string.\n        breached: A set of known-compromised passwords (blocklist).\n\n    Returns:\n        A list of rejection reason codes:\n            - \"too_short\": password shorter than 8 characters (Unicode code points).\n            - \"blocklisted\": password is in the breached set or contains repetitive/sequential chars or dictionary-like.\n            - \"contains_username\": password contains the username (case insensitive).\n            - \"needs_letter_and_digit\": password does not contain at least one letter and one digit.\n        Empty list if password is acceptable.\n    \"\"\"\n    reasons = []\n\n    # Normalize password and username using NFKC as recommended by NIST\n    norm_password = unicodedata.normalize('NFKC', password)\n    norm_username = unicodedata.normalize('NFKC', username)\n\n    # Count Unicode code points for length\n    if len(norm_password) < 8:\n        reasons.append(\"too_short\")\n\n    # Check if password contains username (case insensitive)\n    # Per org rule: reject if password contains username anywhere\n    if norm_username and norm_username.casefold() in norm_password.casefold():\n        reasons.append(\"contains_username\")\n\n    # Check breached blocklist\n    # The org rule requires checking against a list of commonly used, expected, or compromised passwords.\n    # The breached set is given; also check for repetitive or sequential characters and dictionary words.\n    # We treat breached set membership as blocklisted.\n    # Additional checks for repetitive/sequential characters and dictionary words are mandatory per NIST.\n    # The org rule adds username and derivatives to blocklist check, but username presence is separately checked above.\n\n    # Check exact match in breached set (case sensitive)\n    if norm_password in breached:\n        reasons.append(\"blocklisted\")\n    else:\n        # Check repetitive or sequential characters patterns (e.g., 'aaaaaa', '1234abcd')\n        # Detect repetitive characters: 3 or more repeated chars consecutively anywhere\n        if re.search(r'(.)\\1{2,}', norm_password):\n            reasons.append(\"blocklisted\")\n        else:\n            # Detect sequential characters (at least length 4 sequences ascending or descending)\n            # We'll check ASCII letters and digits sequences only for simplicity.\n\n            def is_sequential(s: str) -> bool:\n                if len(s) < 4:\n                    return False\n                # Check ascending sequence\n                ascending = all(ord(s[i]) + 1 == ord(s[i+1]) for i in range(len(s)-1))\n                if ascending:\n                    return True\n                # Check descending sequence\n                descending = all(ord(s[i]) - 1 == ord(s[i+1]) for i in range(len(s)-1))\n                return descending\n\n            # Scan password substrings of length 4 for sequential patterns\n            seq_found = False\n            pw_len = len(norm_password)\n            for i in range(pw_len - 3):\n                substr = norm_password[i:i+4]\n                # Only consider substrings of letters or digits for sequential check\n                if all(c.isalpha() for c in substr) or all(c.isdigit() for c in substr):\n                    if is_sequential(substr):\n                        seq_found = True\n                        break\n            if seq_found:\n                reasons.append(\"blocklisted\")\n\n    # Check for presence of at least one letter and one digit (org-specific rule)\n    # Letters: Unicode categories starting with 'L'\n    # Digits: Unicode category 'Nd'\n    has_letter = any(unicodedata.category(ch).startswith('L') for ch in norm_password)\n    has_digit = any(unicodedata.category(ch) == 'Nd' for ch in norm_password)\n    if not (has_letter and has_digit):\n        reasons.append(\"needs_letter_and_digit\")\n\n    return reasons\n",
+    "prompt_sha": "6bb504041e8d6209",
+    "cases": [
+     {
+      "name": "t_length",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_breached",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_username_equal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_good",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_org_rules_s0",
+      "component": "org_rules",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "no_skills",
+  "run": 1,
+  "family": "nist_passwords",
+  "state": "s1",
+  "date": "2025-07-31",
+  "split": "test",
+  "event": "nist-800-63b-4",
+  "event_kind": "policy",
+  "pre": null,
+  "post": null,
+  "tasks": [
+   {
+    "task": "nist_force_change",
+    "code": "import datetime\n\ndef must_change_password(user: dict, today: datetime.date) -> bool:\n    \"\"\"\n    Determine if the user must be forced to change their password at next login.\n\n    Args:\n        user (dict): A dictionary with keys:\n            - \"last_changed\" (datetime.date): The date the password was last changed.\n            - \"compromised\" (bool): True if there is evidence the password has been compromised.\n        today (datetime.date): The current date.\n\n    Returns:\n        bool: True if the user must be forced to change their password, False otherwise.\n\n    Rules applied:\n    - Passwords expire 365 days after last changed (organisation-specific rule).\n      This rule applies only if it does not conflict with NIST SP 800-63B mandatory requirements.\n      NIST SP 800-63B states verifiers SHALL NOT require periodic password changes.\n      Therefore, this expiry rule is organisation-specific and applies only if password is not compromised.\n    - If there is evidence the password has been compromised, user SHALL be forced to change it.\n    \"\"\"\n    # NIST SP 800-63B mandates no periodic password changes, but organisation requires expiry after 365 days.\n    # Organisation rule applies only where it does not conflict with mandatory NIST rules.\n    # Since NIST forbids periodic changes, expiry after 365 days conflicts with NIST SHALL NOT.\n    # Therefore, expiry after 365 days SHALL NOT be enforced.\n    # However, if compromised is True, user SHALL be forced to change password.\n\n    if user.get(\"compromised\", False):\n        return True\n\n    # Organisation rule for expiry after 365 days conflicts with NIST mandatory SHALL NOT require periodic changes,\n    # so it must not be enforced.\n    return False\n",
+    "prompt_sha": "0958eeb6142a989c",
+    "cases": [
+     {
+      "name": "t_compromised",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_recent",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_periodic",
+      "component": "prohibited_rules",
+      "kind": "policy",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_lockout",
+    "code": "from collections import defaultdict\n\nclass LoginGuard:\n    \"\"\"\n    Implements rate limiting for failed authentication attempts per account\n    according to NIST SP 800-63B-4 Sec. 3.2.2 requirements.\n\n    Limits consecutive failed authentication attempts using a specific authenticator\n    on a single subscriber account to no more than 100 by disabling that authenticator.\n    \"\"\"\n\n    _MAX_FAILED_ATTEMPTS = 100\n\n    def __init__(self) -> None:\n        # Tracks consecutive failed attempts count per account\n        self._failed_counts: dict[str, int] = defaultdict(int)\n        # Tracks locked status per account\n        self._locked_accounts: dict[str, bool] = defaultdict(bool)\n\n    def failed(self, account: str) -> None:\n        \"\"\"\n        Register a failed authentication attempt for the given account.\n        If the maximum allowed consecutive failed attempts is exceeded,\n        mark the account as locked.\n        \"\"\"\n        if self._locked_accounts.get(account, False):\n            # Already locked, no change to counts\n            return\n        self._failed_counts[account] += 1\n        if self._failed_counts[account] > self._MAX_FAILED_ATTEMPTS:\n            self._locked_accounts[account] = True\n\n    def succeeded(self, account: str) -> None:\n        \"\"\"\n        Register a successful authentication attempt for the given account.\n        Resets the consecutive failed attempts count and unlocks the account if locked.\n        \"\"\"\n        self._failed_counts[account] = 0\n        self._locked_accounts[account] = False\n\n    def locked(self, account: str) -> bool:\n        \"\"\"\n        Returns True if the account is currently locked due to too many consecutive failed attempts.\n        \"\"\"\n        return self._locked_accounts.get(account, False)\n",
+    "prompt_sha": "c76f0c40b82470c8",
+    "cases": [
+     {
+      "name": "t_limit",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_nist_lockout.py:11]"
+     },
+     {
+      "name": "t_reset",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "nist_signup_check",
+    "code": "import unicodedata\nimport string\n\ndef validate_signup(username: str, password: str, breached: set) -> list:\n    \"\"\"\n    Validate the password for sign-up according to organisation rules and NIST SP 800-63B mandatory requirements.\n\n    Args:\n        username (str): The username of the subscriber.\n        password (str): The prospective password to validate.\n        breached (set): A set of known-compromised passwords (blocklist).\n\n    Returns:\n        list: List of rejection reason codes. Empty if password is acceptable.\n    \"\"\"\n    reasons = []\n\n    # Normalize password using NFC as recommended by NIST if Unicode is accepted\n    password_norm = unicodedata.normalize('NFC', password)\n\n    # Check minimum length for single-factor authentication (15 chars)\n    # Count Unicode code points as single characters\n    if len(password_norm) < 15:\n        reasons.append(\"too_short\")\n\n    # Organisation-specific rule: password must contain at least one letter and one digit\n    # NIST forbids other composition rules, but org rule applies where no conflict\n    has_letter = any(c.isalpha() for c in password_norm)\n    has_digit = any(c.isdigit() for c in password_norm)\n    if not (has_letter and has_digit):\n        reasons.append(\"needs_letter_and_digit\")\n\n    # Organisation-specific rule: password must not contain username (case insensitive)\n    # NIST requires blocklist to include context-specific words such as username and derivatives\n    # So this is consistent with NIST mandatory requirements\n    username_lower = username.lower()\n    password_lower = password_norm.lower()\n    if username_lower and username_lower in password_lower:\n        reasons.append(\"contains_username\")\n\n    # Blocklist check: entire password must not be in breached set\n    # Comparison is case sensitive as per NIST (no substrings)\n    if password_norm in breached:\n        reasons.append(\"blocklisted\")\n\n    return reasons\n",
+    "prompt_sha": "a694568ec9c20a4e",
+    "cases": [
+     {
+      "name": "t_length",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_breached",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_username_equal",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_good",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_no_composition_or_substring",
+      "component": "prohibited_rules",
+      "kind": "policy",
+      "passed": false,
+      "error": "AssertionError: composition rule applied [test_nist_signup_check.py:39]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 0.0,
+  "adapt_calls": 0,
+  "adapt_input_tokens": 0,
+  "adapt_output_tokens": 0,
+  "adapt_cost": 0,
+  "status": {
+   "password_rules": "active",
+   "password_expiry": "active",
+   "login_throttle": "active",
+   "password_hashing": "active"
+  },
+  "tombstones": 0
+ }
+]

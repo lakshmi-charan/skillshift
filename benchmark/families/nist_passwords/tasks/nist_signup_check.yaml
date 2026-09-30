@@ -1,0 +1,9 @@
+id: nist_signup_check
+function: validate_signup
+relevant_skills: [password_rules]
+prompt: |
+  Write a Python function `validate_signup(username: str, password: str, breached: set) -> list` for our
+  sign-up form. `breached` is a set of known-compromised passwords. Return the list of reasons the password
+  must be rejected, using these codes: "too_short", "blocklisted", "contains_username",
+  "needs_letter_and_digit". Return an empty list if the password is acceptable under our password rules.
+tests: tasks/test_nist_signup_check.py

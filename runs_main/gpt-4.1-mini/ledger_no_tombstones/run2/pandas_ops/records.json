@@ -1,0 +1,3018 @@
+[
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_no_tombstones",
+  "run": 2,
+  "family": "pandas_ops",
+  "state": "s0",
+  "date": "2023-01-19",
+  "split": "s0",
+  "event": null,
+  "post": {
+   "ledger": {
+    "cases": [
+     {
+      "name": "h_add_to_existing",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_to_empty",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_chain",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_empty_list",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_into_new",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance_empty",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running_empty",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "monthly_report": {
+    "cases": [
+     {
+      "name": "h_monthly",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly_leap_and_cols",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly_unsorted",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_quarterly",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_quarterly_single",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_yearly",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_yearly_gap",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily_timestamps",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels_cols",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "cleaning": {
+    "cases": [
+     {
+      "name": "h_strip",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_numbers_untouched",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_inner_space",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_mixed_types",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_none",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls_all_missing",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_keep_partial",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers_values_kept",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "flagging": {
+    "cases": [
+     {
+      "name": "h_flag",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_custom_col_boundary",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_none",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_int",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_other_cols",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "mark_missing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "flag_count",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_records": {
+    "cases": [
+     {
+      "name": "h_records",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_single",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_generated",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines_missing_key",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json_empty",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten_flat",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "grouping": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_int",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_ignores_text",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_numeric_only_frame",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_two_text_cols",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top_one",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_share",
+      "component": "share_of_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot_sums",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pd_clean_export",
+    "code": "import pandas as pd\nfrom cleaning import normalise_headers, strip_whitespace, drop_empty_rows\n\n\ndef clean_export(csv_text: str) -> pd.DataFrame:\n    \"\"\"\n    Parse CSV text with header row, return a tidy DataFrame:\n    - column names lower-cased and trimmed with runs of non-alphanumeric replaced by '_'\n    - surrounding whitespace removed from every string cell\n    - rows whose values are all missing dropped\n    - index renumbered from 0\n    Numeric columns remain numeric.\n    \"\"\"\n    df = pd.read_csv(pd.io.common.StringIO(csv_text))\n    df = normalise_headers(df)\n    df = strip_whitespace(df)\n    df = drop_empty_rows(df)\n    return df\n",
+    "prompt_sha": "ddd0bd4bff32061a",
+    "cases": [
+     {
+      "name": "t_clean",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_numeric",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_inner_spaces_kept",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_flag_readings",
+    "code": "import pandas as pd\n\ndef flag_readings(df: pd.DataFrame, column: str, low: float, high: float) -> pd.DataFrame:\n    \"\"\"Return a copy of df with a 'status' column:\n    'low' where df[column] < low,\n    'high' where df[column] > high,\n    'ok' otherwise.\n    The input df is not modified.\n    \"\"\"\n    out = df.copy()\n    conditions = [\n        out[column] < low,\n        out[column] > high\n    ]\n    choices = [\"low\", \"high\"]\n    out[\"status\"] = pd.Series(pd.NA, index=out.index, dtype=\"string\")\n    out[\"status\"] = pd.Series(pd.Categorical(pd.np.select(conditions, choices, default=\"ok\"), categories=[\"low\", \"ok\", \"high\"], ordered=False), index=out.index)\n    return out\n",
+    "prompt_sha": "15a9d4b35002691e",
+    "cases": [
+     {
+      "name": "t_status",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_out",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_ledger_append",
+    "code": "import pandas as pd\nimport ledger\n\n\ndef append_transactions(ledger: pd.DataFrame, transactions: list) -> pd.DataFrame:\n    \"\"\"\n    Return a new DataFrame with transactions appended after the existing ledger rows,\n    index renumbered 0..n-1, and a float 'balance' column holding the running total of 'amount'.\n    The input ledger is not modified.\n    \"\"\"\n    # Append transactions to ledger using ledger.add_entries (handles memo default)\n    new_ledger = ledger.add_entries(ledger, transactions)\n    # Compute running balance over the whole result\n    new_ledger = new_ledger.reset_index(drop=True)\n    new_ledger[\"balance\"] = pd.Series(ledger.running_balance(new_ledger))\n    return new_ledger\n",
+    "prompt_sha": "5f99a06be1975066",
+    "cases": [
+     {
+      "name": "t_append",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'add_entries' [generic.py:5902]"
+     },
+     {
+      "name": "t_empty_ledger",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'add_entries' [generic.py:5902]"
+     },
+     {
+      "name": "t_existing_balance_recomputed",
+      "component": "functional",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'add_entries' [generic.py:5902]"
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_monthly_revenue",
+    "code": "import pandas as pd\n\n\ndef monthly_revenue(json_text: str) -> dict:\n    \"\"\"\n    Given a JSON array of objects with keys \"date\" (\"YYYY-MM-DD\") and \"amount\" (a number),\n    return a dict mapping \"YYYY-MM\" to the float total of amounts for every calendar month\n    from the earliest to the latest month present, including months with no records (total 0.0),\n    with keys in chronological order.\n    \"\"\"\n    df = pd.read_json(json_text, orient=\"records\")\n    df[\"date\"] = pd.to_datetime(df[\"date\"])\n    s = df.set_index(\"date\")[\"amount\"].astype(float)\n    # Resample by month end, summing amounts, filling missing months with 0\n    monthly = s.resample(\"M\").sum().reindex(\n        pd.date_range(start=s.index.min().to_period(\"M\").to_timestamp(\"M\"),\n                      end=s.index.max().to_period(\"M\").to_timestamp(\"M\"),\n                      freq=\"M\"),\n        fill_value=0.0\n    )\n    # Map index to \"YYYY-MM\" strings and convert to dict with chronological order preserved\n    return {dt.strftime(\"%Y-%m\"): float(val) for dt, val in monthly.items()}\n",
+    "prompt_sha": "8c7e34ae207359aa",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_unsorted_year_boundary",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_single",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ]
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_no_tombstones",
+  "run": 2,
+  "family": "pandas_ops",
+  "state": "s1",
+  "date": "2023-04-03",
+  "split": "dev",
+  "event": "pandas-2.0",
+  "event_kind": "tool",
+  "pre": {
+   "ledger": {
+    "cases": [
+     {
+      "name": "h_add_to_existing",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'append' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_add_to_empty",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'append' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_chain",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'append' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_many",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'append' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_many_empty_list",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_into_new",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'append' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_balance",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance_empty",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running_empty",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "monthly_report": {
+    "cases": [
+     {
+      "name": "h_monthly",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly_leap_and_cols",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly_unsorted",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_quarterly",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_quarterly_single",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_yearly",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_yearly_gap",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily_timestamps",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels_cols",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "cleaning": {
+    "cases": [
+     {
+      "name": "h_strip",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_numbers_untouched",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_inner_space",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_mixed_types",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_none",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'iteritems' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_nulls_all_missing",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'iteritems' [generic.py:5989]",
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_keep_partial",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers_values_kept",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "flagging": {
+    "cases": [
+     {
+      "name": "h_flag",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_custom_col_boundary",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_none",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_int",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_other_cols",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "mark_missing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "flag_count",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_records": {
+    "cases": [
+     {
+      "name": "h_records",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_single",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_generated",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines_missing_key",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json_empty",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten_flat",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "grouping": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_int",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_ignores_text",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Could not convert dee to numeric [nanops.py:1699]",
+      "missing": null
+     },
+     {
+      "name": "h_means_numeric_only_frame",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_two_text_cols",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": false,
+      "error": "TypeError: Could not convert x to numeric [nanops.py:1699]",
+      "missing": null
+     },
+     {
+      "name": "h_top",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top_one",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_share",
+      "component": "share_of_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot_sums",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "ledger": {
+    "cases": [
+     {
+      "name": "h_add_to_existing",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_to_empty",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_chain",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_empty_list",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_into_new",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance_empty",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running_empty",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "monthly_report": {
+    "cases": [
+     {
+      "name": "h_monthly",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly_leap_and_cols",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_monthly_unsorted",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_quarterly",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_quarterly_single",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_yearly",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_yearly_gap",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily_timestamps",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels_cols",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "cleaning": {
+    "cases": [
+     {
+      "name": "h_strip",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_numbers_untouched",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_inner_space",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_mixed_types",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_none",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls_all_missing",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_keep_partial",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers_values_kept",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "flagging": {
+    "cases": [
+     {
+      "name": "h_flag",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_custom_col_boundary",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_none",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_int",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_other_cols",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "mark_missing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "flag_count",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_records": {
+    "cases": [
+     {
+      "name": "h_records",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_single",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_generated",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines_missing_key",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json_empty",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten_flat",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "grouping": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_int",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_ignores_text",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_numeric_only_frame",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_two_text_cols",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top_one",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_share",
+      "component": "share_of_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot_sums",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pd_clean_export",
+    "code": "import pandas as pd\nimport re\n\n\ndef clean_export(csv_text: str) -> pd.DataFrame:\n    \"\"\"Parse CSV text and return a tidy DataFrame with:\n    - normalized column names (lower-case, trimmed, non-alphanumerics replaced by '_')\n    - surrounding whitespace removed from string cells\n    - rows with all missing values dropped\n    - index renumbered from 0\n    Numeric columns remain numeric.\n    \"\"\"\n    # Parse CSV text\n    df = pd.read_csv(pd.io.common.StringIO(csv_text))\n\n    # Normalize headers\n    df = df.rename(columns=lambda c: re.sub(r\"[^0-9a-z]+\", \"_\", str(c).strip().lower()).strip(\"_\"))\n\n    # Strip whitespace from string cells only (non-strings and missing values unchanged)\n    df = df.applymap(lambda v: v.strip() if isinstance(v, str) else v)\n\n    # Drop rows where all values are missing and reset index\n    df = df.dropna(how=\"all\").reset_index(drop=True)\n\n    return df\n",
+    "prompt_sha": "27d712e466fb87c8",
+    "cases": [
+     {
+      "name": "t_clean",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_numeric",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_inner_spaces_kept",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_flag_readings",
+    "code": "import pandas as pd\n\ndef flag_readings(df: pd.DataFrame, column: str, low: float, high: float) -> pd.DataFrame:\n    \"\"\"Return a copy of df with a string column 'status' added:\n    'low' where df[column] < low,\n    'high' where df[column] > high,\n    'ok' otherwise.\n    The input DataFrame is not modified.\n    \"\"\"\n    out = df.copy()\n    conditions = [\n        out[column] < low,\n        out[column] > high\n    ]\n    choices = [\"low\", \"high\"]\n    out[\"status\"] = pd.Series(\"ok\", index=out.index)\n    out.loc[conditions[0], \"status\"] = choices[0]\n    out.loc[conditions[1], \"status\"] = choices[1]\n    return out\n",
+    "prompt_sha": "57db7889e07e4eba",
+    "cases": [
+     {
+      "name": "t_status",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_out",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_ledger_append",
+    "code": "import pandas as pd\nfrom ledger import running_balance\n\n\ndef append_transactions(ledger: pd.DataFrame, transactions: list) -> pd.DataFrame:\n    \"\"\"\n    Return a new DataFrame with transactions appended to ledger, index renumbered 0..n-1,\n    and a \"balance\" column holding the running total of \"amount\" over the whole result.\n    The input ledger is not modified.\n    \"\"\"\n    # Create DataFrame from transactions list\n    if transactions:\n        new_rows = pd.DataFrame(transactions)\n    else:\n        new_rows = pd.DataFrame(columns=[\"date\", \"account\", \"amount\"])\n\n    # Concatenate ledger and new rows\n    combined = pd.concat([ledger, new_rows], ignore_index=True)\n\n    # Compute running balance of \"amount\" column as float list\n    combined[\"balance\"] = running_balance(combined)\n\n    return combined\n",
+    "prompt_sha": "09caef76e5777e0e",
+    "cases": [
+     {
+      "name": "t_append",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty_ledger",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_existing_balance_recomputed",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_monthly_revenue",
+    "code": "import pandas as pd\nimport json\n\n\ndef monthly_revenue(json_text: str) -> dict:\n    \"\"\"\n    Given a JSON array of objects with keys \"date\" (YYYY-MM-DD) and \"amount\" (number),\n    return a dict mapping \"YYYY-MM\" to the float total of amounts for every calendar month\n    from the earliest to the latest month present, including months with no records (0.0),\n    with keys in chronological order.\n    \"\"\"\n    # Parse JSON text into DataFrame\n    df = pd.read_json(json_text, orient=\"records\")\n\n    # Convert date column to datetime\n    df[\"date\"] = pd.to_datetime(df[\"date\"])\n\n    # Set date as index\n    df = df.set_index(\"date\")\n\n    # Resample by calendar month end, summing amounts\n    monthly_sums = df[\"amount\"].resample(\"M\").sum()\n\n    # Create full range of months from earliest to latest month\n    full_range = pd.date_range(start=monthly_sums.index.min(), end=monthly_sums.index.max(), freq=\"M\")\n\n    # Reindex to full range, filling missing months with 0.0\n    monthly_sums = monthly_sums.reindex(full_range, fill_value=0.0)\n\n    # Format index as \"YYYY-MM\" strings\n    monthly_sums.index = monthly_sums.index.to_period(\"M\").astype(str)\n\n    # Convert to dict with keys in chronological order\n    return monthly_sums.to_dict()\n",
+    "prompt_sha": "8062ee2fc06a6f84",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_unsorted_year_boundary",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_single",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 29.63,
+  "adapt_calls": 4,
+  "adapt_input_tokens": 17074,
+  "adapt_output_tokens": 3081,
+  "adapt_cost": 0.0094552,
+  "status": {
+   "ledger": "active",
+   "monthly_report": "active",
+   "cleaning": "active",
+   "flagging": "active",
+   "json_records": "active",
+   "grouping": "active"
+  },
+  "tombstones": 0
+ },
+ {
+  "model": "gpt-4.1-mini",
+  "method": "ledger_no_tombstones",
+  "run": 2,
+  "family": "pandas_ops",
+  "state": "s2",
+  "date": "2026-01-21",
+  "split": "test",
+  "event": "pandas-3.0",
+  "event_kind": "tool",
+  "pre": {
+   "ledger": {
+    "cases": [
+     {
+      "name": "h_add_to_existing",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_to_empty",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_chain",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_empty_list",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_into_new",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance_empty",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running_empty",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "monthly_report": {
+    "cases": [
+     {
+      "name": "h_monthly",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: M. Failed to parse with error message: ValueError(\"'M' is no longer supported for offsets. Please use 'ME' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_monthly_leap_and_cols",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: M. Failed to parse with error message: ValueError(\"'M' is no longer supported for offsets. Please use 'ME' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_monthly_unsorted",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: M. Failed to parse with error message: ValueError(\"'M' is no longer supported for offsets. Please use 'ME' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_quarterly",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: Q. Failed to parse with error message: ValueError(\"'Q' is no longer supported for offsets. Please use 'QE' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_quarterly_single",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: Q. Failed to parse with error message: ValueError(\"'Q' is no longer supported for offsets. Please use 'QE' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_yearly",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: Y. Failed to parse with error message: ValueError(\"'Y' is no longer supported for offsets. Please use 'YE' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_yearly_gap",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "ValueError: Invalid frequency: Y. Failed to parse with error message: ValueError(\"'Y' is no longer supported for offsets. Please use 'YE' instead.\") [offsets.pyx:6162]",
+      "missing": null
+     },
+     {
+      "name": "h_daily",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_daily_timestamps",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_labels_cols",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "cleaning": {
+    "cases": [
+     {
+      "name": "h_strip",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'applymap' [generic.py:6194]",
+      "missing": null
+     },
+     {
+      "name": "h_strip_numbers_untouched",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'applymap' [generic.py:6194]",
+      "missing": null
+     },
+     {
+      "name": "h_strip_inner_space",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": false,
+      "error": "AttributeError: 'DataFrame' object has no attribute 'applymap' [generic.py:6194]",
+      "missing": null
+     },
+     {
+      "name": "h_text",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_cleaning.py:41]",
+      "missing": null
+     },
+     {
+      "name": "h_text_mixed_types",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_cleaning.py:48]",
+      "missing": null
+     },
+     {
+      "name": "h_text_none",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls_all_missing",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_keep_partial",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers_values_kept",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "flagging": {
+    "cases": [
+     {
+      "name": "h_flag",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_flagging.py:15]",
+      "missing": null
+     },
+     {
+      "name": "h_flag_custom_col_boundary",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_flagging.py:22]",
+      "missing": null
+     },
+     {
+      "name": "h_flag_none",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_flagging.py:36]",
+      "missing": null
+     },
+     {
+      "name": "h_cap_int",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_flagging.py:43]",
+      "missing": null
+     },
+     {
+      "name": "h_cap_other_cols",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": false,
+      "error": "AssertionError:  [test_flagging.py:49]",
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "mark_missing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "flag_count",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_records": {
+    "cases": [
+     {
+      "name": "h_records",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": false,
+      "error": "FileNotFoundError: File [{\"id\": 1, \"name\": \"ada\", \"score\": 9.5}, {\"id\": 2, \"name\": \"bob\", \"score\": 7.0}, {\"id\": 3, \"name\": \"cy\", \"score\": null}] does not exist [_json.py:957]",
+      "missing": null
+     },
+     {
+      "name": "h_records_single",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": false,
+      "error": "FileNotFoundError: File [{\"sku\": \"X-1\", \"qty\": 4}] does not exist [_json.py:957]",
+      "missing": null
+     },
+     {
+      "name": "h_records_generated",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": false,
+      "error": "FileNotFoundError: File [{\"k\": 0, \"v\": 0.0}, {\"k\": 1, \"v\": 1.5}, {\"k\": 2, \"v\": 3.0}, {\"k\": 3, \"v\": 4.5}, {\"k\": 4, \"v\": 6.0}, {\"k\": 5, \"v\": 7.5}, {\"k\": 6, \"v\": 9.0}, {\"k\": 7, \"v\": 10.5}, {\"k\": 8, \"v\": 12.0}, {\"k\": 9, \"v\": 13.5}, {\"k\": 10, \"v\": 15.0}, {\"k\": 11, \"v\": 16.5}, {\"k\": 12, \"v\": 18.0}, {\"k\": 13, \"v\": 19.5}, {\"k [_json.py:957]",
+      "missing": null
+     },
+     {
+      "name": "h_lines",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": false,
+      "error": "FileNotFoundError: File {\"id\": 1, \"tag\": \"a\"}\n{\"id\": 2, \"tag\": \"b\"}\n{\"id\": 3, \"tag\": \"c\"}\n does not exist [_json.py:957]",
+      "missing": null
+     },
+     {
+      "name": "h_lines_missing_key",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": false,
+      "error": "FileNotFoundError: File {\"a\": 1, \"b\": 2}\n{\"a\": 3}\n does not exist [_json.py:957]",
+      "missing": null
+     },
+     {
+      "name": "h_to_json",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json_empty",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten_flat",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "grouping": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_int",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_ignores_text",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_numeric_only_frame",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_two_text_cols",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top_one",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_share",
+      "component": "share_of_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot_sums",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "post": {
+   "ledger": {
+    "cases": [
+     {
+      "name": "h_add_to_existing",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_add_to_empty",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_chain",
+      "component": "add_entry",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_empty_list",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_many_into_new",
+      "component": "add_entries",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_balance_empty",
+      "component": "balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_running_empty",
+      "component": "running_balance",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "monthly_report": {
+    "cases": [
+     {
+      "name": "h_monthly",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function monthly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_monthly_leap_and_cols",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function monthly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_monthly_unsorted",
+      "component": "monthly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function monthly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_quarterly",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function quarterly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_quarterly_single",
+      "component": "quarterly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function quarterly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_yearly",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function yearly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_yearly_gap",
+      "component": "yearly_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function yearly_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_daily",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": false,
+      "error": "function daily_average is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_daily_timestamps",
+      "component": "daily_average",
+      "kind": "valid",
+      "passed": false,
+      "error": "function daily_average is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_labels",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function month_label_totals is absent from the library",
+      "missing": true
+     },
+     {
+      "name": "h_labels_cols",
+      "component": "month_label_totals",
+      "kind": "valid",
+      "passed": false,
+      "error": "function month_label_totals is absent from the library",
+      "missing": true
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "cleaning": {
+    "cases": [
+     {
+      "name": "h_strip",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_numbers_untouched",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_strip_inner_space",
+      "component": "strip_whitespace",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_mixed_types",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_text_none",
+      "component": "text_columns",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_nulls_all_missing",
+      "component": "null_counts",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_drop_keep_partial",
+      "component": "drop_empty_rows",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_headers_values_kept",
+      "component": "normalise_headers",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "flagging": {
+    "cases": [
+     {
+      "name": "h_flag",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_custom_col_boundary",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flag_none",
+      "component": "flag_above",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_int",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_cap_other_cols",
+      "component": "cap_values",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_missing",
+      "component": "mark_missing",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_count",
+      "component": "flag_count",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "json_records": {
+    "cases": [
+     {
+      "name": "h_records",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_single",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_records_generated",
+      "component": "records_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_lines_missing_key",
+      "component": "lines_to_frame",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_to_json_empty",
+      "component": "frame_to_records",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_flatten_flat",
+      "component": "flatten_nested",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   "grouping": {
+    "cases": [
+     {
+      "name": "h_totals",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_totals_int",
+      "component": "group_totals",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_ignores_text",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_numeric_only_frame",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_means_two_text_cols",
+      "component": "group_means",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_top_one",
+      "component": "top_n_per_group",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_share",
+      "component": "share_of_total",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     },
+     {
+      "name": "h_pivot_sums",
+      "component": "pivot_summary",
+      "kind": "valid",
+      "passed": true,
+      "error": null,
+      "missing": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  },
+  "tasks": [
+   {
+    "task": "pd_clean_export",
+    "code": "import pandas as pd\nfrom cleaning import normalise_headers, strip_whitespace, drop_empty_rows\n\n\ndef clean_export(csv_text: str) -> pd.DataFrame:\n    \"\"\"Parse CSV text and return a tidy DataFrame with normalized headers, stripped strings,\n    dropped empty rows, and reset index. Numeric columns remain numeric.\"\"\"\n    df = pd.read_csv(pd.io.common.StringIO(csv_text))\n    df = normalise_headers(df)\n    df = strip_whitespace(df)\n    df = drop_empty_rows(df)\n    return df\n",
+    "prompt_sha": "b63994ee313ee2e8",
+    "cases": [
+     {
+      "name": "t_clean",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_numeric",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_inner_spaces_kept",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_flag_readings",
+    "code": "import pandas as pd\n\ndef flag_readings(df: pd.DataFrame, column: str, low: float, high: float) -> pd.DataFrame:\n    \"\"\"Return a copy of df with a string 'status' column:\n    'low' where df[column] < low,\n    'high' where df[column] > high,\n    'ok' otherwise.\n    The input df is not modified.\n    \"\"\"\n    out = df.copy()\n    # Initialize all as 'ok'\n    out[\"status\"] = \"ok\"\n    # Assign 'low' where column < low\n    out.loc[out[column] < low, \"status\"] = \"low\"\n    # Assign 'high' where column > high\n    out.loc[out[column] > high, \"status\"] = \"high\"\n    return out\n",
+    "prompt_sha": "ab9be0a47113887c",
+    "cases": [
+     {
+      "name": "t_status",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_ok",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_all_out",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_ledger_append",
+    "code": "import pandas as pd\nimport ledger\n\n\ndef append_transactions(ledger_df: pd.DataFrame, transactions: list) -> pd.DataFrame:\n    \"\"\"\n    Return a new DataFrame with `transactions` appended to `ledger_df` (index renumbered 0..n-1)\n    and a float \"balance\" column holding the running total of \"amount\" over the whole result.\n    The input ledger_df is not modified.\n    \"\"\"\n    # Append transactions using ledger.add_entries to ensure correct handling of memo and dtypes\n    combined = ledger.add_entries(ledger_df, transactions)\n    # Calculate running balance of the \"amount\" column\n    combined = combined.reset_index(drop=True)\n    combined[\"balance\"] = combined[\"amount\"].astype(float).cumsum()\n    return combined\n",
+    "prompt_sha": "25d31a7f4c3f1d88",
+    "cases": [
+     {
+      "name": "t_append",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_empty_ledger",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_existing_balance_recomputed",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   },
+   {
+    "task": "pd_monthly_revenue",
+    "code": "import pandas as pd\nfrom datetime import datetime\nfrom pandas.tseries.offsets import MonthEnd\n\ndef monthly_revenue(json_text: str) -> dict:\n    \"\"\"\n    Given a JSON array of objects with keys \"date\" (\"YYYY-MM-DD\") and \"amount\" (number),\n    return a dict mapping \"YYYY-MM\" to the float total of amounts for every calendar month\n    from the earliest to the latest month present, including months with no records (total 0.0),\n    with keys in chronological order.\n    \"\"\"\n    # Parse JSON array to DataFrame\n    df = pd.read_json(pd.io.common.StringIO(json_text), orient=\"records\")\n    if df.empty:\n        return {}\n\n    # Convert date column to datetime\n    df[\"date\"] = pd.to_datetime(df[\"date\"], format=\"%Y-%m-%d\", errors=\"coerce\")\n    # Drop rows with invalid dates\n    df = df.dropna(subset=[\"date\"])\n    if df.empty:\n        return {}\n\n    # Extract year-month string \"YYYY-MM\"\n    df[\"year_month\"] = df[\"date\"].dt.to_period(\"M\").astype(str)\n\n    # Determine full range of months from earliest to latest\n    min_month = df[\"date\"].min().to_period(\"M\").to_timestamp()\n    max_month = df[\"date\"].max().to_period(\"M\").to_timestamp()\n\n    # Create all months in range inclusive\n    all_months = pd.period_range(min_month, max_month, freq=\"M\").astype(str)\n\n    # Group by year_month and sum amounts\n    sums = df.groupby(\"year_month\")[\"amount\"].sum()\n\n    # Reindex to include all months, fill missing with 0.0\n    sums = sums.reindex(all_months, fill_value=0.0)\n\n    # Convert to dict with float values\n    return {month: float(sums[month]) for month in sums.index}\n",
+    "prompt_sha": "814dc0955d0170b8",
+    "cases": [
+     {
+      "name": "t_basic",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_unsorted_year_boundary",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     },
+     {
+      "name": "t_single",
+      "component": "functional",
+      "kind": "valid",
+      "passed": true,
+      "error": null
+     }
+    ],
+    "import_error": null,
+    "fatal": null
+   }
+  ],
+  "adapt_seconds": 92.11,
+  "adapt_calls": 13,
+  "adapt_input_tokens": 53063,
+  "adapt_output_tokens": 9662,
+  "adapt_cost": 0.0267388,
+  "status": {
+   "ledger": "active",
+   "monthly_report": "quarantined",
+   "cleaning": "active",
+   "flagging": "active",
+   "json_records": "active",
+   "grouping": "active"
+  },
+  "tombstones": 0
+ }
+]

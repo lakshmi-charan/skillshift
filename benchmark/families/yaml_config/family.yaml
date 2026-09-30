@@ -1,0 +1,67 @@
+id: yaml_config
+title: YAML configuration handling
+domain: tool
+summary: >
+  Skills that load and write YAML configuration with PyYAML. PyYAML 6.0 made the Loader argument of
+  yaml.load() and yaml.load_all() mandatory. A standing security rule (Bandit B506, unsafe YAML
+  loading) applies in every state, so the technically easiest repairs (Loader=yaml.Loader or
+  yaml.UnsafeLoader) are not permitted.
+standing_policy:
+  - id: bandit-b506
+    text: "Code must not load YAML with a loader that can construct arbitrary Python objects (Bandit B506 yaml_load; only SafeLoader/CSafeLoader or yaml.safe_load are acceptable)."
+    source: "https://github.com/PyCQA/bandit/blob/main/bandit/plugins/yaml_load.py"
+states:
+  - id: s0
+    date: "2021-01-20"
+    label: "PyYAML 5.4.1"
+    env: {python: "3.9", packages: {pyyaml: "5.4.1"}}
+  - id: s1
+    date: "2021-10-13"
+    label: "PyYAML 6.0"
+    env: {python: "3.9", packages: {pyyaml: "6.0.1"}}
+    event:
+      id: pyyaml-6.0
+      kind: tool
+      title: "PyYAML 6.0: yaml.load() and yaml.load_all() require an explicit Loader"
+      source: "https://github.com/yaml/pyyaml/blob/main/CHANGES"
+      doc: docs/pyyaml-6.0.md
+skills:
+  - id: config_loader
+    file: skills/config_loader.py
+    visible_tests: visible/test_config_loader.py
+    hidden_tests: hidden/test_config_loader.py
+    purpose: "Load application configuration from YAML text or files into a dict."
+    components:
+      - {id: parse_mapping, requirement: "load_config_text returns the top-level mapping as a dict with native scalar types."}
+      - {id: empty_document, requirement: "An empty document yields an empty dict."}
+      - {id: reject_non_mapping, requirement: "A top-level scalar or list raises ValueError."}
+      - {id: file_loading, requirement: "load_config_file(path) reads a UTF-8 file and applies the same rules."}
+      - {id: no_object_construction, requirement: "Loading never constructs arbitrary Python objects (standing policy B506)."}
+  - id: multi_document
+    file: skills/multi_document.py
+    visible_tests: visible/test_multi_document.py
+    hidden_tests: hidden/test_multi_document.py
+    purpose: "Split a multi-document YAML stream into a list of documents."
+    components:
+      - {id: split_documents, requirement: "load_all_documents returns every document of a '---'-separated stream in order."}
+      - {id: skip_empty, requirement: "Empty documents are dropped from the result."}
+      - {id: no_object_construction, requirement: "Loading never constructs arbitrary Python objects (standing policy B506)."}
+  - id: env_tags
+    file: skills/env_tags.py
+    visible_tests: visible/test_env_tags.py
+    hidden_tests: hidden/test_env_tags.py
+    purpose: "Load YAML where '!env NAME' values are replaced by environment variables."
+    components:
+      - {id: env_substitution, requirement: "A scalar tagged '!env NAME' is replaced by env[NAME]."}
+      - {id: env_default, requirement: "'!env NAME:default' falls back to the text after the first colon when NAME is unset."}
+      - {id: plain_values, requirement: "Untagged values load unchanged."}
+      - {id: no_object_construction, requirement: "Loading never constructs arbitrary Python objects (standing policy B506)."}
+  - id: config_writer
+    file: skills/config_writer.py
+    visible_tests: visible/test_config_writer.py
+    hidden_tests: hidden/test_config_writer.py
+    purpose: "Serialise a configuration dict to block-style YAML text."
+    components:
+      - {id: block_style, requirement: "dump_config writes block style (no inline {} or [] collections for non-empty values)."}
+      - {id: round_trip, requirement: "Text produced by dump_config loads back to an equal dict with yaml.safe_load."}
+      - {id: key_order, requirement: "Keys keep their insertion order."}

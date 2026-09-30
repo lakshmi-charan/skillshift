@@ -1,0 +1,99 @@
+id: sqlalchemy_ops
+title: Database access helpers built on SQLAlchemy
+domain: tool
+summary: >
+  A small internal library of database helpers used by several services: ad-hoc SQL reports, bulk
+  table operations, conversion of result rows to plain Python data, an ORM repository for users and
+  orders, Core sales-reporting queries, and Session/transaction utilities. The services use SQLite
+  databases through SQLAlchemy; callers pass in an Engine, Connection or Session as documented on
+  each function. The library must keep working with the SQLAlchemy version installed in the
+  deployment.
+states:
+  - id: s0
+    date: "2024-09-05"
+    label: "SQLAlchemy 1.4.54"
+    env: {python: "3.12", packages: {sqlalchemy: "1.4.54"}}
+  - id: s1
+    date: "2023-01-26"
+    label: "SQLAlchemy 2.0.54"
+    env: {python: "3.12", packages: {sqlalchemy: "2.0.54"}}
+    event:
+      id: sqlalchemy-2.0
+      kind: tool
+      title: "SQLAlchemy 2.0: legacy 1.x APIs removed (autocommit, connectionless execution, string SQL, select([...]), mapping-style rows, string joins, subtransactions)"
+      source: "https://github.com/sqlalchemy/sqlalchemy/blob/rel_2_0_0/doc/build/changelog/migration_20.rst"
+      doc: docs/sqlalchemy-2.0.md
+  - id: s2
+    date: "2026-09-24"
+    label: "SQLAlchemy 2.1.1"
+    env: {python: "3.12", packages: {sqlalchemy: "2.1.1"}}
+    event:
+      id: sqlalchemy-2.1
+      kind: tool
+      title: "SQLAlchemy 2.1: removal of Select.c / implicit subqueries, Query coercion in Session.execute(), Session.close_all; filter_by() searches all FROM entities"
+      source: "https://github.com/sqlalchemy/sqlalchemy/blob/rel_2_1_0/doc/build/changelog/changelog_21.rst"
+      doc: docs/sqlalchemy-2.1.md
+skills:
+  - id: sql_reports
+    file: skills/sql_reports.py
+    visible_tests: visible/test_sql_reports.py
+    hidden_tests: hidden/test_sql_reports.py
+    purpose: "Run ad-hoc SQL report strings against an Engine and render the results as text."
+    components:
+      - {id: run_report, requirement: "run_report(engine, sql, params) executes a SQL string with named :param placeholders and returns all rows as a list of tuples."}
+      - {id: report_scalar, requirement: "report_scalar(engine, sql, params) returns the first column of the first row, or None when there are no rows."}
+      - {id: report_columns, requirement: "report_columns(engine, sql, params) returns the result's column names in order."}
+      - {id: render_table, requirement: "render_table(headers, rows) returns a fixed-width text table: header line, a dash separator with '-+-' between columns, one line per row, cells joined by ' | ' and padded to the widest cell, trailing spaces stripped, None shown as empty."}
+  - id: bulk_ops
+    file: skills/bulk_ops.py
+    visible_tests: visible/test_bulk_ops.py
+    hidden_tests: hidden/test_bulk_ops.py
+    purpose: "Create tables and insert/delete/count rows of Core Table objects through an Engine."
+    components:
+      - {id: ensure_tables, requirement: "ensure_tables(engine, metadata) creates missing tables (keeping existing data) and returns the sorted names of all tables in the database."}
+      - {id: insert_many, requirement: "insert_many(engine, table, rows) inserts and commits the given row dicts (any iterable) and returns how many were inserted; an empty input inserts nothing."}
+      - {id: delete_matching, requirement: "delete_matching(engine, table, **criteria) deletes and commits the rows whose columns equal all given values, returns the number deleted, and raises ValueError when no criteria are given."}
+      - {id: count_rows, requirement: "count_rows(engine, table, **criteria) returns the number of rows, optionally only those whose columns equal all given values."}
+  - id: row_access
+    file: skills/row_access.py
+    visible_tests: visible/test_row_access.py
+    hidden_tests: hidden/test_row_access.py
+    purpose: "Turn result rows of a statement executed on a Connection into dicts, tuples and column lists."
+    components:
+      - {id: fetch_dicts, requirement: "fetch_dicts(conn, stmt) returns each result row as a dict keyed by column name."}
+      - {id: fetch_column, requirement: "fetch_column(conn, stmt, name) returns the values of the named result column in row order."}
+      - {id: fetch_tuples, requirement: "fetch_tuples(conn, stmt) returns each result row as a plain tuple."}
+      - {id: row_has_column, requirement: "row_has_column(row, name) is True exactly when the result row has a column called name (row values are irrelevant)."}
+      - {id: result_keys, requirement: "result_keys(conn, stmt) returns the result's column names in order."}
+  - id: user_repository
+    file: skills/user_repository.py
+    visible_tests: visible/test_user_repository.py
+    hidden_tests: hidden/test_user_repository.py
+    purpose: "Declarative User/Order models and Session-based repository functions."
+    components:
+      - {id: add_records, requirement: "add_user(session, name, email) and add_order(session, user_id, total, status='new') persist (commit) new rows, storing emails lower-case, and return the new ids."}
+      - {id: find_by_email, requirement: "find_by_email(session, email) returns the User with that email (case-insensitive input) or None."}
+      - {id: get_by_id, requirement: "get_user(session, user_id) returns the User with that primary key or None."}
+      - {id: orders_for, requirement: "orders_for(session, email, status=None) returns that user's orders ordered by id, optionally only those with the given status."}
+      - {id: owner_of_order, requirement: "owner_of_order(session, order_id) returns the User who placed the order, or None if no such order exists."}
+  - id: sales_reports
+    file: skills/sales_reports.py
+    visible_tests: visible/test_sales_reports.py
+    hidden_tests: hidden/test_sales_reports.py
+    purpose: "Core table definitions (customers, invoices) and sales reporting queries on a Connection."
+    components:
+      - {id: totals_by_customer, requirement: "totals_by_customer(conn) returns {customer name: sum of invoice amounts} for customers with invoices."}
+      - {id: big_spenders, requirement: "big_spenders(conn, min_total) returns [(name, total)] for customers whose invoice total is at least min_total, largest total first, ties by name."}
+      - {id: count_matching, requirement: "count_matching(conn, stmt) returns the number of rows the SELECT statement stmt returns."}
+      - {id: monthly_revenue, requirement: "monthly_revenue(conn) returns [(YYYY-MM, total)] of invoice amounts per month in month order."}
+  - id: session_helpers
+    file: skills/session_helpers.py
+    visible_tests: visible/test_session_helpers.py
+    hidden_tests: hidden/test_session_helpers.py
+    purpose: "Session factory, unit-of-work scope, transaction joining, query-to-dict and shutdown helpers."
+    components:
+      - {id: factory_config, requirement: "make_session_factory(engine) makes sessions bound to engine that do not autoflush and keep attribute values readable after commit and close."}
+      - {id: session_scope, requirement: "session_scope(factory) yields a session that is committed on success, rolled back on error (the error propagates) and always closed."}
+      - {id: run_in_transaction, requirement: "run_in_transaction(session, fn, *args) returns fn(session, *args) with its changes flushed inside the session's transaction but not committed; if fn raises, the exception propagates and none of the session's pending work is committed."}
+      - {id: query_to_dicts, requirement: "query_to_dicts(session, query) takes a column-based ORM Query and returns its rows as dicts keyed by column label."}
+      - {id: shutdown, requirement: "shutdown() closes every open Session in the process so that their objects become detached."}
